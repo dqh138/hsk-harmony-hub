@@ -46,9 +46,11 @@ const HSKLevelPage = () => {
     return items;
   }, [query, category, levelNum]);
 
+  if (!isValid) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
 
       <section className="border-b border-border/30 py-12">
         <div className="container mx-auto px-4">
