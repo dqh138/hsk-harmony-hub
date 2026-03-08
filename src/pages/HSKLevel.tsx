@@ -51,8 +51,10 @@ const HSKLevelPage = () => {
   }
 
   return (
-
+    <div className="min-h-screen bg-background">
+      <Navbar />
       <section className="border-b border-border/30 py-12">
+
         <div className="container mx-auto px-4">
           <h1 className={cn("font-serif text-4xl font-black sm:text-5xl", hskLevelTextColors[levelNum])}>
             HSK {levelNum}
