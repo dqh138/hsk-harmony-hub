@@ -14,15 +14,12 @@ const HSKLevelPage = () => {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<GrammarCategory | null>(null);
 
-  if (![1, 2, 3, 4, 5, 6].includes(levelNum)) {
-    return <Navigate to="/" replace />;
-  }
-
-  const allPoints = getGrammarByLevel(levelNum);
+  const isValid = [1, 2, 3, 4, 5, 6].includes(levelNum);
+  const allPoints = isValid ? getGrammarByLevel(levelNum) : [];
 
   const availableCategories = useMemo(
     () => [...new Set(allPoints.map((g) => g.category))],
-    [levelNum]
+    [levelNum, isValid]
   );
 
   const filtered = useMemo(() => {
