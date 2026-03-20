@@ -20,6 +20,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/hsk/:level" element={<HSKLevel />} />
+          <Route path="/mock-exams" element={<MockExams />} />
+          <Route path="/mock-exam/:examId" element={<MockExamPractice />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
