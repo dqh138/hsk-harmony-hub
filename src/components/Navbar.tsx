@@ -33,6 +33,15 @@ const Navbar = () => {
               HSK {level}
             </Link>
           ))}
+          <Link
+            to="/mock-exams"
+            className={cn(
+              "rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-hsk6",
+              location.pathname.startsWith("/mock-exam") && "bg-muted"
+            )}
+          >
+            模拟考试
+          </Link>
         </div>
 
         {/* Mobile toggle */}
