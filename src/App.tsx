@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import HSKLevel from "./pages/HSKLevel";
+import MockExams from "./pages/MockExams";
+import MockExamPractice from "./pages/MockExamPractice";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
