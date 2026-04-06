@@ -6,8 +6,14 @@ export type ReadingPartType =
   | "cloze-sentences"         // Part 3: Fill in blanks with correct sentences
   | "reading-comprehension";  // Part 4: Read passages and answer questions
 
+export type ListeningPartType =
+  | "short-conversations"     // Part 1: Q1-15
+  | "interviews"              // Part 2: Q16-30
+  | "passages";               // Part 3: Q31-50
+
 export interface ExamQuestion {
   id: number;
+  questionText?: string;      // For listening Part 2/3 questions shown on screen
   options: string[];          // A, B, C, D (or A-E for cloze-sentences)
   correctAnswer?: string;     // "A" | "B" | "C" | "D" | "E"
 }
@@ -29,12 +35,34 @@ export interface ReadingPart {
   }[];
 }
 
+export interface ListeningScript {
+  questionRange: string;      // e.g., "1" or "16-20"
+  text: string;
+}
+
+export interface ListeningPart {
+  type: ListeningPartType;
+  title: string;
+  instructions: string;
+  questions: ExamQuestion[];
+  scripts?: ListeningScript[];
+}
+
+export interface WritingSection {
+  title: string;
+  instructions: string[];
+  prompt: string;
+  sampleAnswer?: string;
+}
+
 export interface MockExam {
   id: string;
   title: string;
   titleZh: string;
   level: number;
   sections: {
+    listening?: ListeningPart[];
     reading: ReadingPart[];
+    writing?: WritingSection;
   };
 }
