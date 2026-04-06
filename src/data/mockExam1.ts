@@ -256,4 +256,6 @@ export const mockExam1: MockExam = {
   }
 };
 
-export const allMockExams: MockExam[] = [mockExam1];
+import { mockExam4 } from "./mockExam4";
+
+export const allMockExams: MockExam[] = [mockExam1, mockExam4];
