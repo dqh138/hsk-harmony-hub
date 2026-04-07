@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { useParams, useSearchParams, Navigate, Link } from "react-router-dom";
 import { allMockExams } from "@/data/mockExam1";
 import { ReadingPart, ListeningPart, ExamQuestion } from "@/data/mockExamTypes";
@@ -17,6 +17,17 @@ const MockExamPractice = () => {
   const [revealed, setRevealed] = useState(false);
   const [currentPart, setCurrentPart] = useState(0);
   const [showScripts, setShowScripts] = useState(false);
+  const scriptsRef = useRef<HTMLDivElement>(null);
+
+  const toggleScripts = useCallback(() => {
+    const next = !showScripts;
+    setShowScripts(next);
+    if (next) {
+      setTimeout(() => {
+        scriptsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+  }, [showScripts]);
 
   const activeSection = (searchParams.get("section") as SectionType) || "reading";
 
@@ -180,7 +191,7 @@ const MockExamPractice = () => {
 
       {/* Scripts shown when showScripts is toggled */}
       {showScripts && p.scripts && p.scripts.length > 0 && (
-        <div className="mt-8 space-y-4">
+        <div ref={scriptsRef} className="mt-8 space-y-4">
           <h4 className="flex items-center gap-2 text-sm font-bold text-primary">
             <FileText className="h-4 w-4" /> 听力文本
           </h4>
@@ -309,7 +320,7 @@ const MockExamPractice = () => {
             <div className="ml-auto flex items-center gap-2">
               {activeSection === "listening" && (
                 <Button
-                  onClick={() => setShowScripts(!showScripts)}
+                  onClick={toggleScripts}
                   variant="outline"
                   size="sm"
                   className={cn(
