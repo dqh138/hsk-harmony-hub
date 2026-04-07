@@ -192,8 +192,8 @@ export const mockExam1: MockExam = {
             options: [],
             questions: [
               { id: 76, options: [`A 神志也有些模糊`, `B 脚上打着石膏`, `C 嘴里不停地念叨着我的名字`, `D 顿时昏迷不醒`, `E 顿时刺中了我心中的最痛点`], correctAnswer: "D" },
-              { id: 77, options: [`A 神志也有些模糊`, `B 脚上打着石膏`, `C 嘴里不停地念叨着我的名字`, `D 顿时昏迷不醒`, `E 顿时刺中了我心中的最痛点`], correctAnswer: "A" },
-              { id: 78, options: [`A 神志也有些模糊`, `B 脚上打着石膏`, `C 嘴里不停地念叨着我的名字`, `D 顿时昏迷不醒`, `E 顿时刺中了我心中的最痛点`], correctAnswer: "B" },
+              { id: 77, options: [`A 神志也有些模糊`, `B 脚上打着石膏`, `C 嘴里不停地念叨着我的名字`, `D 顿时昏迷不醒`, `E 顿时刺中了我心中的最痛点`], correctAnswer: "B" },
+              { id: 78, options: [`A 神志也有些模糊`, `B 脚上打着石膏`, `C 嘴里不停地念叨着我的名字`, `D 顿时昏迷不醒`, `E 顿时刺中了我心中的最痛点`], correctAnswer: "A" },
               { id: 79, options: [`A 神志也有些模糊`, `B 脚上打着石膏`, `C 嘴里不停地念叨着我的名字`, `D 顿时昏迷不醒`, `E 顿时刺中了我心中的最痛点`], correctAnswer: "C" },
               { id: 80, options: [`A 神志也有些模糊`, `B 脚上打着石膏`, `C 嘴里不停地念叨着我的名字`, `D 顿时昏迷不醒`, `E 顿时刺中了我心中的最痛点`], correctAnswer: "E" }
             ]
