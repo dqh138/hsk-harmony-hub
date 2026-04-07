@@ -331,12 +331,16 @@ const MockExamPractice = () => {
         </div>
       )}
 
-      <section className="container mx-auto max-w-3xl px-4 py-8">
-        {activeSection === "listening" && exam.audioSrc && (
-          <div className="mb-6">
+      {/* Sticky audio player for listening section */}
+      {activeSection === "listening" && exam.audioSrc && (
+        <div className="sticky top-[6.5rem] z-30 border-b border-border/30 bg-background/95 backdrop-blur">
+          <div className="container mx-auto max-w-3xl px-4 py-3">
             <AudioPlayer src={exam.audioSrc} title="听力音频" />
           </div>
-        )}
+        </div>
+      )}
+
+      <section className="container mx-auto max-w-3xl px-4 py-8">
 
         {activeSection === "writing" && hasWriting && renderWritingSection()}
 
