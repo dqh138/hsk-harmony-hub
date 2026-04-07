@@ -97,15 +97,12 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
         </div>
       )}
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="icon" className="h-9 w-9 shrink-0" onClick={toggle}>
-          {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-        </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={restart} title="Restart">
-          <RotateCcw className="h-3.5 w-3.5" />
-        </Button>
         <Button variant="ghost" className="h-8 shrink-0 gap-1 px-2 text-xs" onClick={() => skip(-10)} title="-10s">
           <SkipBack className="h-3.5 w-3.5" />
           <span className="font-mono">10</span>
+        </Button>
+        <Button variant="outline" size="icon" className="h-9 w-9 shrink-0" onClick={toggle}>
+          {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </Button>
         <Button variant="ghost" className="h-8 shrink-0 gap-1 px-2 text-xs" onClick={() => skip(10)} title="+10s">
           <span className="font-mono">10</span>
@@ -139,6 +136,9 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={restart} title="Restart">
+          <RotateCcw className="h-3.5 w-3.5" />
+        </Button>
       </div>
     </div>
   );
