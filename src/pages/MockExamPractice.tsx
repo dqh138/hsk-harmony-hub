@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import AudioPlayer from "@/components/AudioPlayer";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye, Headphones, BookOpen, PenTool } from "lucide-react";
+import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye, Headphones, BookOpen, PenTool, FileText } from "lucide-react";
 
 type SectionType = "listening" | "reading" | "writing";
 
