@@ -60,7 +60,7 @@ export const mockExam1: MockExam = {
               `他的这种情绪还影响到了工作，影响了整个乐队的形象。`,
               `要创造条件让更多的青年科学家迅速成长，但万万不可揠苗助长。`
             ],
-            correctAnswer: "C"
+            correctAnswer: "B"
           },
           {
             id: 56,
