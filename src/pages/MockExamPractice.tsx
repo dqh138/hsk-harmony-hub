@@ -329,7 +329,7 @@ const MockExamPractice = () => {
                   )}
                 >
                   <FileText className="mr-1 h-4 w-4" />
-                  {showScripts ? "隐藏文本" : "查看文本"}
+                  {showScripts ? " 隐藏文本" : " 查看文本"}
                 </Button>
               )}
               {!revealed && (
