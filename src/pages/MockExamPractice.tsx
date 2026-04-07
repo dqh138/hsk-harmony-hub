@@ -178,32 +178,22 @@ const MockExamPractice = () => {
         {p.questions.map((q) => renderQuestion(q))}
       </div>
 
-      {/* Scripts revealed after answers */}
-      {revealed && p.scripts && p.scripts.length > 0 && (
-        <div className="mt-8">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowScripts(!showScripts)}
-            className="mb-4"
-          >
-            <Headphones className="mr-1 h-4 w-4" />
-            {showScripts ? "隐藏听力文本" : "查看听力文本"}
-          </Button>
-          {showScripts && (
-            <div className="space-y-4">
-              {p.scripts.map((s, i) => (
-                <div key={i} className="rounded-lg border border-border/30 bg-muted/30 p-4">
-                  <div className="mb-2 text-xs font-bold text-muted-foreground">
-                    第 {s.questionRange} 题
-                  </div>
-                  <div className="text-sm leading-relaxed whitespace-pre-line">
-                    {s.text}
-                  </div>
-                </div>
-              ))}
+      {/* Scripts shown when showScripts is toggled */}
+      {showScripts && p.scripts && p.scripts.length > 0 && (
+        <div className="mt-8 space-y-4">
+          <h4 className="flex items-center gap-2 text-sm font-bold text-primary">
+            <FileText className="h-4 w-4" /> 听力文本
+          </h4>
+          {p.scripts.map((s, i) => (
+            <div key={i} className="rounded-lg border border-border/30 bg-muted/30 p-4">
+              <div className="mb-2 text-xs font-bold text-muted-foreground">
+                第 {s.questionRange} 题
+              </div>
+              <div className="text-sm leading-relaxed whitespace-pre-line">
+                {s.text}
+              </div>
             </div>
-          )}
+          ))}
         </div>
       )}
     </div>
