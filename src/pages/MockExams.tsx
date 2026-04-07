@@ -107,16 +107,16 @@ const MockExams = () => {
           })}
 
           {/* Placeholder for future exams */}
-          {Array.from({ length: 8 }, (_, i) => (
+          {[2, 3, 6, 7, 8, 9, 10].map((num) => (
             <div
-              key={`placeholder-${i}`}
+              key={`placeholder-${num}`}
               className="relative overflow-hidden rounded-xl border border-dashed border-border/50 bg-card/50 p-6 opacity-50"
             >
               <h2 className="font-serif text-2xl font-black text-muted-foreground">
-                模拟试卷 {i + 2 + (i >= 2 ? 1 : 0)}
+                HSK（六级）模拟试卷 {num}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                HSK 6 Mock Exam {i + 2 + (i >= 2 ? 1 : 0)}
+                HSK 6 Mock Exam {num}
               </p>
               <div className="mt-4 space-y-2">
                 {["听力", "阅读", "书写"].map((label) => (
