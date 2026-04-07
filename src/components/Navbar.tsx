@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
+import ThemeToggle from "@/components/ThemeToggle";
+import logo from "@/assets/logo.png";
 
 const levels: HSKLevel[] = [1, 2, 3, 4, 5, 6];
 
@@ -14,8 +16,8 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <span className="font-serif text-2xl font-bold gold-text">中文语法</span>
-          <span className="hidden text-sm text-muted-foreground sm:inline">HSK Grammar</span>
+          <img src={logo} alt="HSK Hub" className="h-10 w-10 rounded-lg" />
+          <span className="font-serif text-2xl font-bold gold-text">HSK Hub</span>
         </Link>
 
         {/* Desktop */}
