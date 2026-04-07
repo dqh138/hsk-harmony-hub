@@ -334,7 +334,7 @@ const MockExamPractice = () => {
               )}
               {!revealed && (
                 <Button onClick={() => setRevealed(true)} variant="outline" size="sm" className="border-hsk6/50 text-hsk6 hover:bg-hsk6/10" disabled={answeredCount === 0}>
-                  <Eye className="mr-1 h-4 w-4" /> Reveal Answers
+                  <Eye className="mr-1 h-4 w-4" /> 查看答案
                 </Button>
               )}
             </div>
