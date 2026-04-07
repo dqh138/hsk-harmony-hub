@@ -191,7 +191,7 @@ const MockExamPractice = () => {
 
       {/* Scripts shown when showScripts is toggled */}
       {showScripts && p.scripts && p.scripts.length > 0 && (
-        <div className="mt-8 space-y-4">
+        <div ref={scriptsRef} className="mt-8 space-y-4">
           <h4 className="flex items-center gap-2 text-sm font-bold text-primary">
             <FileText className="h-4 w-4" /> 听力文本
           </h4>
