@@ -20,11 +20,41 @@ const MockExamPractice = () => {
   const activeSection = (searchParams.get("section") as SectionType) || "reading";
 
   const exam = allMockExams.find((e) => e.id === examId);
-  if (!exam) return <Navigate to="/mock-exams" replace />;
 
-  const hasListening = (exam.sections.listening?.length ?? 0) > 0;
-  const hasReading = exam.sections.reading.length > 0;
-  const hasWriting = !!exam.sections.writing;
+  const hasListening = (exam?.sections.listening?.length ?? 0) > 0;
+  const hasReading = (exam?.sections.reading.length ?? 0) > 0;
+  const hasWriting = !!exam?.sections.writing;
+
+  const readingParts = exam?.sections.reading ?? [];
+  const listeningParts = exam?.sections.listening ?? [];
+  const activeParts = activeSection === "listening" ? listeningParts : activeSection === "reading" ? readingParts : [];
+  const part = activeParts[currentPart];
+
+  const allQuestions = useMemo(() => {
+    const qs: ExamQuestion[] = [];
+    if (activeSection === "reading") {
+      readingParts.forEach((p) => {
+        if (p.questions) qs.push(...p.questions);
+        if (p.passages) p.passages.forEach((pa) => qs.push(...pa.questions));
+        if (p.blanksPassage) p.blanksPassage.forEach((b) => qs.push(...b.questions));
+      });
+    } else if (activeSection === "listening") {
+      listeningParts.forEach((p) => qs.push(...p.questions));
+    }
+    return qs;
+  }, [activeSection, readingParts, listeningParts]);
+
+  const answeredCount = Object.keys(answers).length;
+  const totalQuestions = allQuestions.length;
+
+  const score = useMemo(() => {
+    if (!revealed) return 0;
+    return allQuestions.filter(
+      (q) => q.correctAnswer && answers[q.id] === q.correctAnswer
+    ).length;
+  }, [revealed, answers, allQuestions]);
+
+  if (!exam) return <Navigate to="/mock-exams" replace />;
 
   const switchSection = (s: SectionType) => {
     setSearchParams({ section: s });

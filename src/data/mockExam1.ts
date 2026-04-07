@@ -252,7 +252,7 @@ export const mockExam1: MockExam = {
           }
         ]
       }
-    ]
+    ],
     listening: [],
     writing: undefined
   }
