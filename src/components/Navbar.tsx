@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -8,8 +8,37 @@ import logo from "@/assets/logo.png";
 
 const levels: HSKLevel[] = [1, 2, 3, 4, 5, 6];
 
+const NavDropdown = ({
+  label,
+  children,
+  isActive,
+}: {
+  label: string;
+  children: React.ReactNode;
+  isActive: boolean;
+}) => {
+  return (
+    <div className="relative group">
+      <button
+        className={cn(
+          "flex items-center gap-1 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+          isActive && "bg-muted"
+        )}
+      >
+        {label}
+        <ChevronDown className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:rotate-180" />
+      </button>
+      <div className="invisible absolute left-0 top-full z-50 min-w-[160px] rounded-lg border border-border bg-popover p-1.5 shadow-xl opacity-0 transition-all group-hover:visible group-hover:opacity-100">
+        {children}
+      </div>
+    </div>
+  );
+};
+
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [grammarOpen, setGrammarOpen] = useState(false);
+  const [examOpen, setExamOpen] = useState(false);
   const location = useLocation();
 
   return (
@@ -22,28 +51,44 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden items-center gap-1 md:flex">
-          {levels.map((level) => (
-            <Link
-              key={level}
-              to={`/hsk/${level}`}
-              className={cn(
-                "rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                hskLevelTextColors[level],
-                location.pathname === `/hsk/${level}` && "bg-muted"
-              )}
-            >
-              HSK {level}
-            </Link>
-          ))}
-          <Link
-            to="/mock-exams"
-            className={cn(
-              "rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-hsk6",
-              location.pathname.startsWith("/mock-exam") && "bg-muted"
-            )}
+          <NavDropdown
+            label="Grammar"
+            isActive={location.pathname.startsWith("/hsk/")}
           >
-            模拟考试
-          </Link>
+            {levels.map((level) => (
+              <Link
+                key={level}
+                to={`/hsk/${level}`}
+                className={cn(
+                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
+                  hskLevelTextColors[level],
+                  location.pathname === `/hsk/${level}` && "bg-muted"
+                )}
+              >
+                HSK {level}
+              </Link>
+            ))}
+          </NavDropdown>
+
+          <NavDropdown
+            label="模拟考试"
+            isActive={location.pathname.startsWith("/mock-exam")}
+          >
+            {levels.map((level) => (
+              <Link
+                key={level}
+                to={`/mock-exams?level=${level}`}
+                className={cn(
+                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
+                  hskLevelTextColors[level],
+                  location.pathname.startsWith("/mock-exam") && location.search === `?level=${level}` && "bg-muted"
+                )}
+              >
+                HSK {level}
+              </Link>
+            ))}
+          </NavDropdown>
+
           <ThemeToggle />
         </div>
 
@@ -62,26 +107,57 @@ const Navbar = () => {
       {/* Mobile menu */}
       {open && (
         <div className="border-t border-border/50 bg-background px-4 pb-4 md:hidden">
-          {levels.map((level) => (
-            <Link
-              key={level}
-              to={`/hsk/${level}`}
-              onClick={() => setOpen(false)}
-              className={cn(
-                "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                hskLevelTextColors[level]
-              )}
-            >
-              HSK {level}
-            </Link>
-          ))}
-          <Link
-            to="/mock-exams"
-            onClick={() => setOpen(false)}
-            className="block rounded-md px-3 py-2 text-sm font-bold text-hsk6 transition-colors hover:bg-muted"
+          {/* Grammar section */}
+          <button
+            onClick={() => setGrammarOpen(!grammarOpen)}
+            className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          >
+            Grammar
+            <ChevronDown className={cn("h-4 w-4 transition-transform", grammarOpen && "rotate-180")} />
+          </button>
+          {grammarOpen && (
+            <div className="ml-3 border-l border-border/50 pl-2">
+              {levels.map((level) => (
+                <Link
+                  key={level}
+                  to={`/hsk/${level}`}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
+                    hskLevelTextColors[level]
+                  )}
+                >
+                  HSK {level}
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* Mock exams section */}
+          <button
+            onClick={() => setExamOpen(!examOpen)}
+            className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             模拟考试
-          </Link>
+            <ChevronDown className={cn("h-4 w-4 transition-transform", examOpen && "rotate-180")} />
+          </button>
+          {examOpen && (
+            <div className="ml-3 border-l border-border/50 pl-2">
+              {levels.map((level) => (
+                <Link
+                  key={level}
+                  to={`/mock-exams?level=${level}`}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
+                    hskLevelTextColors[level]
+                  )}
+                >
+                  HSK {level}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </nav>
