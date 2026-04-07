@@ -1,18 +1,27 @@
 import { useState, useRef, useEffect } from "react";
-import { Play, Pause, RotateCcw, Volume2 } from "lucide-react";
+import { Play, Pause, RotateCcw, Volume2, SkipBack, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface AudioPlayerProps {
   src: string;
   title?: string;
 }
 
+const SPEED_OPTIONS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+
 const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [speed, setSpeed] = useState(1);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -52,6 +61,19 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
     setPlaying(true);
   };
 
+  const skip = (seconds: number) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + seconds));
+  };
+
+  const changeSpeed = (s: number) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.playbackRate = s;
+    setSpeed(s);
+  };
+
   const seek = (val: number[]) => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -74,22 +96,18 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
           <span className="text-sm font-medium text-primary">{title}</span>
         </div>
       )}
-      <div className="flex items-center gap-3">
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-9 w-9 shrink-0"
-          onClick={toggle}
-        >
+      <div className="flex items-center gap-2">
+        <Button variant="outline" size="icon" className="h-9 w-9 shrink-0" onClick={toggle}>
           {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-9 w-9 shrink-0"
-          onClick={restart}
-        >
-          <RotateCcw className="h-4 w-4" />
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={restart} title="Restart">
+          <RotateCcw className="h-3.5 w-3.5" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => skip(-10)} title="-10s">
+          <SkipBack className="h-3.5 w-3.5" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => skip(10)} title="+10s">
+          <SkipForward className="h-3.5 w-3.5" />
         </Button>
         <Slider
           value={[currentTime]}
@@ -101,6 +119,24 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
         <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
           {fmt(currentTime)} / {fmt(duration)}
         </span>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="h-8 shrink-0 px-2 text-xs font-mono">
+              {speed === 1 ? "1x" : `${speed}x`}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="min-w-0">
+            {SPEED_OPTIONS.map((s) => (
+              <DropdownMenuItem
+                key={s}
+                onClick={() => changeSpeed(s)}
+                className={speed === s ? "bg-accent font-bold" : ""}
+              >
+                {s === 1 ? "Normal" : `${s}x`}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
