@@ -17,6 +17,17 @@ const MockExamPractice = () => {
   const [revealed, setRevealed] = useState(false);
   const [currentPart, setCurrentPart] = useState(0);
   const [showScripts, setShowScripts] = useState(false);
+  const scriptsRef = useRef<HTMLDivElement>(null);
+
+  const toggleScripts = useCallback(() => {
+    const next = !showScripts;
+    setShowScripts(next);
+    if (next) {
+      setTimeout(() => {
+        scriptsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+  }, [showScripts]);
 
   const activeSection = (searchParams.get("section") as SectionType) || "reading";
 
