@@ -3,6 +3,7 @@ import { useParams, useSearchParams, Navigate, Link } from "react-router-dom";
 import { allMockExams } from "@/data/mockExam1";
 import { ReadingPart, ListeningPart, ExamQuestion } from "@/data/mockExamTypes";
 import Navbar from "@/components/Navbar";
+import AudioPlayer from "@/components/AudioPlayer";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye, Headphones, BookOpen, PenTool } from "lucide-react";
