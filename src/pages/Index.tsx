@@ -42,7 +42,7 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
         <div className="container relative mx-auto px-4 text-center">
           <h1 className="font-serif text-5xl font-black tracking-tight gold-text sm:text-6xl md:text-7xl">
-            中文语法
+            HSK Hub
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
             Your complete HSK 1–6 Chinese grammar reference. Search, browse, and master every essential pattern.
