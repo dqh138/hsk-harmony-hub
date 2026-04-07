@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import AudioPlayer from "@/components/AudioPlayer";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye, Headphones, BookOpen, PenTool } from "lucide-react";
+import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye, Headphones, BookOpen, PenTool, FileText } from "lucide-react";
 
 type SectionType = "listening" | "reading" | "writing";
 
@@ -178,32 +178,22 @@ const MockExamPractice = () => {
         {p.questions.map((q) => renderQuestion(q))}
       </div>
 
-      {/* Scripts revealed after answers */}
-      {revealed && p.scripts && p.scripts.length > 0 && (
-        <div className="mt-8">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowScripts(!showScripts)}
-            className="mb-4"
-          >
-            <Headphones className="mr-1 h-4 w-4" />
-            {showScripts ? "隐藏听力文本" : "查看听力文本"}
-          </Button>
-          {showScripts && (
-            <div className="space-y-4">
-              {p.scripts.map((s, i) => (
-                <div key={i} className="rounded-lg border border-border/30 bg-muted/30 p-4">
-                  <div className="mb-2 text-xs font-bold text-muted-foreground">
-                    第 {s.questionRange} 题
-                  </div>
-                  <div className="text-sm leading-relaxed whitespace-pre-line">
-                    {s.text}
-                  </div>
-                </div>
-              ))}
+      {/* Scripts shown when showScripts is toggled */}
+      {showScripts && p.scripts && p.scripts.length > 0 && (
+        <div className="mt-8 space-y-4">
+          <h4 className="flex items-center gap-2 text-sm font-bold text-primary">
+            <FileText className="h-4 w-4" /> 听力文本
+          </h4>
+          {p.scripts.map((s, i) => (
+            <div key={i} className="rounded-lg border border-border/30 bg-muted/30 p-4">
+              <div className="mb-2 text-xs font-bold text-muted-foreground">
+                第 {s.questionRange} 题
+              </div>
+              <div className="text-sm leading-relaxed whitespace-pre-line">
+                {s.text}
+              </div>
             </div>
-          )}
+          ))}
         </div>
       )}
     </div>
@@ -316,7 +306,21 @@ const MockExamPractice = () => {
                 {p.title}
               </button>
             ))}
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-2">
+              {activeSection === "listening" && (
+                <Button
+                  onClick={() => setShowScripts(!showScripts)}
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "border-primary/50 text-primary hover:bg-primary/10",
+                    showScripts && "bg-primary/10"
+                  )}
+                >
+                  <FileText className="mr-1 h-4 w-4" />
+                  {showScripts ? "隐藏文本" : "查看文本"}
+                </Button>
+              )}
               {!revealed && (
                 <Button onClick={() => setRevealed(true)} variant="outline" size="sm" className="border-hsk6/50 text-hsk6 hover:bg-hsk6/10" disabled={answeredCount === 0}>
                   <Eye className="mr-1 h-4 w-4" /> Reveal Answers
@@ -327,12 +331,16 @@ const MockExamPractice = () => {
         </div>
       )}
 
-      <section className="container mx-auto max-w-3xl px-4 py-8">
-        {activeSection === "listening" && exam.audioSrc && (
-          <div className="mb-6">
+      {/* Sticky audio player for listening section */}
+      {activeSection === "listening" && exam.audioSrc && (
+        <div className="sticky top-[6.5rem] z-30 border-b border-border/30 bg-background/95 backdrop-blur">
+          <div className="container mx-auto max-w-3xl px-4 py-3">
             <AudioPlayer src={exam.audioSrc} title="听力音频" />
           </div>
-        )}
+        </div>
+      )}
+
+      <section className="container mx-auto max-w-3xl px-4 py-8">
 
         {activeSection === "writing" && hasWriting && renderWritingSection()}
 
