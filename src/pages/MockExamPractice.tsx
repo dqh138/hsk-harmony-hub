@@ -306,7 +306,21 @@ const MockExamPractice = () => {
                 {p.title}
               </button>
             ))}
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-2">
+              {activeSection === "listening" && (
+                <Button
+                  onClick={() => setShowScripts(!showScripts)}
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "border-primary/50 text-primary hover:bg-primary/10",
+                    showScripts && "bg-primary/10"
+                  )}
+                >
+                  <FileText className="mr-1 h-4 w-4" />
+                  {showScripts ? "隐藏文本" : "查看文本"}
+                </Button>
+              )}
               {!revealed && (
                 <Button onClick={() => setRevealed(true)} variant="outline" size="sm" className="border-hsk6/50 text-hsk6 hover:bg-hsk6/10" disabled={answeredCount === 0}>
                   <Eye className="mr-1 h-4 w-4" /> Reveal Answers
