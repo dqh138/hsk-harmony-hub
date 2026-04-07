@@ -60,6 +60,7 @@ export interface MockExam {
   title: string;
   titleZh: string;
   level: number;
+  audioSrc?: string;
   sections: {
     listening?: ListeningPart[];
     reading: ReadingPart[];

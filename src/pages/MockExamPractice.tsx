@@ -3,6 +3,7 @@ import { useParams, useSearchParams, Navigate, Link } from "react-router-dom";
 import { allMockExams } from "@/data/mockExam1";
 import { ReadingPart, ListeningPart, ExamQuestion } from "@/data/mockExamTypes";
 import Navbar from "@/components/Navbar";
+import AudioPlayer from "@/components/AudioPlayer";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye, Headphones, BookOpen, PenTool } from "lucide-react";
@@ -327,6 +328,12 @@ const MockExamPractice = () => {
       )}
 
       <section className="container mx-auto max-w-3xl px-4 py-8">
+        {activeSection === "listening" && exam.audioSrc && (
+          <div className="mb-6">
+            <AudioPlayer src={exam.audioSrc} title="听力音频" />
+          </div>
+        )}
+
         {activeSection === "writing" && hasWriting && renderWritingSection()}
 
         {activeSection === "reading" && part && renderReadingPart(part as ReadingPart)}
