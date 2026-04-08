@@ -107,7 +107,7 @@ const MockExams = () => {
           })}
 
           {/* Placeholder for future exams */}
-          {[2, 3, 6, 7, 8, 9, 10].map((num) => (
+          {[2, 3, 6].map((num) => (
             <div
               key={`placeholder-${num}`}
               className="relative overflow-hidden rounded-xl border border-dashed border-border/50 bg-card/50 p-6 opacity-50"
