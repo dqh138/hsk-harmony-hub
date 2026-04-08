@@ -5,6 +5,7 @@ export const mockExam5: MockExam = {
   title: "HSK 6 Mock Exam 5",
   titleZh: "HSK（六级）模拟试卷 5",
   level: 6,
+  audioSrc: "/audio/hsk6-mock-exam-5-listening.mp3",
   sections: {
     listening: [
       {
