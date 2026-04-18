@@ -4,6 +4,8 @@ import { allMockExams } from "@/data/mockExam1";
 import { ReadingPart, ListeningPart, ExamQuestion } from "@/data/mockExamTypes";
 import Navbar from "@/components/Navbar";
 import AudioPlayer from "@/components/AudioPlayer";
+import ExamTimer from "@/components/ExamTimer";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye, Headphones, BookOpen, PenTool, FileText } from "lucide-react";
@@ -215,10 +217,20 @@ const MockExamPractice = () => {
     return (
       <div className="space-y-6">
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-          <h3 className="font-serif text-lg font-bold text-primary">{w.title}</h3>
-          {w.instructions.map((inst, i) => (
-            <p key={i} className="mt-1 text-sm text-muted-foreground">{inst}</p>
-          ))}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="font-serif text-lg font-bold text-primary">{w.title}</h3>
+              {w.instructions.map((inst, i) => (
+                <p key={i} className="mt-1 text-sm text-muted-foreground">{inst}</p>
+              ))}
+            </div>
+            <ExamTimer
+              durationMinutes={45}
+              label="书写 45 分钟"
+              onTimeUp={() => toast({ title: "时间到", description: "书写部分时间已结束。" })}
+            />
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">提示：考试规定阅读后有 10 分钟阅题时间，然后开始 45 分钟书写。</p>
         </div>
 
         <div className="rounded-lg border border-border/30 bg-muted/30 p-4 text-sm leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto">
@@ -318,6 +330,16 @@ const MockExamPractice = () => {
               </button>
             ))}
             <div className="ml-auto flex items-center gap-2">
+              {activeSection === "reading" && (
+                <ExamTimer
+                  durationMinutes={50}
+                  label="阅读 50 分钟"
+                  onTimeUp={() => {
+                    setRevealed(true);
+                    toast({ title: "时间到", description: "阅读部分时间已结束，已显示答案。" });
+                  }}
+                />
+              )}
               {activeSection === "listening" && (
                 <Button
                   onClick={toggleScripts}
