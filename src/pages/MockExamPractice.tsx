@@ -217,10 +217,20 @@ const MockExamPractice = () => {
     return (
       <div className="space-y-6">
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-          <h3 className="font-serif text-lg font-bold text-primary">{w.title}</h3>
-          {w.instructions.map((inst, i) => (
-            <p key={i} className="mt-1 text-sm text-muted-foreground">{inst}</p>
-          ))}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="font-serif text-lg font-bold text-primary">{w.title}</h3>
+              {w.instructions.map((inst, i) => (
+                <p key={i} className="mt-1 text-sm text-muted-foreground">{inst}</p>
+              ))}
+            </div>
+            <ExamTimer
+              durationMinutes={45}
+              label="书写 45 分钟"
+              onTimeUp={() => toast({ title: "时间到", description: "书写部分时间已结束。" })}
+            />
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">提示：考试规定阅读后有 10 分钟阅题时间，然后开始 45 分钟书写。</p>
         </div>
 
         <div className="rounded-lg border border-border/30 bg-muted/30 p-4 text-sm leading-relaxed whitespace-pre-line max-h-[60vh] overflow-y-auto">
