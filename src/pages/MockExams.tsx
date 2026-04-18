@@ -107,7 +107,7 @@ const MockExams = () => {
           })}
 
           {/* Placeholder for future exams */}
-          {[6].map((num) => (
+          {([] as number[]).map((num) => (
             <div
               key={`placeholder-${num}`}
               className="relative overflow-hidden rounded-xl border border-dashed border-border/50 bg-card/50 p-6 opacity-50"
