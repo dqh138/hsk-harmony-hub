@@ -346,9 +346,10 @@ import { mockExam2 } from "./mockExam2";
 import { mockExam3 } from "./mockExam3";
 import { mockExam4 } from "./mockExam4";
 import { mockExam5 } from "./mockExam5";
+import { mockExam6 } from "./mockExam6";
 import { mockExam7 } from "./mockExam7";
 import { mockExam8 } from "./mockExam8";
 import { mockExam9 } from "./mockExam9";
 import { mockExam10 } from "./mockExam10";
 
-export const allMockExams: MockExam[] = [mockExam1, mockExam2, mockExam3, mockExam4, mockExam5, mockExam7, mockExam8, mockExam9, mockExam10];
+export const allMockExams: MockExam[] = [mockExam1, mockExam2, mockExam3, mockExam4, mockExam5, mockExam6, mockExam7, mockExam8, mockExam9, mockExam10];
