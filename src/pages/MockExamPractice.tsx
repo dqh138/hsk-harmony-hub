@@ -330,6 +330,16 @@ const MockExamPractice = () => {
               </button>
             ))}
             <div className="ml-auto flex items-center gap-2">
+              {activeSection === "reading" && (
+                <ExamTimer
+                  durationMinutes={50}
+                  label="阅读 50 分钟"
+                  onTimeUp={() => {
+                    setRevealed(true);
+                    toast({ title: "时间到", description: "阅读部分时间已结束，已显示答案。" });
+                  }}
+                />
+              )}
               {activeSection === "listening" && (
                 <Button
                   onClick={toggleScripts}
