@@ -4,6 +4,8 @@ import { allMockExams } from "@/data/mockExam1";
 import { ReadingPart, ListeningPart, ExamQuestion } from "@/data/mockExamTypes";
 import Navbar from "@/components/Navbar";
 import AudioPlayer from "@/components/AudioPlayer";
+import ExamTimer from "@/components/ExamTimer";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye, Headphones, BookOpen, PenTool, FileText } from "lucide-react";
