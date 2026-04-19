@@ -5,6 +5,8 @@ import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
+import bambooDecor from "@/assets/decor-bamboo.png";
+import mountainsDecor from "@/assets/decor-mountains.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 
@@ -51,6 +53,28 @@ const Navbar = () => {
   };
 
   return (
+    <>
+      {/* Site-wide subtle Chinese decor */}
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <img
+          src={bambooDecor}
+          alt=""
+          loading="lazy"
+          className="absolute -left-8 top-20 h-[70vh] w-auto opacity-[0.07] dark:opacity-[0.1] select-none"
+        />
+        <img
+          src={bambooDecor}
+          alt=""
+          loading="lazy"
+          className="absolute -right-10 bottom-0 h-[55vh] w-auto -scale-x-100 opacity-[0.06] dark:opacity-[0.09] select-none"
+        />
+        <img
+          src={mountainsDecor}
+          alt=""
+          loading="lazy"
+          className="absolute bottom-0 left-1/2 w-[120vw] max-w-none -translate-x-1/2 opacity-[0.06] dark:opacity-[0.09] select-none"
+        />
+      </div>
     <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
