@@ -84,24 +84,15 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden items-center gap-1 md:flex">
-          <NavDropdown
-            label="语法"
-            isActive={location.pathname.startsWith("/hsk/")}
+          <Link
+            to="/grammar"
+            className={cn(
+              "rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              (location.pathname === "/grammar" || location.pathname.startsWith("/hsk/")) && "bg-muted"
+            )}
           >
-            {levels.map((level) => (
-              <Link
-                key={level}
-                to={`/hsk/${level}`}
-                className={cn(
-                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                  hskLevelTextColors[level],
-                  location.pathname === `/hsk/${level}` && "bg-muted"
-                )}
-              >
-                HSK {level}
-              </Link>
-            ))}
-          </NavDropdown>
+            语法
+          </Link>
 
           <NavDropdown
             label="生词"
@@ -192,31 +183,13 @@ const Navbar = () => {
       {/* Mobile menu */}
       {open && (
         <div className="border-t border-border/50 bg-background px-4 pb-4 md:hidden">
-          {/* Grammar section */}
-          <button
-            onClick={() => setGrammarOpen(!grammarOpen)}
-            className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          <Link
+            to="/grammar"
+            onClick={() => setOpen(false)}
+            className="block rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             语法
-            <ChevronDown className={cn("h-4 w-4 transition-transform", grammarOpen && "rotate-180")} />
-          </button>
-          {grammarOpen && (
-            <div className="ml-3 border-l border-border/50 pl-2">
-              {levels.map((level) => (
-                <Link
-                  key={level}
-                  to={`/hsk/${level}`}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                    hskLevelTextColors[level]
-                  )}
-                >
-                  HSK {level}
-                </Link>
-              ))}
-            </div>
-          )}
+          </Link>
 
           {/* Vocabulary section */}
           <button

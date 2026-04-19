@@ -33,7 +33,7 @@ const Index = () => {
       description:
         "Tra cứu toàn bộ ngữ pháp HSK 1–6 với cấu trúc, giải thích và ví dụ song ngữ Hán–Anh chi tiết.",
       icon: BookOpen,
-      href: "/hsk/1",
+      href: "/grammar",
       cta: "Khám phá ngữ pháp",
       stat: `${grammarCount}+ điểm ngữ pháp`,
       accent: "from-hsk1/20 to-hsk2/10",
