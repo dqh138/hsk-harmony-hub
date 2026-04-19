@@ -179,8 +179,9 @@ const Index = () => {
       </section>
 
       {/* Quick Level Access */}
-      <section className="border-y border-border/30 bg-muted/20 py-16">
-        <div className="container mx-auto px-4">
+      <section className="relative overflow-hidden border-y border-border/30 bg-muted/20 py-16">
+        <ChineseDecorInline variant="mountains" className="absolute bottom-0 left-1/2 w-[110%] max-w-none -translate-x-1/2 opacity-25" />
+        <div className="container relative mx-auto px-4">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="font-serif text-2xl font-black md:text-3xl">
@@ -252,7 +253,9 @@ const Index = () => {
       {/* CTA */}
       <section className="container mx-auto px-4 pb-20">
         <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-8 text-center md:p-12">
-          <GraduationCap className="mx-auto h-12 w-12 text-primary" />
+          <ChineseDecorInline variant="house" className="absolute -bottom-6 right-2 hidden h-40 w-auto opacity-20 md:block" />
+          <ChineseDecorInline variant="house" className="absolute -bottom-6 left-2 hidden h-40 w-auto -scale-x-100 opacity-15 md:block" />
+          <GraduationCap className="relative mx-auto h-12 w-12 text-primary" />
           <h2 className="mt-4 font-serif text-3xl font-black md:text-4xl">
             Sẵn sàng <span className="gold-text">chinh phục HSK</span>?
           </h2>
