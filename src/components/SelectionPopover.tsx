@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { BookmarkPlus, Highlighter, ExternalLink, Clock, X } from "lucide-react";
+import { BookmarkPlus, Highlighter, ExternalLink, Clock, X, Languages, Loader2 } from "lucide-react";
 import { addHighlight, isHighlighted, removeHighlight, saveWord } from "@/lib/savedWords";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PopoverState {
   text: string;
@@ -10,28 +11,39 @@ interface PopoverState {
   y: number;
 }
 
+interface LookupResult {
+  pinyin: string;
+  meaning: string;
+  partOfSpeech?: string;
+  hskLevel?: string;
+}
+
 const MAX_LEN = 80;
+// Chỉ tra cứu nếu chuỗi chứa ký tự Hán.
+const HAN_REGEX = /[\u4e00-\u9fff]/;
 
 const SelectionPopover = () => {
   const [state, setState] = useState<PopoverState | null>(null);
+  const [lookup, setLookup] = useState<LookupResult | null>(null);
+  const [loading, setLoading] = useState(false);
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleSelection = () => {
-      // Defer to ensure selection is finalized.
       setTimeout(() => {
         const sel = window.getSelection();
         if (!sel || sel.isCollapsed) {
           setState(null);
+          setLookup(null);
           return;
         }
         const text = sel.toString().trim();
         if (!text || text.length > MAX_LEN) {
           setState(null);
+          setLookup(null);
           return;
         }
 
-        // Don't show inside the popover itself or input/textarea.
         const anchor = sel.anchorNode;
         const el =
           anchor && anchor.nodeType === Node.ELEMENT_NODE
@@ -44,6 +56,7 @@ const SelectionPopover = () => {
         const rect = range.getBoundingClientRect();
         if (rect.width === 0 && rect.height === 0) return;
 
+        setLookup(null);
         setState({
           text,
           x: rect.left + rect.width / 2 + window.scrollX,
@@ -57,9 +70,15 @@ const SelectionPopover = () => {
       if (popoverRef.current?.contains(target)) return;
     };
 
-    const handleScroll = () => setState(null);
+    const handleScroll = () => {
+      setState(null);
+      setLookup(null);
+    };
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setState(null);
+      if (e.key === "Escape") {
+        setState(null);
+        setLookup(null);
+      }
     };
 
     document.addEventListener("mouseup", handleSelection);
@@ -80,14 +99,16 @@ const SelectionPopover = () => {
 
   const { text, x, y } = state;
   const highlighted = isHighlighted(text);
+  const hasHan = HAN_REGEX.test(text);
 
   const close = () => {
     setState(null);
+    setLookup(null);
     window.getSelection()?.removeAllRanges();
   };
 
   const handleSave = () => {
-    saveWord(text);
+    saveWord(text, lookup ? `${lookup.pinyin} – ${lookup.meaning}` : undefined);
     toast({ title: "已保存", description: `"${text}" 已加入生词本` });
     close();
   };
@@ -123,6 +144,24 @@ const SelectionPopover = () => {
     close();
   };
 
+  const handlePinyin = async () => {
+    if (loading || lookup) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("pinyin-translate", {
+        body: { text },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setLookup(data as LookupResult);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Lỗi tra cứu";
+      toast({ title: "Tra cứu thất bại", description: msg, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       ref={popoverRef}
@@ -133,58 +172,95 @@ const SelectionPopover = () => {
         top: y - 8,
         transform: "translate(-50%, -100%)",
       }}
-      className="z-[100] flex items-center gap-1 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-xl animate-in fade-in-0 zoom-in-95"
+      className="z-[100] flex max-w-[min(90vw,520px)] flex-col gap-1 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-xl animate-in fade-in-0 zoom-in-95"
     >
-      <button
-        onClick={handleSave}
-        className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
-        title="加入生词本"
-      >
-        <BookmarkPlus className="h-3.5 w-3.5" />
-        <span>保存</span>
-      </button>
-      <button
-        onClick={handleSaveLater}
-        className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
-        title="稍后查询"
-      >
-        <Clock className="h-3.5 w-3.5" />
-        <span>稍后查</span>
-      </button>
-      <button
-        onClick={handlePleco}
-        className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
-        title="Pleco 词典"
-      >
-        <ExternalLink className="h-3.5 w-3.5" />
-        <span>Pleco</span>
-      </button>
-      <button
-        onClick={handleGoogle}
-        className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
-        title="Google 翻译"
-      >
-        <ExternalLink className="h-3.5 w-3.5" />
-        <span>Google</span>
-      </button>
-      <button
-        onClick={handleHighlight}
-        className={cn(
-          "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted",
-          highlighted && "text-primary"
+      {lookup && (
+        <div className="flex flex-col gap-0.5 border-b border-border/60 px-3 py-2">
+          <div className="flex items-baseline gap-2">
+            <span className="font-serif text-base font-semibold text-primary">
+              {lookup.pinyin}
+            </span>
+            {lookup.hskLevel && (
+              <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                {lookup.hskLevel}
+              </span>
+            )}
+            {lookup.partOfSpeech && (
+              <span className="text-[11px] italic text-muted-foreground">
+                {lookup.partOfSpeech}
+              </span>
+            )}
+          </div>
+          <div className="text-xs text-foreground/90">{lookup.meaning}</div>
+        </div>
+      )}
+      <div className="flex flex-wrap items-center gap-1">
+        {hasHan && (
+          <button
+            onClick={handlePinyin}
+            disabled={loading || !!lookup}
+            className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted disabled:opacity-50"
+            title="Hiển thị phiên âm và nghĩa"
+          >
+            {loading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Languages className="h-3.5 w-3.5" />
+            )}
+            <span>拼音</span>
+          </button>
         )}
-        title={highlighted ? "取消高亮" : "高亮"}
-      >
-        <Highlighter className="h-3.5 w-3.5" />
-        <span>{highlighted ? "取消" : "高亮"}</span>
-      </button>
-      <button
-        onClick={close}
-        className="rounded-md p-1.5 transition-colors hover:bg-muted"
-        title="关闭"
-      >
-        <X className="h-3.5 w-3.5" />
-      </button>
+        <button
+          onClick={handleSave}
+          className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
+          title="加入生词本"
+        >
+          <BookmarkPlus className="h-3.5 w-3.5" />
+          <span>保存</span>
+        </button>
+        <button
+          onClick={handleSaveLater}
+          className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
+          title="稍后查询"
+        >
+          <Clock className="h-3.5 w-3.5" />
+          <span>稍后查</span>
+        </button>
+        <button
+          onClick={handlePleco}
+          className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
+          title="Pleco 词典"
+        >
+          <ExternalLink className="h-3.5 w-3.5" />
+          <span>Pleco</span>
+        </button>
+        <button
+          onClick={handleGoogle}
+          className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
+          title="Google 翻译"
+        >
+          <ExternalLink className="h-3.5 w-3.5" />
+          <span>Google</span>
+        </button>
+        <button
+          onClick={handleHighlight}
+          className={cn(
+            "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted",
+            highlighted && "text-primary"
+          )}
+          title={highlighted ? "取消高亮" : "高亮"}
+        >
+          <Highlighter className="h-3.5 w-3.5" />
+          <span>{highlighted ? "取消" : "高亮"}</span>
+        </button>
+        <button
+          onClick={close}
+          className="rounded-md p-1.5 transition-colors hover:bg-muted"
+          title="关闭"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+      </div>
     </div>
   );
 };
