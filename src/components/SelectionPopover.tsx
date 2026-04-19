@@ -26,6 +26,53 @@ const MAX_LEN = 80;
 // Chỉ tra cứu nếu chuỗi chứa ký tự Hán.
 const HAN_REGEX = /[\u4e00-\u9fff]/;
 
+const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "INPUT", "TEXTAREA", "MARK", "NOSCRIPT", "CODE", "PRE"]);
+
+/**
+ * Walk text nodes immediately before/after a Range to capture surrounding
+ * context (used to disambiguate highlight position when re-applying later).
+ */
+function computeContext(range: Range, len: number): { contextBefore: string; contextAfter: string } {
+  const root = document.getElementById("root") ?? document.body;
+
+  const acceptText = (n: Node) => {
+    const parent = n.parentElement;
+    if (!parent) return NodeFilter.FILTER_REJECT;
+    if (SKIP_TAGS.has(parent.tagName)) return NodeFilter.FILTER_REJECT;
+    if (parent.closest("[data-selection-popover]")) return NodeFilter.FILTER_REJECT;
+    return NodeFilter.FILTER_ACCEPT;
+  };
+
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: acceptText });
+
+  // Collect all text nodes in document order, with their concatenated string and per-node start offsets
+  const segs: { node: Text; start: number }[] = [];
+  let full = "";
+  let cur = walker.nextNode() as Text | null;
+  while (cur) {
+    const v = cur.nodeValue ?? "";
+    if (v.length > 0) {
+      segs.push({ node: cur, start: full.length });
+      full += v;
+    }
+    cur = walker.nextNode() as Text | null;
+  }
+
+  const startNode = range.startContainer;
+  const endNode = range.endContainer;
+  const startSeg = segs.find((s) => s.node === startNode);
+  const endSeg = segs.find((s) => s.node === endNode);
+  if (!startSeg || !endSeg) return { contextBefore: "", contextAfter: "" };
+
+  const startOffset = startSeg.start + range.startOffset;
+  const endOffset = endSeg.start + range.endOffset;
+
+  return {
+    contextBefore: full.slice(Math.max(0, startOffset - len), startOffset),
+    contextAfter: full.slice(endOffset, endOffset + len),
+  };
+}
+
 const SelectionPopover = () => {
   const [state, setState] = useState<PopoverState | null>(null);
   const [lookup, setLookup] = useState<LookupResult | null>(null);
@@ -228,14 +275,11 @@ const SelectionPopover = () => {
       <div className="flex flex-wrap items-center gap-1">
         <button
           onClick={handleHighlight}
-          className={cn(
-            "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted",
-            highlighted && "text-primary"
-          )}
-          title={highlighted ? "取消高亮" : "高亮"}
+          className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
+          title="高亮"
         >
           <Highlighter className="h-3.5 w-3.5" />
-          <span>{highlighted ? "取消" : "高亮"}</span>
+          <span>高亮</span>
         </button>
         {hasHan && (
           <button
