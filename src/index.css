@@ -138,4 +138,16 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  mark.hskhub-highlight {
+    background-color: hsl(var(--primary) / 0.25);
+    color: inherit;
+    border-radius: 0.125rem;
+    padding: 0 0.1em;
+    box-decoration-break: clone;
+  }
+
+  .dark mark.hskhub-highlight {
+    background-color: hsl(var(--primary) / 0.4);
+  }
 }

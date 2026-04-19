@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Bookmark } from "lucide-react";
 import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -89,6 +89,17 @@ const Navbar = () => {
             ))}
           </NavDropdown>
 
+          <Link
+            to="/saved-words"
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              location.pathname === "/saved-words" && "bg-muted"
+            )}
+          >
+            <Bookmark className="h-4 w-4" />
+            生词本
+          </Link>
+
           <ThemeToggle />
         </div>
 
@@ -158,6 +169,15 @@ const Navbar = () => {
               ))}
             </div>
           )}
+
+          <Link
+            to="/saved-words"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          >
+            <Bookmark className="h-4 w-4" />
+            生词本
+          </Link>
         </div>
       )}
     </nav>
