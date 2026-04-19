@@ -1,10 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ChevronDown, Bookmark } from "lucide-react";
+import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User } from "lucide-react";
 import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 const levels: HSKLevel[] = [1, 2, 3, 4, 5, 6];
 
