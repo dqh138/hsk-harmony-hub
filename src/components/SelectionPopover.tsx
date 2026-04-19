@@ -148,7 +148,6 @@ const SelectionPopover = () => {
   };
 
   const handleHighlight = async () => {
-    if (!requireAuth("tô sáng từ")) return;
     if (highlighted) {
       await removeHighlight(text);
       toast({ title: "已取消高亮", description: `"${text}"` });
