@@ -29,6 +29,21 @@ const SelectionPopover = () => {
   const [lookup, setLookup] = useState<LookupResult | null>(null);
   const [loading, setLoading] = useState(false);
   const popoverRef = useRef<HTMLDivElement | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const requireAuth = (action: string): boolean => {
+    if (user) return true;
+    toast({
+      title: "Cần đăng nhập",
+      description: `Đăng nhập để ${action} và đồng bộ trên mọi thiết bị.`,
+    });
+    setState(null);
+    setLookup(null);
+    window.getSelection()?.removeAllRanges();
+    navigate("/auth");
+    return false;
+  };
 
   useEffect(() => {
     const handleSelection = () => {
