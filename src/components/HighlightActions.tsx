@@ -30,9 +30,15 @@ const HighlightActions = () => {
         return;
       }
 
-      // Don't show when user is selecting text
+      // If user is selecting text OUTSIDE this mark, don't hijack
       const sel = window.getSelection();
-      if (sel && sel.toString().length > 0) return;
+      if (sel && sel.toString().length > 0) {
+        const anchor = sel.anchorNode;
+        const focus = sel.focusNode;
+        const insideMark =
+          (anchor && mark.contains(anchor)) && (focus && mark.contains(focus));
+        if (!insideMark) return;
+      }
 
       const rect = mark.getBoundingClientRect();
       setState({

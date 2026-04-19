@@ -129,7 +129,13 @@ function clearHighlights(root: HTMLElement) {
 
 function applyHighlights(root: HTMLElement, records: HighlightRecord[]) {
   if (records.length === 0) return;
+  const existing = new Set(
+    Array.from(root.querySelectorAll<HTMLElement>("mark.hskhub-highlight"))
+      .map((m) => m.dataset.highlightId)
+      .filter(Boolean) as string[]
+  );
   for (const rec of records) {
+    if (existing.has(rec.id)) continue;
     const { full, segments } = collectTextSegments(root);
     const offset = findOffset(full, rec.contextBefore, rec.text, rec.contextAfter);
     if (offset === -1) continue;
@@ -156,7 +162,18 @@ const HighlightStyles = () => {
     let scheduled = false;
     const run = () => {
       scheduled = false;
-      clearHighlights(root);
+      // Remove marks whose records no longer exist (e.g. user removed highlight)
+      const validIds = new Set(records.map((r) => r.id));
+      root.querySelectorAll<HTMLElement>("mark.hskhub-highlight").forEach((m) => {
+        const id = m.dataset.highlightId;
+        if (!id || !validIds.has(id)) {
+          const parent = m.parentNode;
+          if (!parent) return;
+          while (m.firstChild) parent.insertBefore(m.firstChild, m);
+          parent.removeChild(m);
+          parent.normalize();
+        }
+      });
       applyHighlights(root, records);
     };
 
