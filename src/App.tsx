@@ -13,6 +13,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import SelectionPopover from "./components/SelectionPopover";
 import HighlightStyles from "./components/HighlightStyles";
+import HighlightActions from "./components/HighlightActions";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { initSavedWords } from "./lib/savedWords";
 
@@ -37,6 +38,7 @@ const App = () => (
           <SavedWordsBootstrap />
           <SelectionPopover />
           <HighlightStyles />
+          <HighlightActions />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
