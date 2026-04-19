@@ -201,15 +201,17 @@ const SelectionPopover = () => {
 
   const handleHighlight = async () => {
     const range = rangeRef.current;
+    console.log("[highlight] click handleHighlight", { hasRange: !!range, text });
     if (!range) {
       close();
       return;
     }
 
     const { contextBefore, contextAfter } = computeContext(range, CONTEXT_LEN);
+    console.log("[highlight] context", { contextBefore, contextAfter, route: location.pathname });
 
-    // Save first to get the id, then wrap with that id so the action popover can find it
     const rec = await addHighlightAt(text, location.pathname, contextBefore, contextAfter);
+    console.log("[highlight] saved record", rec);
 
     if (rec) {
       try {
@@ -217,8 +219,9 @@ const SelectionPopover = () => {
         mark.className = "hskhub-highlight";
         mark.dataset.highlightId = rec.id;
         range.surroundContents(mark);
-      } catch {
-        // crosses element boundaries — HighlightStyles will re-apply on next tick
+        console.log("[highlight] wrapped DOM");
+      } catch (err) {
+        console.warn("[highlight] surroundContents failed", err);
       }
     }
     close();
