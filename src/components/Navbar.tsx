@@ -40,6 +40,7 @@ const NavDropdown = ({
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [grammarOpen, setGrammarOpen] = useState(false);
+  const [vocabOpen, setVocabOpen] = useState(false);
   const [examOpen, setExamOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
@@ -71,6 +72,25 @@ const Navbar = () => {
                   "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
                   hskLevelTextColors[level],
                   location.pathname === `/hsk/${level}` && "bg-muted"
+                )}
+              >
+                HSK {level}
+              </Link>
+            ))}
+          </NavDropdown>
+
+          <NavDropdown
+            label="生词"
+            isActive={location.pathname.startsWith("/vocabulary/")}
+          >
+            {levels.map((level) => (
+              <Link
+                key={level}
+                to={`/vocabulary/${level}`}
+                className={cn(
+                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
+                  hskLevelTextColors[level],
+                  location.pathname === `/vocabulary/${level}` && "bg-muted"
                 )}
               >
                 HSK {level}
