@@ -40,6 +40,7 @@ const NavDropdown = ({
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [grammarOpen, setGrammarOpen] = useState(false);
+  const [vocabOpen, setVocabOpen] = useState(false);
   const [examOpen, setExamOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
@@ -71,6 +72,25 @@ const Navbar = () => {
                   "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
                   hskLevelTextColors[level],
                   location.pathname === `/hsk/${level}` && "bg-muted"
+                )}
+              >
+                HSK {level}
+              </Link>
+            ))}
+          </NavDropdown>
+
+          <NavDropdown
+            label="生词"
+            isActive={location.pathname.startsWith("/vocabulary/")}
+          >
+            {levels.map((level) => (
+              <Link
+                key={level}
+                to={`/vocabulary/${level}`}
+                className={cn(
+                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
+                  hskLevelTextColors[level],
+                  location.pathname === `/vocabulary/${level}` && "bg-muted"
                 )}
               >
                 HSK {level}
@@ -162,6 +182,32 @@ const Navbar = () => {
                 <Link
                   key={level}
                   to={`/hsk/${level}`}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
+                    hskLevelTextColors[level]
+                  )}
+                >
+                  HSK {level}
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* Vocabulary section */}
+          <button
+            onClick={() => setVocabOpen(!vocabOpen)}
+            className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          >
+            生词
+            <ChevronDown className={cn("h-4 w-4 transition-transform", vocabOpen && "rotate-180")} />
+          </button>
+          {vocabOpen && (
+            <div className="ml-3 border-l border-border/50 pl-2">
+              {levels.map((level) => (
+                <Link
+                  key={level}
+                  to={`/vocabulary/${level}`}
                   onClick={() => setOpen(false)}
                   className={cn(
                     "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
