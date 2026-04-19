@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { BookmarkPlus, Highlighter, ExternalLink, Clock, X, Languages, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { BookmarkPlus, Highlighter, ExternalLink, Clock, X, Languages, Loader2, LogIn } from "lucide-react";
 import { addHighlight, isHighlighted, removeHighlight, saveWord } from "@/lib/savedWords";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface PopoverState {
   text: string;
