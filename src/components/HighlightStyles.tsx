@@ -120,10 +120,15 @@ function clearHighlights(root: HTMLElement) {
   const marks = root.querySelectorAll("mark.hskhub-highlight");
   marks.forEach((m) => {
     const parent = m.parentNode;
-    if (!parent) return;
-    while (m.firstChild) parent.insertBefore(m.firstChild, m);
-    parent.removeChild(m);
-    parent.normalize();
+    if (!parent || !parent.contains(m)) return;
+    try {
+      while (m.firstChild) parent.insertBefore(m.firstChild, m);
+      parent.removeChild(m);
+      // Do NOT call parent.normalize() — merges text nodes React tracks
+      // and triggers "removeChild ... not a child of this node" errors.
+    } catch {
+      /* node already detached by React */
+    }
   });
 }
 
