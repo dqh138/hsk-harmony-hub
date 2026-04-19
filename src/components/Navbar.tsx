@@ -5,8 +5,6 @@ import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
-import bambooDecor from "@/assets/decor-bamboo.png";
-import mountainsDecor from "@/assets/decor-mountains.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 
@@ -254,7 +252,6 @@ const Navbar = () => {
         </div>
       )}
     </nav>
-    </>
   );
 };
 
