@@ -162,6 +162,18 @@ const HighlightStyles = () => {
     let scheduled = false;
     const run = () => {
       scheduled = false;
+      // Remove marks whose records no longer exist (e.g. user removed highlight)
+      const validIds = new Set(records.map((r) => r.id));
+      root.querySelectorAll<HTMLElement>("mark.hskhub-highlight").forEach((m) => {
+        const id = m.dataset.highlightId;
+        if (!id || !validIds.has(id)) {
+          const parent = m.parentNode;
+          if (!parent) return;
+          while (m.firstChild) parent.insertBefore(m.firstChild, m);
+          parent.removeChild(m);
+          parent.normalize();
+        }
+      });
       applyHighlights(root, records);
     };
 
