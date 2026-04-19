@@ -13,11 +13,10 @@ const GrammarCard = ({ point }: GrammarCardProps) => {
   return (
     <div
       className={cn(
-        "group cursor-pointer rounded-lg border bg-card transition-all hover:shadow-lg hover:shadow-primary/5",
+        "group rounded-lg border bg-card transition-all hover:shadow-lg hover:shadow-primary/5",
         hskLevelBorderColors[point.level],
         expanded && "border-opacity-100 shadow-lg shadow-primary/5"
       )}
-      onClick={() => setExpanded(!expanded)}
     >
       <div className="flex items-start justify-between p-4">
         <div className="flex-1">
@@ -34,9 +33,15 @@ const GrammarCard = ({ point }: GrammarCardProps) => {
           </h3>
           <p className="mt-1 text-sm text-foreground">{point.name}</p>
         </div>
-        <div className="ml-2 mt-1 text-muted-foreground">
+        <button
+          type="button"
+          onClick={() => setExpanded(!expanded)}
+          aria-label={expanded ? "Thu gọn" : "Mở rộng"}
+          aria-expanded={expanded}
+          className="ml-2 mt-1 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
           {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-        </div>
+        </button>
       </div>
 
       {expanded && (
