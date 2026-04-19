@@ -120,10 +120,15 @@ function clearHighlights(root: HTMLElement) {
   const marks = root.querySelectorAll("mark.hskhub-highlight");
   marks.forEach((m) => {
     const parent = m.parentNode;
-    if (!parent) return;
-    while (m.firstChild) parent.insertBefore(m.firstChild, m);
-    parent.removeChild(m);
-    parent.normalize();
+    if (!parent || !parent.contains(m)) return;
+    try {
+      while (m.firstChild) parent.insertBefore(m.firstChild, m);
+      parent.removeChild(m);
+      // Do NOT call parent.normalize() — merges text nodes React tracks
+      // and triggers "removeChild ... not a child of this node" errors.
+    } catch {
+      /* node already detached by React */
+    }
   });
 }
 
@@ -168,13 +173,20 @@ const HighlightStyles = () => {
         const id = m.dataset.highlightId;
         if (!id || !validIds.has(id)) {
           const parent = m.parentNode;
-          if (!parent) return;
-          while (m.firstChild) parent.insertBefore(m.firstChild, m);
-          parent.removeChild(m);
-          parent.normalize();
+          if (!parent || !parent.contains(m)) return;
+          try {
+            while (m.firstChild) parent.insertBefore(m.firstChild, m);
+            parent.removeChild(m);
+          } catch {
+            /* node already detached by React */
+          }
         }
       });
-      applyHighlights(root, records);
+      try {
+        applyHighlights(root, records);
+      } catch {
+        /* ignore mutation races with React */
+      }
     };
 
     const schedule = () => {
@@ -197,7 +209,8 @@ const HighlightStyles = () => {
 
     return () => {
       observer.disconnect();
-      clearHighlights(root);
+      // Don't unwrap on unmount — React may already be removing these nodes,
+      // which causes "removeChild ... not a child of this node" errors.
     };
   }, [tick, location.pathname]);
 
