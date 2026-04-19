@@ -31,8 +31,10 @@ const SelectionPopover = () => {
   const [lookup, setLookup] = useState<LookupResult | null>(null);
   const [loading, setLoading] = useState(false);
   const popoverRef = useRef<HTMLDivElement | null>(null);
+  const rangeRef = useRef<Range | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const requireAuth = (action: string): boolean => {
     if (user) return true;
