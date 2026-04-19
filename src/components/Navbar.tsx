@@ -303,6 +303,7 @@ const Navbar = () => {
         </div>
       )}
     </nav>
+    </>
   );
 };
 
