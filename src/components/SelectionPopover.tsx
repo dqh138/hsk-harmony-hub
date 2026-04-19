@@ -138,11 +138,6 @@ const SelectionPopover = () => {
     close();
   };
 
-  const handlePleco = () => {
-    window.open(`https://www.pleco.com/?s=${encodeURIComponent(text)}`, "_blank", "noopener");
-    close();
-  };
-
   const handleGoogle = () => {
     window.open(
       `https://translate.google.com/?sl=zh-CN&tl=vi&text=${encodeURIComponent(text)}&op=translate`,
