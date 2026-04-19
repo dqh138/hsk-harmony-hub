@@ -97,7 +97,12 @@ const SelectionPopover = () => {
   };
 
   useEffect(() => {
-    const handleSelection = () => {
+    const handleSelection = (e: Event) => {
+      // Skip if mouseup/touchend happened inside our popover — clicking a
+      // popover button must not dismiss the popover before its onClick fires.
+      const evTarget = e.target as Node | null;
+      if (evTarget && popoverRef.current?.contains(evTarget)) return;
+
       setTimeout(() => {
         const sel = window.getSelection();
         if (!sel || sel.isCollapsed) {
