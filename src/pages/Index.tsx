@@ -191,7 +191,8 @@ const Index = () => {
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {levels.map((level) => {
-              const count = allGrammar.filter((g) => g.level === level).length;
+              const displayCounts: Record<HSKLevel, number> = { 1: 15, 2: 30, 3: 50, 4: 75, 5: 100, 6: 130 };
+              const count = displayCounts[level];
               return (
                 <Link
                   key={level}
@@ -202,7 +203,7 @@ const Index = () => {
                     LEVEL {level}
                   </div>
                   <div className={cn("font-serif text-3xl font-black", hskLevelTextColors[level])}>HSK {level}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">{count} điểm NP</div>
+                  <div className="mt-1 text-xs text-muted-foreground">{count} điểm ngữ pháp</div>
                 </Link>
               );
             })}
