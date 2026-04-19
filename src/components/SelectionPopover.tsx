@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { BookmarkPlus, Highlighter, ExternalLink, Clock, X, Languages, Loader2, LogIn } from "lucide-react";
-import { addHighlight, isHighlighted, removeHighlight, saveWord } from "@/lib/savedWords";
+import { useLocation, useNavigate } from "react-router-dom";
+import { BookmarkPlus, Highlighter, ExternalLink, Clock, X, Languages, Loader2 } from "lucide-react";
+import { addHighlightAt, saveWord } from "@/lib/savedWords";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+
+const CONTEXT_LEN = 20;
 
 interface PopoverState {
   text: string;
