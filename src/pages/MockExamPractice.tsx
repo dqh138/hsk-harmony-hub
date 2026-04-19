@@ -113,24 +113,39 @@ const MockExamPractice = () => {
             const isWrong = revealed && isSelected && !isCorrect;
 
             return (
-              <button
+              <div
                 key={i}
-                onClick={() => handleAnswer(q.id, letter)}
-                disabled={revealed}
+                role="button"
+                tabIndex={revealed ? -1 : 0}
+                onClick={(e) => {
+                  // Don't trigger answer selection if user is selecting text
+                  const sel = window.getSelection();
+                  if (sel && sel.toString().length > 0) return;
+                  handleAnswer(q.id, letter);
+                }}
+                onKeyDown={(e) => {
+                  if (revealed) return;
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleAnswer(q.id, letter);
+                  }
+                }}
+                aria-disabled={revealed}
                 className={cn(
-                  "flex items-start gap-2 rounded-md border px-3 py-2 text-left text-sm transition-all",
+                  "flex items-start gap-2 rounded-md border px-3 py-2 text-left text-sm transition-all select-text cursor-pointer",
                   !revealed && isSelected && "border-primary bg-primary/10 text-foreground",
                   !revealed && !isSelected && "border-border/50 hover:border-primary/50 hover:bg-primary/5",
                   isCorrectOption && "border-hsk3 bg-hsk3/10 text-hsk3",
                   isWrong && "border-destructive bg-destructive/10 text-destructive",
+                  revealed && "cursor-default",
                   revealed && !isCorrectOption && !isWrong && "opacity-50"
                 )}
               >
-                <span className="mt-0.5 font-mono text-xs font-bold opacity-70">
+                <span className="mt-0.5 font-mono text-xs font-bold opacity-70 select-none">
                   {letter}
                 </span>
                 <span className="flex-1">{opt}</span>
-              </button>
+              </div>
             );
           })}
         </div>
