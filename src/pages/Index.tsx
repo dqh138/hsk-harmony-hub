@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, GraduationCap, Bookmark, FileText, ArrowRight, Sparkles, Layers, Search } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
+import { ChineseDecorInline } from "@/components/ChineseDecor";
 import { allGrammar } from "@/data/grammar";
 import { allVocab } from "@/data/vocab";
 import { HSKLevel, hskLevelColors, hskLevelTextColors } from "@/data/grammarTypes";
