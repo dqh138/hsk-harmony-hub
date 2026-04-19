@@ -84,8 +84,12 @@ function findOffset(
   return -1;
 }
 
-function wrapRange(segments: TextSegment[], startOffset: number, endOffset: number) {
-  // Find segment containing startOffset and endOffset
+function wrapRange(
+  segments: TextSegment[],
+  startOffset: number,
+  endOffset: number,
+  highlightId: string
+) {
   const startSeg = segments.find((s) => startOffset >= s.start && startOffset < s.end);
   const endSeg = segments.find((s) => endOffset > s.start && endOffset <= s.end);
   if (!startSeg || !endSeg) return;
@@ -98,15 +102,14 @@ function wrapRange(segments: TextSegment[], startOffset: number, endOffset: numb
     return;
   }
 
-  // Only wrap if range stays within a single parent (safest, avoids breaking layout)
   if (startSeg.node.parentNode !== endSeg.node.parentNode && startSeg !== endSeg) {
-    // Multi-parent ranges: skip to avoid DOM corruption
     return;
   }
 
   try {
     const mark = document.createElement("mark");
     mark.className = "hskhub-highlight";
+    mark.dataset.highlightId = highlightId;
     range.surroundContents(mark);
   } catch {
     // surroundContents can throw if range crosses element boundaries
@@ -126,12 +129,11 @@ function clearHighlights(root: HTMLElement) {
 
 function applyHighlights(root: HTMLElement, records: HighlightRecord[]) {
   if (records.length === 0) return;
-  // Apply one-by-one so each subsequent search sees fresh DOM
   for (const rec of records) {
     const { full, segments } = collectTextSegments(root);
     const offset = findOffset(full, rec.contextBefore, rec.text, rec.contextAfter);
     if (offset === -1) continue;
-    wrapRange(segments, offset, offset + rec.text.length);
+    wrapRange(segments, offset, offset + rec.text.length, rec.id);
   }
 }
 
