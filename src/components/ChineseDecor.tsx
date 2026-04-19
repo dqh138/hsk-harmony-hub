@@ -13,15 +13,50 @@ export const ChineseDecorBackdrop = () => {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
     >
-      {/* Bamboo - left edge */}
+      {/* Left bamboo cluster - 3 stalks */}
       <img
         src={bamboo}
         alt=""
         loading="lazy"
         width={512}
         height={1024}
-        className="absolute -left-10 top-10 h-[70vh] w-auto opacity-[0.06] dark:opacity-[0.08] select-none"
+        className="absolute -left-16 top-8 h-[78vh] w-auto opacity-[0.07] dark:opacity-[0.09] select-none"
       />
+      <img
+        src={bamboo}
+        alt=""
+        loading="lazy"
+        width={512}
+        height={1024}
+        className="absolute -left-4 top-20 h-[62vh] w-auto opacity-[0.05] dark:opacity-[0.07] select-none"
+      />
+      <img
+        src={bamboo}
+        alt=""
+        loading="lazy"
+        width={512}
+        height={1024}
+        className="absolute left-16 top-32 h-[50vh] w-auto opacity-[0.04] dark:opacity-[0.06] select-none"
+      />
+
+      {/* Right bamboo cluster - 2 stalks (mirrored) */}
+      <img
+        src={bamboo}
+        alt=""
+        loading="lazy"
+        width={512}
+        height={1024}
+        className="absolute -right-12 top-12 h-[72vh] w-auto -scale-x-100 opacity-[0.06] dark:opacity-[0.08] select-none"
+      />
+      <img
+        src={bamboo}
+        alt=""
+        loading="lazy"
+        width={512}
+        height={1024}
+        className="absolute right-6 top-28 h-[55vh] w-auto -scale-x-100 opacity-[0.04] dark:opacity-[0.06] select-none"
+      />
+
       {/* Mountains - bottom band */}
       <img
         src={mountains}
