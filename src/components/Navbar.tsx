@@ -194,6 +194,32 @@ const Navbar = () => {
             </div>
           )}
 
+          {/* Vocabulary section */}
+          <button
+            onClick={() => setVocabOpen(!vocabOpen)}
+            className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          >
+            生词
+            <ChevronDown className={cn("h-4 w-4 transition-transform", vocabOpen && "rotate-180")} />
+          </button>
+          {vocabOpen && (
+            <div className="ml-3 border-l border-border/50 pl-2">
+              {levels.map((level) => (
+                <Link
+                  key={level}
+                  to={`/vocabulary/${level}`}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
+                    hskLevelTextColors[level]
+                  )}
+                >
+                  HSK {level}
+                </Link>
+              ))}
+            </div>
+          )}
+
           {/* Mock exams section */}
           <button
             onClick={() => setExamOpen(!examOpen)}
