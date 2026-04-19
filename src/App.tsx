@@ -9,6 +9,7 @@ import HSKLevel from "./pages/HSKLevel";
 import MockExams from "./pages/MockExams";
 import MockExamPractice from "./pages/MockExamPractice";
 import SavedWords from "./pages/SavedWords";
+import VocabularyLevel from "./pages/VocabularyLevel";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import StudyToolsLayer from "./components/StudyToolsLayer";
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/hsk/:level" element={<HSKLevel />} />
+            <Route path="/vocabulary/:level" element={<VocabularyLevel />} />
             <Route path="/mock-exams" element={<MockExams />} />
             <Route path="/mock-exam/:examId" element={<MockExamPractice />} />
             <Route path="/saved-words" element={<SavedWords />} />
