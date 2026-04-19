@@ -282,7 +282,10 @@ const SelectionPopover = () => {
           <div className="text-xs text-foreground/90">{lookup.meaning}</div>
         </div>
       )}
-      <div className="flex flex-wrap items-center gap-1">
+      <div
+        className="flex flex-wrap items-center gap-1"
+        onMouseDown={(e) => e.preventDefault()}
+      >
         <button
           onClick={handleHighlight}
           className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
