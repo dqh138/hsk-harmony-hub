@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { BookmarkPlus, Highlighter, ExternalLink, Clock, X, Languages, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { BookmarkPlus, Highlighter, ExternalLink, Clock, X, Languages, Loader2, LogIn } from "lucide-react";
 import { addHighlight, isHighlighted, removeHighlight, saveWord } from "@/lib/savedWords";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface PopoverState {
   text: string;
@@ -27,6 +29,21 @@ const SelectionPopover = () => {
   const [lookup, setLookup] = useState<LookupResult | null>(null);
   const [loading, setLoading] = useState(false);
   const popoverRef = useRef<HTMLDivElement | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const requireAuth = (action: string): boolean => {
+    if (user) return true;
+    toast({
+      title: "Cần đăng nhập",
+      description: `Đăng nhập để ${action} và đồng bộ trên mọi thiết bị.`,
+    });
+    setState(null);
+    setLookup(null);
+    window.getSelection()?.removeAllRanges();
+    navigate("/auth");
+    return false;
+  };
 
   useEffect(() => {
     const handleSelection = () => {
@@ -107,14 +124,16 @@ const SelectionPopover = () => {
     window.getSelection()?.removeAllRanges();
   };
 
-  const handleSave = () => {
-    saveWord(text, lookup ? `${lookup.pinyin} – ${lookup.meaning}` : undefined);
+  const handleSave = async () => {
+    if (!requireAuth("lưu từ")) return;
+    await saveWord(text, lookup ? `${lookup.pinyin} – ${lookup.meaning}` : undefined);
     toast({ title: "已保存", description: `"${text}" 已加入生词本` });
     close();
   };
 
-  const handleSaveLater = () => {
-    saveWord(text, "稍后查询");
+  const handleSaveLater = async () => {
+    if (!requireAuth("lưu từ")) return;
+    await saveWord(text, "稍后查询");
     toast({ title: "已加入待查列表", description: `"${text}"` });
     close();
   };
@@ -133,12 +152,13 @@ const SelectionPopover = () => {
     close();
   };
 
-  const handleHighlight = () => {
+  const handleHighlight = async () => {
+    if (!requireAuth("tô sáng từ")) return;
     if (highlighted) {
-      removeHighlight(text);
+      await removeHighlight(text);
       toast({ title: "已取消高亮", description: `"${text}"` });
     } else {
-      addHighlight(text);
+      await addHighlight(text);
       toast({ title: "已高亮", description: `"${text}"` });
     }
     close();

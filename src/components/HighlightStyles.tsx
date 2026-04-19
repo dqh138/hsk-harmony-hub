@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getHighlights, subscribeSavedWords } from "@/lib/savedWords";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Walks the DOM and wraps occurrences of highlighted phrases in <mark> tags.
@@ -84,10 +85,16 @@ function applyHighlights(root: HTMLElement, terms: string[]) {
 
 const HighlightStyles = () => {
   const [tick, setTick] = useState(0);
+  const { user } = useAuth();
 
   useEffect(() => {
     return subscribeSavedWords(() => setTick((t) => t + 1));
   }, []);
+
+  // Re-run highlight pass when user changes (login/logout switches data source).
+  useEffect(() => {
+    setTick((t) => t + 1);
+  }, [user?.id]);
 
   useEffect(() => {
     const root = document.getElementById("root");

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Trash2, RotateCw, ChevronLeft, ChevronRight, BookOpen, Layers } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Trash2, RotateCw, ChevronLeft, ChevronRight, BookOpen, Layers, LogIn, Cloud } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,11 +10,13 @@ import {
   subscribeSavedWords,
   type SavedWord,
 } from "@/lib/savedWords";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 type Mode = "list" | "flashcard";
 
 const SavedWords = () => {
+  const { user, loading } = useAuth();
   const [words, setWords] = useState<SavedWord[]>([]);
   const [mode, setMode] = useState<Mode>("list");
   const [index, setIndex] = useState(0);
@@ -22,7 +25,7 @@ const SavedWords = () => {
   useEffect(() => {
     setWords(getSavedWords());
     return subscribeSavedWords(() => setWords(getSavedWords()));
-  }, []);
+  }, [user]);
 
   const current = words[index];
 
@@ -51,6 +54,37 @@ const SavedWords = () => {
     []
   );
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="container mx-auto px-4 py-12">
+          <Card className="mx-auto max-w-md p-8 text-center">
+            <Cloud className="mx-auto mb-3 h-10 w-10 text-primary" />
+            <h1 className="mb-2 font-serif text-2xl font-bold gold-text">生词本</h1>
+            <p className="mb-6 text-sm text-muted-foreground">
+              Đăng nhập để lưu từ vựng và đồng bộ trên mọi thiết bị.
+            </p>
+            <Button asChild className="w-full">
+              <Link to="/auth">
+                <LogIn className="mr-2 h-4 w-4" />
+                Đăng nhập / Đăng ký
+              </Link>
+            </Button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -58,8 +92,9 @@ const SavedWords = () => {
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="font-serif text-3xl font-bold gold-text">生词本</h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              共 {words.length} 个已保存的词语
+            <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Cloud className="h-3.5 w-3.5" />
+              共 {words.length} 个已保存的词语 · đồng bộ cloud
             </p>
           </div>
           <div className="flex items-center gap-2">

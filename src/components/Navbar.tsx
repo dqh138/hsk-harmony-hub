@@ -1,10 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ChevronDown, Bookmark } from "lucide-react";
+import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User } from "lucide-react";
 import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 const levels: HSKLevel[] = [1, 2, 3, 4, 5, 6];
 
@@ -40,6 +42,12 @@ const Navbar = () => {
   const [grammarOpen, setGrammarOpen] = useState(false);
   const [examOpen, setExamOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({ title: "Đã đăng xuất" });
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -99,6 +107,28 @@ const Navbar = () => {
             <Bookmark className="h-4 w-4" />
             生词本
           </Link>
+
+          {user ? (
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              title={user.email ?? "Đã đăng nhập"}
+            >
+              <User className="h-4 w-4" />
+              <LogOut className="h-3.5 w-3.5 opacity-70" />
+            </button>
+          ) : (
+            <Link
+              to="/auth"
+              className={cn(
+                "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+                location.pathname === "/auth" && "bg-muted"
+              )}
+            >
+              <LogIn className="h-4 w-4" />
+              登录
+            </Link>
+          )}
 
           <ThemeToggle />
         </div>
@@ -178,6 +208,28 @@ const Navbar = () => {
             <Bookmark className="h-4 w-4" />
             生词本
           </Link>
+
+          {user ? (
+            <button
+              onClick={() => {
+                setOpen(false);
+                handleSignOut();
+              }}
+              className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            >
+              <LogOut className="h-4 w-4" />
+              Đăng xuất ({user.email})
+            </button>
+          ) : (
+            <Link
+              to="/auth"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            >
+              <LogIn className="h-4 w-4" />
+              Đăng nhập
+            </Link>
+          )}
         </div>
       )}
     </nav>
