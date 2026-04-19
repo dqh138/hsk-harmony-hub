@@ -208,6 +208,28 @@ const Navbar = () => {
             <Bookmark className="h-4 w-4" />
             生词本
           </Link>
+
+          {user ? (
+            <button
+              onClick={() => {
+                setOpen(false);
+                handleSignOut();
+              }}
+              className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            >
+              <LogOut className="h-4 w-4" />
+              Đăng xuất ({user.email})
+            </button>
+          ) : (
+            <Link
+              to="/auth"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            >
+              <LogIn className="h-4 w-4" />
+              Đăng nhập
+            </Link>
+          )}
         </div>
       )}
     </nav>
