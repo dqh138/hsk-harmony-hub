@@ -77,6 +77,7 @@ const SelectionPopover = () => {
         const rect = range.getBoundingClientRect();
         if (rect.width === 0 && rect.height === 0) return;
 
+        rangeRef.current = range.cloneRange();
         setLookup(null);
         setState({
           text,
@@ -119,12 +120,12 @@ const SelectionPopover = () => {
   if (!state) return null;
 
   const { text, x, y } = state;
-  const highlighted = isHighlighted(text);
   const hasHan = HAN_REGEX.test(text);
 
   const close = () => {
     setState(null);
     setLookup(null);
+    rangeRef.current = null;
     window.getSelection()?.removeAllRanges();
   };
 
@@ -152,13 +153,25 @@ const SelectionPopover = () => {
   };
 
   const handleHighlight = async () => {
-    if (highlighted) {
-      await removeHighlight(text);
-      toast({ title: "已取消高亮", description: `"${text}"` });
-    } else {
-      await addHighlight(text);
-      toast({ title: "已高亮", description: `"${text}"` });
+    const range = rangeRef.current;
+    if (!range) {
+      close();
+      return;
     }
+
+    // Compute context before/after by walking text nodes around the range
+    const { contextBefore, contextAfter } = computeContext(range, CONTEXT_LEN);
+
+    // Wrap range immediately in DOM
+    try {
+      const mark = document.createElement("mark");
+      mark.className = "hskhub-highlight";
+      range.surroundContents(mark);
+    } catch {
+      // surroundContents may fail if range crosses elements; ignore — will be re-applied on next render
+    }
+
+    await addHighlightAt(text, location.pathname, contextBefore, contextAfter);
     close();
   };
 
