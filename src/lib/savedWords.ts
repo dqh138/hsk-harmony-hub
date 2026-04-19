@@ -1,9 +1,9 @@
-// Cloud-backed store for saved vocabulary words and highlights.
+// Cloud-backed store for saved vocabulary words and per-location highlights.
 // Uses Supabase when user is authenticated, falls back to localStorage as guest cache.
 import { supabase } from "@/integrations/supabase/client";
 
 const WORDS_KEY = "hskhub:saved-words";
-const HIGHLIGHTS_KEY = "hskhub:highlights";
+const HIGHLIGHTS_KEY = "hskhub:highlights-v2";
 
 export interface SavedWord {
   id: string;
@@ -12,11 +12,19 @@ export interface SavedWord {
   createdAt: number;
 }
 
+export interface HighlightRecord {
+  id: string;
+  text: string;
+  route: string;
+  contextBefore: string;
+  contextAfter: string;
+}
+
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
 let wordsCache: SavedWord[] = [];
-let highlightsCache: string[] = [];
+let highlightsCache: HighlightRecord[] = [];
 let currentUserId: string | null = null;
 let initialized = false;
 
@@ -26,13 +34,13 @@ function emit() {
   window.dispatchEvent(new CustomEvent("hskhub:highlights-changed"));
 }
 
-function loadLocal(): { words: SavedWord[]; highlights: string[] } {
+function loadLocal(): { words: SavedWord[]; highlights: HighlightRecord[] } {
   try {
     const w = localStorage.getItem(WORDS_KEY);
     const h = localStorage.getItem(HIGHLIGHTS_KEY);
     return {
       words: w ? (JSON.parse(w) as SavedWord[]) : [],
-      highlights: h ? (JSON.parse(h) as string[]) : [],
+      highlights: h ? (JSON.parse(h) as HighlightRecord[]) : [],
     };
   } catch {
     return { words: [], highlights: [] };
@@ -54,7 +62,7 @@ async function fetchCloud() {
       .order("created_at", { ascending: false }),
     supabase
       .from("highlights")
-      .select("text")
+      .select("id, text, route, context_before, context_after")
       .order("created_at", { ascending: false }),
   ]);
   if (!wordsRes.error && wordsRes.data) {
@@ -66,7 +74,13 @@ async function fetchCloud() {
     }));
   }
   if (!highlightsRes.error && highlightsRes.data) {
-    highlightsCache = highlightsRes.data.map((h) => h.text);
+    highlightsCache = highlightsRes.data.map((h: any) => ({
+      id: h.id,
+      text: h.text,
+      route: h.route ?? "",
+      contextBefore: h.context_before ?? "",
+      contextAfter: h.context_after ?? "",
+    }));
   }
   emit();
 }
@@ -87,20 +101,20 @@ async function migrateLocalToCloud() {
     );
   }
   if (local.highlights.length > 0) {
-    await supabase.from("highlights").upsert(
-      local.highlights.map((t) => ({ user_id: currentUserId!, text: t })),
-      { onConflict: "user_id,text", ignoreDuplicates: true }
+    await supabase.from("highlights").insert(
+      local.highlights.map((h) => ({
+        user_id: currentUserId!,
+        text: h.text,
+        route: h.route,
+        context_before: h.contextBefore,
+        context_after: h.contextAfter,
+      }))
     );
   }
-  // Clear local after migration
   localStorage.removeItem(WORDS_KEY);
   localStorage.removeItem(HIGHLIGHTS_KEY);
 }
 
-/**
- * Initialize the store. Call once at app start with the current user id (or null).
- * When user changes, call again to switch source.
- */
 export async function initSavedWords(userId: string | null) {
   currentUserId = userId;
   initialized = true;
@@ -176,7 +190,6 @@ export async function saveWord(text: string, note?: string): Promise<SavedWord |
     return word;
   }
 
-  // Local mode
   const existing = wordsCache.find((w) => w.text === trimmed);
   if (existing) {
     if (note && note !== existing.note) {
@@ -217,8 +230,8 @@ export async function updateWordNote(id: string, note: string) {
   emit();
 }
 
-// ===== Highlights =====
-export function getHighlights(): string[] {
+// ===== Highlights (per-location) =====
+export function getHighlights(): HighlightRecord[] {
   if (!initialized) {
     const local = loadLocal();
     wordsCache = local.words;
@@ -228,32 +241,72 @@ export function getHighlights(): string[] {
   return highlightsCache;
 }
 
-export async function addHighlight(text: string) {
-  const trimmed = text.trim();
-  if (!trimmed) return;
-  if (highlightsCache.includes(trimmed)) return;
-
-  if (currentUserId) {
-    await supabase.from("highlights").upsert(
-      { user_id: currentUserId, text: trimmed },
-      { onConflict: "user_id,text", ignoreDuplicates: true }
-    );
-  }
-  highlightsCache = [trimmed, ...highlightsCache].slice(0, 500);
-  persistLocal();
-  emit();
+export function getHighlightsForRoute(route: string): HighlightRecord[] {
+  return getHighlights().filter((h) => h.route === route);
 }
 
-export async function removeHighlight(text: string) {
+export async function addHighlightAt(
+  text: string,
+  route: string,
+  contextBefore: string,
+  contextAfter: string
+): Promise<HighlightRecord | null> {
   const trimmed = text.trim();
+  if (!trimmed) return null;
+
+  // Prevent exact duplicate
+  const dup = highlightsCache.find(
+    (h) =>
+      h.text === trimmed &&
+      h.route === route &&
+      h.contextBefore === contextBefore &&
+      h.contextAfter === contextAfter
+  );
+  if (dup) return dup;
+
   if (currentUserId) {
-    await supabase.from("highlights").delete().eq("text", trimmed).eq("user_id", currentUserId);
+    const { data, error } = await supabase
+      .from("highlights")
+      .insert({
+        user_id: currentUserId,
+        text: trimmed,
+        route,
+        context_before: contextBefore,
+        context_after: contextAfter,
+      })
+      .select("id, text, route, context_before, context_after")
+      .single();
+    if (error || !data) return null;
+    const rec: HighlightRecord = {
+      id: data.id,
+      text: data.text,
+      route: data.route ?? "",
+      contextBefore: (data as any).context_before ?? "",
+      contextAfter: (data as any).context_after ?? "",
+    };
+    highlightsCache = [rec, ...highlightsCache];
+    emit();
+    return rec;
   }
-  highlightsCache = highlightsCache.filter((t) => t !== trimmed);
+
+  const rec: HighlightRecord = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    text: trimmed,
+    route,
+    contextBefore,
+    contextAfter,
+  };
+  highlightsCache = [rec, ...highlightsCache].slice(0, 1000);
   persistLocal();
   emit();
+  return rec;
 }
 
-export function isHighlighted(text: string) {
-  return highlightsCache.includes(text.trim());
+export async function removeHighlightById(id: string) {
+  if (currentUserId) {
+    await supabase.from("highlights").delete().eq("id", id);
+  }
+  highlightsCache = highlightsCache.filter((h) => h.id !== id);
+  persistLocal();
+  emit();
 }
