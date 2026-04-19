@@ -5,7 +5,7 @@ import { Headphones, BookOpen, PenTool } from "lucide-react";
 
 const MockExams = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative z-10">
       <Navbar />
 
       <section className="relative overflow-hidden border-b border-border/30 py-16">
