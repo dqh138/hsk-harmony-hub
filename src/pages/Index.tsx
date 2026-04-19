@@ -131,7 +131,8 @@ const Index = () => {
       <section className="container mx-auto px-4 py-16">
         <div className="mx-auto mb-12 max-w-2xl text-center">
           <h2 className="font-serif text-3xl font-black md:text-4xl">
-            Bốn công cụ — <span className="gold-text">một hành trình</span>
+            <span className="text-primary">Đồng hành</span> cùng bạn trên con đường{" "}
+            <span className="gold-text">chinh phục HSK</span>
           </h2>
           <p className="mt-3 text-sm text-muted-foreground md:text-base">
             Từ ngữ pháp nền tảng đến phòng thi thử, mọi thứ bạn cần đều ở đây.
