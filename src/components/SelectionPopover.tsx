@@ -206,19 +206,21 @@ const SelectionPopover = () => {
       return;
     }
 
-    // Compute context before/after by walking text nodes around the range
     const { contextBefore, contextAfter } = computeContext(range, CONTEXT_LEN);
 
-    // Wrap range immediately in DOM
-    try {
-      const mark = document.createElement("mark");
-      mark.className = "hskhub-highlight";
-      range.surroundContents(mark);
-    } catch {
-      // surroundContents may fail if range crosses elements; ignore — will be re-applied on next render
-    }
+    // Save first to get the id, then wrap with that id so the action popover can find it
+    const rec = await addHighlightAt(text, location.pathname, contextBefore, contextAfter);
 
-    await addHighlightAt(text, location.pathname, contextBefore, contextAfter);
+    if (rec) {
+      try {
+        const mark = document.createElement("mark");
+        mark.className = "hskhub-highlight";
+        mark.dataset.highlightId = rec.id;
+        range.surroundContents(mark);
+      } catch {
+        // crosses element boundaries — HighlightStyles will re-apply on next tick
+      }
+    }
     close();
   };
 
