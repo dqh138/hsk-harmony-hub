@@ -105,8 +105,13 @@
     @apply border-border;
   }
 
-  body {
+  html {
     @apply bg-background text-foreground;
+  }
+
+  body {
+    @apply text-foreground;
+    background: transparent;
     font-family: 'Noto Sans SC', sans-serif;
   }
 
