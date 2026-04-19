@@ -25,7 +25,7 @@ const Grammar = () => {
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/30">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent" />
-        <ChineseDecorInline variant="bamboo" className="absolute -left-6 top-6 hidden h-[90%] w-auto opacity-20 md:block" />
+        
         <div className="container relative mx-auto px-4 py-16 text-center md:py-20">
           <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary">
             <BookOpen className="h-3.5 w-3.5" />

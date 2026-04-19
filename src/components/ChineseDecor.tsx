@@ -22,15 +22,6 @@ export const ChineseDecorBackdrop = () => {
         height={1024}
         className="absolute -left-10 top-10 h-[70vh] w-auto opacity-[0.06] dark:opacity-[0.08] select-none"
       />
-      {/* Bamboo - right edge mirrored */}
-      <img
-        src={bamboo}
-        alt=""
-        loading="lazy"
-        width={512}
-        height={1024}
-        className="absolute -right-12 bottom-0 h-[60vh] w-auto -scale-x-100 opacity-[0.05] dark:opacity-[0.07] select-none"
-      />
       {/* Mountains - bottom band */}
       <img
         src={mountains}
