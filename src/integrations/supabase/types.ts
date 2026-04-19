@@ -16,20 +16,29 @@ export type Database = {
     Tables: {
       highlights: {
         Row: {
+          context_after: string
+          context_before: string
           created_at: string
           id: string
+          route: string
           text: string
           user_id: string
         }
         Insert: {
+          context_after?: string
+          context_before?: string
           created_at?: string
           id?: string
+          route?: string
           text: string
           user_id: string
         }
         Update: {
+          context_after?: string
+          context_before?: string
           created_at?: string
           id?: string
+          route?: string
           text?: string
           user_id?: string
         }
