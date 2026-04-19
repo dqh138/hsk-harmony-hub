@@ -303,8 +303,10 @@ export async function addHighlightAt(
 }
 
 export async function removeHighlightById(id: string) {
+  console.log("[highlights] removeHighlightById", id, "cloud:", !!currentUserId);
   if (currentUserId) {
-    await supabase.from("highlights").delete().eq("id", id);
+    const { error } = await supabase.from("highlights").delete().eq("id", id);
+    if (error) console.error("[highlights] delete error", error);
   }
   highlightsCache = highlightsCache.filter((h) => h.id !== id);
   persistLocal();

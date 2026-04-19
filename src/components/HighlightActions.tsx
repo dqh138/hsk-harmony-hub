@@ -59,15 +59,20 @@ const HighlightActions = () => {
 
   if (!state) return null;
 
-  const handleRemove = async () => {
-    await removeHighlightById(state.id);
+  const handleRemove = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const id = state.id;
     setState(null);
+    await removeHighlightById(id);
   };
 
   return (
     <div
       ref={popoverRef}
       data-selection-popover
+      onMouseDown={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
       style={{
         position: "absolute",
         left: state.x,
@@ -77,6 +82,8 @@ const HighlightActions = () => {
       className="z-[100] flex items-center gap-1 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-xl animate-in fade-in-0 zoom-in-95"
     >
       <button
+        type="button"
+        onMouseDown={(e) => e.preventDefault()}
         onClick={handleRemove}
         className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-destructive/10 hover:text-destructive"
         title="取消高亮"
@@ -85,7 +92,12 @@ const HighlightActions = () => {
         <span>取消高亮</span>
       </button>
       <button
-        onClick={() => setState(null)}
+        type="button"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={(e) => {
+          e.stopPropagation();
+          setState(null);
+        }}
         className="rounded-md p-1.5 transition-colors hover:bg-muted"
         title="关闭"
       >
