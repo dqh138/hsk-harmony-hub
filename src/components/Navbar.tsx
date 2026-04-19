@@ -60,7 +60,7 @@ const Navbar = () => {
         {/* Desktop */}
         <div className="hidden items-center gap-1 md:flex">
           <NavDropdown
-            label="Grammar"
+            label="语法"
             isActive={location.pathname.startsWith("/hsk/")}
           >
             {levels.map((level) => (
@@ -153,7 +153,7 @@ const Navbar = () => {
             onClick={() => setGrammarOpen(!grammarOpen)}
             className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
-            Grammar
+            语法
             <ChevronDown className={cn("h-4 w-4 transition-transform", grammarOpen && "rotate-180")} />
           </button>
           {grammarOpen && (
