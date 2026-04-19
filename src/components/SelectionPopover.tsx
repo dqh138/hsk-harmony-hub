@@ -215,6 +215,17 @@ const SelectionPopover = () => {
         </div>
       )}
       <div className="flex flex-wrap items-center gap-1">
+        <button
+          onClick={handleHighlight}
+          className={cn(
+            "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted",
+            highlighted && "text-primary"
+          )}
+          title={highlighted ? "取消高亮" : "高亮"}
+        >
+          <Highlighter className="h-3.5 w-3.5" />
+          <span>{highlighted ? "取消" : "高亮"}</span>
+        </button>
         {hasHan && (
           <button
             onClick={handlePinyin}
@@ -247,31 +258,12 @@ const SelectionPopover = () => {
           <span>稍后查</span>
         </button>
         <button
-          onClick={handlePleco}
-          className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
-          title="Pleco 词典"
-        >
-          <ExternalLink className="h-3.5 w-3.5" />
-          <span>Pleco</span>
-        </button>
-        <button
           onClick={handleGoogle}
           className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
           title="Google 翻译"
         >
           <ExternalLink className="h-3.5 w-3.5" />
           <span>Google</span>
-        </button>
-        <button
-          onClick={handleHighlight}
-          className={cn(
-            "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted",
-            highlighted && "text-primary"
-          )}
-          title={highlighted ? "取消高亮" : "高亮"}
-        >
-          <Highlighter className="h-3.5 w-3.5" />
-          <span>{highlighted ? "取消" : "高亮"}</span>
         </button>
         <button
           onClick={close}
