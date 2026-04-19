@@ -129,7 +129,13 @@ function clearHighlights(root: HTMLElement) {
 
 function applyHighlights(root: HTMLElement, records: HighlightRecord[]) {
   if (records.length === 0) return;
+  const existing = new Set(
+    Array.from(root.querySelectorAll<HTMLElement>("mark.hskhub-highlight"))
+      .map((m) => m.dataset.highlightId)
+      .filter(Boolean) as string[]
+  );
   for (const rec of records) {
+    if (existing.has(rec.id)) continue;
     const { full, segments } = collectTextSegments(root);
     const offset = findOffset(full, rec.contextBefore, rec.text, rec.contextAfter);
     if (offset === -1) continue;
