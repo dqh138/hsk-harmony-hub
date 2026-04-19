@@ -97,7 +97,12 @@ const SelectionPopover = () => {
   };
 
   useEffect(() => {
-    const handleSelection = () => {
+    const handleSelection = (e: Event) => {
+      // Skip if mouseup/touchend happened inside our popover — clicking a
+      // popover button must not dismiss the popover before its onClick fires.
+      const evTarget = e.target as Node | null;
+      if (evTarget && popoverRef.current?.contains(evTarget)) return;
+
       setTimeout(() => {
         const sel = window.getSelection();
         if (!sel || sel.isCollapsed) {
@@ -201,15 +206,17 @@ const SelectionPopover = () => {
 
   const handleHighlight = async () => {
     const range = rangeRef.current;
+    console.log("[highlight] click handleHighlight", { hasRange: !!range, text });
     if (!range) {
       close();
       return;
     }
 
     const { contextBefore, contextAfter } = computeContext(range, CONTEXT_LEN);
+    console.log("[highlight] context", { contextBefore, contextAfter, route: location.pathname });
 
-    // Save first to get the id, then wrap with that id so the action popover can find it
     const rec = await addHighlightAt(text, location.pathname, contextBefore, contextAfter);
+    console.log("[highlight] saved record", rec);
 
     if (rec) {
       try {
@@ -217,8 +224,9 @@ const SelectionPopover = () => {
         mark.className = "hskhub-highlight";
         mark.dataset.highlightId = rec.id;
         range.surroundContents(mark);
-      } catch {
-        // crosses element boundaries — HighlightStyles will re-apply on next tick
+        console.log("[highlight] wrapped DOM");
+      } catch (err) {
+        console.warn("[highlight] surroundContents failed", err);
       }
     }
     close();
@@ -274,7 +282,10 @@ const SelectionPopover = () => {
           <div className="text-xs text-foreground/90">{lookup.meaning}</div>
         </div>
       )}
-      <div className="flex flex-wrap items-center gap-1">
+      <div
+        className="flex flex-wrap items-center gap-1"
+        onMouseDown={(e) => e.preventDefault()}
+      >
         <button
           onClick={handleHighlight}
           className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
