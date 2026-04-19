@@ -42,6 +42,12 @@ const Navbar = () => {
   const [grammarOpen, setGrammarOpen] = useState(false);
   const [examOpen, setExamOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({ title: "Đã đăng xuất" });
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
