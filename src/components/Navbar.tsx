@@ -108,6 +108,28 @@ const Navbar = () => {
             生词本
           </Link>
 
+          {user ? (
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              title={user.email ?? "Đã đăng nhập"}
+            >
+              <User className="h-4 w-4" />
+              <LogOut className="h-3.5 w-3.5 opacity-70" />
+            </button>
+          ) : (
+            <Link
+              to="/auth"
+              className={cn(
+                "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+                location.pathname === "/auth" && "bg-muted"
+              )}
+            >
+              <LogIn className="h-4 w-4" />
+              登录
+            </Link>
+          )}
+
           <ThemeToggle />
         </div>
 
