@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getHighlights, subscribeSavedWords } from "@/lib/savedWords";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Walks the DOM and wraps occurrences of highlighted phrases in <mark> tags.
