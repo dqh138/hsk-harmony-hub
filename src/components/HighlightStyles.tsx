@@ -162,7 +162,6 @@ const HighlightStyles = () => {
     let scheduled = false;
     const run = () => {
       scheduled = false;
-      clearHighlights(root);
       applyHighlights(root, records);
     };
 
