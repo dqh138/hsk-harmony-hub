@@ -124,14 +124,16 @@ const SelectionPopover = () => {
     window.getSelection()?.removeAllRanges();
   };
 
-  const handleSave = () => {
-    saveWord(text, lookup ? `${lookup.pinyin} – ${lookup.meaning}` : undefined);
+  const handleSave = async () => {
+    if (!requireAuth("lưu từ")) return;
+    await saveWord(text, lookup ? `${lookup.pinyin} – ${lookup.meaning}` : undefined);
     toast({ title: "已保存", description: `"${text}" 已加入生词本` });
     close();
   };
 
-  const handleSaveLater = () => {
-    saveWord(text, "稍后查询");
+  const handleSaveLater = async () => {
+    if (!requireAuth("lưu từ")) return;
+    await saveWord(text, "稍后查询");
     toast({ title: "已加入待查列表", description: `"${text}"` });
     close();
   };
@@ -150,12 +152,13 @@ const SelectionPopover = () => {
     close();
   };
 
-  const handleHighlight = () => {
+  const handleHighlight = async () => {
+    if (!requireAuth("tô sáng từ")) return;
     if (highlighted) {
-      removeHighlight(text);
+      await removeHighlight(text);
       toast({ title: "已取消高亮", description: `"${text}"` });
     } else {
-      addHighlight(text);
+      await addHighlight(text);
       toast({ title: "已高亮", description: `"${text}"` });
     }
     close();
