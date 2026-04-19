@@ -13,7 +13,6 @@ import VocabularyLevel from "./pages/VocabularyLevel";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import StudyToolsLayer from "./components/StudyToolsLayer";
-import { ChineseDecorBackdrop } from "./components/ChineseDecor";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { initSavedWords } from "./lib/savedWords";
 
@@ -36,7 +35,6 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <SavedWordsBootstrap />
-          <ChineseDecorBackdrop />
           <StudyToolsLayer />
           <Routes>
             <Route path="/" element={<Index />} />
