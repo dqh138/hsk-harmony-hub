@@ -51,7 +51,7 @@ const HSKLevelPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative z-10">
       <Navbar />
       <section className="border-b border-border/30 py-12">
 

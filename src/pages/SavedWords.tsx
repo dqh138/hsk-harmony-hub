@@ -56,7 +56,7 @@ const SavedWords = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen relative z-10">
         <Navbar />
       </div>
     );
@@ -64,7 +64,7 @@ const SavedWords = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen relative z-10">
         <Navbar />
         <div className="container mx-auto px-4 py-12">
           <Card className="mx-auto max-w-md p-8 text-center">
@@ -86,7 +86,7 @@ const SavedWords = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative z-10">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">

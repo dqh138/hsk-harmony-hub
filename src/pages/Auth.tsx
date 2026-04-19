@@ -105,7 +105,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen relative z-10">
       <Navbar />
       <div className="container mx-auto flex items-center justify-center px-4 py-12">
         <Card className="w-full max-w-md p-6">
