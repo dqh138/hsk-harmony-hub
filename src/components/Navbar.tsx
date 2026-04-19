@@ -63,12 +63,6 @@ const Navbar = () => {
           className="absolute -left-8 top-20 h-[70vh] w-auto opacity-[0.07] dark:opacity-[0.1] select-none"
         />
         <img
-          src={bambooDecor}
-          alt=""
-          loading="lazy"
-          className="absolute -right-10 bottom-0 h-[55vh] w-auto -scale-x-100 opacity-[0.06] dark:opacity-[0.09] select-none"
-        />
-        <img
           src={mountainsDecor}
           alt=""
           loading="lazy"
