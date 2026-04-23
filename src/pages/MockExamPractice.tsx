@@ -75,9 +75,15 @@ const MockExamPractice = () => {
     ).length;
   }, [revealed, answers, allQuestions]);
 
+  const finalObjectiveScore = useMemo(
+    () => allQuestions.filter((q) => q.correctAnswer && answers[q.id] === q.correctAnswer).length,
+    [answers, allQuestions]
+  );
+
   if (!exam) return <Navigate to="/mock-exams" replace />;
 
   const scorePercent = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : null;
+  const finalScorePercent = totalQuestions > 0 ? Math.round((finalObjectiveScore / totalQuestions) * 100) : null;
   const sectionLabel = activeSection === "listening" ? "Nghe" : activeSection === "reading" ? "Đọc" : "Viết";
 
   const resetAttemptState = () => {
@@ -123,8 +129,8 @@ const MockExamPractice = () => {
         examTitle: exam.titleZh,
         section: activeSection,
         totalQuestions,
-        correctAnswers: score,
-        scorePercent: scorePercent ?? 0,
+        correctAnswers: finalObjectiveScore,
+        scorePercent: finalScorePercent ?? 0,
         elapsedSeconds,
       });
       setSaveStatus("saved");
@@ -439,17 +445,8 @@ const MockExamPractice = () => {
                   {showScripts ? " 隐藏文本" : " 查看文本"}
                 </Button>
               )}
-              {!revealed && (
-                <div className="flex items-center gap-2">
-                  <Button onClick={() => setRevealed(true)} variant="outline" size="sm" className="border-hsk6/50 text-hsk6 hover:bg-hsk6/10" disabled={answeredCount === 0}>
-                    <Eye className="mr-1 h-4 w-4" /> 查看答案
-                  </Button>
-                  {hasStartedAttempt && (
-                    <Button onClick={() => void handleRevealAnswers()} size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                      <Send className="mr-1 h-4 w-4" /> Nộp bài
-                    </Button>
-                  )}
-                </div>
+              {!revealed && hasStartedAttempt && (
+                <div className="text-xs text-muted-foreground">Cuộn xuống cuối bài để nộp bài và chấm đáp án.</div>
               )}
             </div>
           </div>
@@ -486,6 +483,14 @@ const MockExamPractice = () => {
         {activeSection === "reading" && part && renderReadingPart(part as ReadingPart)}
 
         {activeSection === "listening" && part && renderListeningPart(part as ListeningPart)}
+
+        {!revealed && hasStartedAttempt && (
+          <div className="mt-8 flex justify-end border-t border-border/30 pt-6">
+            <Button onClick={() => void handleRevealAnswers()} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Send className="mr-2 h-4 w-4" /> Nộp bài
+            </Button>
+          </div>
+        )}
 
         {activeSection !== "writing" && activeParts.length > 1 && (
           <div className="mt-8 flex items-center justify-between">
