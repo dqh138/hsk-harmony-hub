@@ -5,20 +5,27 @@ import { ReadingPart, ListeningPart, ExamQuestion } from "@/data/mockExamTypes";
 import Navbar from "@/components/Navbar";
 import AudioPlayer from "@/components/AudioPlayer";
 import ExamTimer from "@/components/ExamTimer";
+import ExamResultSummary from "@/components/ExamResultSummary";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye, Headphones, BookOpen, PenTool, FileText } from "lucide-react";
+import { CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye, Headphones, BookOpen, PenTool, FileText, Send } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { saveExamResult } from "@/lib/examResults";
 
 type SectionType = "listening" | "reading" | "writing";
 
 const MockExamPractice = () => {
   const { examId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { user } = useAuth();
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [revealed, setRevealed] = useState(false);
   const [currentPart, setCurrentPart] = useState(0);
   const [showScripts, setShowScripts] = useState(false);
+  const [hasStartedAttempt, setHasStartedAttempt] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "guest" | "error">("idle");
   const scriptsRef = useRef<HTMLDivElement>(null);
 
   const toggleScripts = useCallback(() => {
@@ -68,19 +75,69 @@ const MockExamPractice = () => {
     ).length;
   }, [revealed, answers, allQuestions]);
 
+  const finalObjectiveScore = useMemo(
+    () => allQuestions.filter((q) => q.correctAnswer && answers[q.id] === q.correctAnswer).length,
+    [answers, allQuestions]
+  );
+
   if (!exam) return <Navigate to="/mock-exams" replace />;
+
+  const scorePercent = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : null;
+  const finalScorePercent = totalQuestions > 0 ? Math.round((finalObjectiveScore / totalQuestions) * 100) : null;
+  const sectionLabel = activeSection === "listening" ? "Nghe" : activeSection === "reading" ? "Đọc" : "Viết";
+
+  const resetAttemptState = () => {
+    setAnswers({});
+    setRevealed(false);
+    setShowScripts(false);
+    setHasStartedAttempt(false);
+    setElapsedSeconds(0);
+    setSaveStatus("idle");
+  };
 
   const switchSection = (s: SectionType) => {
     setSearchParams({ section: s });
     setCurrentPart(0);
-    setAnswers({});
-    setRevealed(false);
-    setShowScripts(false);
+    resetAttemptState();
   };
 
   const handleAnswer = (questionId: number, answer: string) => {
     if (revealed) return;
+    setHasStartedAttempt(true);
     setAnswers((prev) => ({ ...prev, [questionId]: answer }));
+  };
+
+  const handleRevealAnswers = async () => {
+    if (revealed) return;
+
+    setRevealed(true);
+
+    if (activeSection === "writing") {
+      setSaveStatus(user ? "saved" : "guest");
+      return;
+    }
+
+    if (!user) {
+      setSaveStatus("guest");
+      return;
+    }
+
+    try {
+      await saveExamResult({
+        userId: user.id,
+        examId: exam.id,
+        examTitle: exam.titleZh,
+        section: activeSection,
+        totalQuestions,
+        correctAnswers: finalObjectiveScore,
+        scorePercent: finalScorePercent ?? 0,
+        elapsedSeconds,
+      });
+      setSaveStatus("saved");
+    } catch {
+      setSaveStatus("error");
+      toast({ title: "Lỗi", description: "Không lưu được kết quả bài thi.", variant: "destructive" });
+    }
   };
 
   const renderQuestion = (q: ExamQuestion) => {
@@ -242,7 +299,12 @@ const MockExamPractice = () => {
             <ExamTimer
               durationMinutes={45}
               label="书写 45 分钟"
-              onTimeUp={() => toast({ title: "时间到", description: "书写部分时间已结束。" })}
+              onStart={() => setHasStartedAttempt(true)}
+              onElapsedChange={setElapsedSeconds}
+              onTimeUp={() => {
+                toast({ title: "时间到", description: "书写部分时间已结束。" });
+                void handleRevealAnswers();
+              }}
             />
           </div>
           <p className="mt-2 text-xs text-muted-foreground">提示：考试规定阅读后有 10 分钟阅题时间，然后开始 45 分钟书写。</p>
@@ -252,9 +314,21 @@ const MockExamPractice = () => {
           {w.prompt}
         </div>
 
+        {revealed && (
+          <ExamResultSummary
+            examTitle={exam.titleZh}
+            sectionLabel={sectionLabel}
+            totalQuestions={0}
+            correctAnswers={0}
+            scorePercent={null}
+            elapsedSeconds={elapsedSeconds}
+            saveStatus={saveStatus}
+          />
+        )}
+
         {!revealed ? (
           <Button
-            onClick={() => setRevealed(true)}
+            onClick={() => void handleRevealAnswers()}
             variant="outline"
             className="border-hsk6/50 text-hsk6 hover:bg-hsk6/10"
           >
@@ -349,8 +423,10 @@ const MockExamPractice = () => {
                 <ExamTimer
                   durationMinutes={50}
                   label="阅读 50 分钟"
+                  onStart={() => setHasStartedAttempt(true)}
+                  onElapsedChange={setElapsedSeconds}
                   onTimeUp={() => {
-                    setRevealed(true);
+                    void handleRevealAnswers();
                     toast({ title: "时间到", description: "阅读部分时间已结束，已显示答案。" });
                   }}
                 />
@@ -369,10 +445,8 @@ const MockExamPractice = () => {
                   {showScripts ? " 隐藏文本" : " 查看文本"}
                 </Button>
               )}
-              {!revealed && (
-                <Button onClick={() => setRevealed(true)} variant="outline" size="sm" className="border-hsk6/50 text-hsk6 hover:bg-hsk6/10" disabled={answeredCount === 0}>
-                  <Eye className="mr-1 h-4 w-4" /> 查看答案
-                </Button>
+              {!revealed && hasStartedAttempt && (
+                <div className="text-xs text-muted-foreground">Cuộn xuống cuối bài để nộp bài và chấm đáp án.</div>
               )}
             </div>
           </div>
@@ -390,11 +464,33 @@ const MockExamPractice = () => {
 
       <section className="container mx-auto max-w-3xl px-4 py-8">
 
+        {revealed && activeSection !== "writing" && (
+          <div className="mb-6">
+            <ExamResultSummary
+              examTitle={exam.titleZh}
+              sectionLabel={sectionLabel}
+              totalQuestions={totalQuestions}
+              correctAnswers={score}
+              scorePercent={scorePercent}
+              elapsedSeconds={elapsedSeconds}
+              saveStatus={saveStatus}
+            />
+          </div>
+        )}
+
         {activeSection === "writing" && hasWriting && renderWritingSection()}
 
         {activeSection === "reading" && part && renderReadingPart(part as ReadingPart)}
 
         {activeSection === "listening" && part && renderListeningPart(part as ListeningPart)}
+
+        {!revealed && hasStartedAttempt && (
+          <div className="mt-8 flex justify-end border-t border-border/30 pt-6">
+            <Button onClick={() => void handleRevealAnswers()} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Send className="mr-2 h-4 w-4" /> Nộp bài
+            </Button>
+          </div>
+        )}
 
         {activeSection !== "writing" && activeParts.length > 1 && (
           <div className="mt-8 flex items-center justify-between">

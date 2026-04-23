@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      exam_results: {
+        Row: {
+          correct_answers: number
+          created_at: string
+          elapsed_seconds: number | null
+          exam_id: string
+          exam_title: string
+          id: string
+          score_percent: number
+          section: string
+          submitted_at: string
+          total_questions: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          correct_answers?: number
+          created_at?: string
+          elapsed_seconds?: number | null
+          exam_id: string
+          exam_title: string
+          id?: string
+          score_percent?: number
+          section: string
+          submitted_at?: string
+          total_questions?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          correct_answers?: number
+          created_at?: string
+          elapsed_seconds?: number | null
+          exam_id?: string
+          exam_title?: string
+          id?: string
+          score_percent?: number
+          section?: string
+          submitted_at?: string
+          total_questions?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       highlights: {
         Row: {
           context_after: string
