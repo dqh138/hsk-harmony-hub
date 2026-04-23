@@ -85,6 +85,7 @@ const MockExamPractice = () => {
   const scorePercent = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : null;
   const finalScorePercent = totalQuestions > 0 ? Math.round((finalObjectiveScore / totalQuestions) * 100) : null;
   const sectionLabel = activeSection === "listening" ? "Nghe" : activeSection === "reading" ? "Đọc" : "Viết";
+  const isLastPart = activeSection === "writing" || activeParts.length === 0 || currentPart === activeParts.length - 1;
 
   const resetAttemptState = () => {
     setAnswers({});
@@ -446,7 +447,11 @@ const MockExamPractice = () => {
                 </Button>
               )}
               {!revealed && hasStartedAttempt && (
-                <div className="text-xs text-muted-foreground">Cuộn xuống cuối bài để nộp bài và chấm đáp án.</div>
+                <div className="text-xs text-muted-foreground">
+                  {isLastPart
+                    ? "Cuộn xuống cuối bài để nộp bài và chấm đáp án."
+                    : "Hoàn thành các part tiếp theo, nút nộp bài sẽ chỉ hiện ở part cuối cùng."}
+                </div>
               )}
             </div>
           </div>
@@ -484,7 +489,7 @@ const MockExamPractice = () => {
 
         {activeSection === "listening" && part && renderListeningPart(part as ListeningPart)}
 
-        {!revealed && hasStartedAttempt && (
+        {!revealed && hasStartedAttempt && isLastPart && (
           <div className="mt-8 flex justify-end border-t border-border/30 pt-6">
             <Button onClick={() => void handleRevealAnswers()} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
               <Send className="mr-2 h-4 w-4" /> Nộp bài
