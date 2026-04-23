@@ -7,9 +7,11 @@ interface ExamTimerProps {
   durationMinutes: number;
   label: string;
   onTimeUp?: () => void;
+  onStart?: () => void;
+  onElapsedChange?: (elapsedSeconds: number) => void;
 }
 
-const ExamTimer = ({ durationMinutes, label, onTimeUp }: ExamTimerProps) => {
+const ExamTimer = ({ durationMinutes, label, onTimeUp, onStart, onElapsedChange }: ExamTimerProps) => {
   const totalSeconds = durationMinutes * 60;
   const [secondsLeft, setSecondsLeft] = useState(totalSeconds);
   const [running, setRunning] = useState(false);
@@ -45,6 +47,10 @@ const ExamTimer = ({ durationMinutes, label, onTimeUp }: ExamTimerProps) => {
     firedRef.current = false;
   }, [totalSeconds, label]);
 
+  useEffect(() => {
+    onElapsedChange?.(totalSeconds - secondsLeft);
+  }, [onElapsedChange, secondsLeft, totalSeconds]);
+
   const mins = Math.floor(secondsLeft / 60);
   const secs = secondsLeft % 60;
   const formatted = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
@@ -57,6 +63,7 @@ const ExamTimer = ({ durationMinutes, label, onTimeUp }: ExamTimerProps) => {
       setSecondsLeft(totalSeconds);
       firedRef.current = false;
     }
+    onStart?.();
     setRunning(true);
   };
 
