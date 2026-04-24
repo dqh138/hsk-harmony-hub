@@ -7,11 +7,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/contexts/AuthContext";
+
+const REMEMBER_KEY = "hskhub:remember-session";
+
+// Move session from localStorage -> sessionStorage when "remember" is OFF.
+// Supabase client persists to localStorage by default; we migrate after auth
+// so closing the tab clears the session.
+const applyRememberPreference = (remember: boolean) => {
+  try {
+    if (remember) {
+      localStorage.setItem(REMEMBER_KEY, "1");
+      // Restore from sessionStorage if it lived there from a previous session
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const k = sessionStorage.key(i);
+        if (k && k.startsWith("sb-") && k.endsWith("-auth-token")) {
+          const v = sessionStorage.getItem(k);
+          if (v && !localStorage.getItem(k)) localStorage.setItem(k, v);
+        }
+      }
+      return;
+    }
+    localStorage.removeItem(REMEMBER_KEY);
+    // Move every supabase auth token key to sessionStorage
+    const keysToMove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith("sb-") && k.endsWith("-auth-token")) keysToMove.push(k);
+    }
+    for (const k of keysToMove) {
+      const v = localStorage.getItem(k);
+      if (v) sessionStorage.setItem(k, v);
+      localStorage.removeItem(k);
+    }
+  } catch {
+    /* storage may be unavailable */
+  }
+};
 
 const emailSchema = z.string().trim().email("Email không hợp lệ").max(255);
 const passwordSchema = z
