@@ -68,7 +68,7 @@ const Flashcards = () => {
     loadProgress();
   }, [loading, user, loadProgress]);
 
-  // Build queue: due cards first, then new cards
+  // Build queue: due cards first (shuffled), then random new cards
   const buildQueue = useCallback(() => {
     const all = vocabByLevel[level] ?? [];
     const now = Date.now();
@@ -79,8 +79,17 @@ const Flashcards = () => {
       if (!p) fresh.push({ word: w });
       else if (new Date(p.due_at).getTime() <= now) due.push({ word: w, progress: p });
     }
-    due.sort((a, b) => new Date(a.progress!.due_at).getTime() - new Date(b.progress!.due_at).getTime());
-    const q = [...due, ...fresh.slice(0, NEW_PER_SESSION)].slice(0, MAX_QUEUE);
+    const shuffle = <T,>(arr: T[]): T[] => {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+    const dueShuffled = shuffle(due);
+    const freshShuffled = shuffle(fresh).slice(0, NEW_PER_SESSION);
+    const q = shuffle([...dueShuffled, ...freshShuffled]).slice(0, MAX_QUEUE);
     setQueue(q);
     setIdx(0);
     setFlipped(false);
