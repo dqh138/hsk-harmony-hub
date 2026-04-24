@@ -1,12 +1,27 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User, Layers } from "lucide-react";
+import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User, Layers, UserCircle2 } from "lucide-react";
 import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const levels: HSKLevel[] = [1, 2, 3, 4, 5, 6];
 
@@ -42,6 +57,7 @@ const Navbar = () => {
   const [grammarOpen, setGrammarOpen] = useState(false);
   const [vocabOpen, setVocabOpen] = useState(false);
   const [examOpen, setExamOpen] = useState(false);
+  const [accountInfoOpen, setAccountInfoOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
 
@@ -49,6 +65,12 @@ const Navbar = () => {
     await signOut();
     toast({ title: "Đã đăng xuất" });
   };
+
+  const accountCreatedAt = user?.created_at
+    ? new Date(user.created_at).toLocaleString("vi-VN")
+    : null;
+  const accountProvider =
+    (user?.app_metadata as { provider?: string } | undefined)?.provider ?? "email";
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
@@ -131,14 +153,31 @@ const Navbar = () => {
           </Link>
 
           {user ? (
-            <button
-              onClick={handleSignOut}
-              className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-              title={user.email ?? "Đã đăng nhập"}
-            >
-              <User className="h-4 w-4" />
-              <LogOut className="h-3.5 w-3.5 opacity-70" />
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+                  title={user.email ?? "Đã đăng nhập"}
+                >
+                  <User className="h-4 w-4" />
+                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[200px]">
+                <DropdownMenuLabel className="truncate text-xs font-normal text-muted-foreground">
+                  {user.email ?? "Tài khoản"}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => setAccountInfoOpen(true)}>
+                  <UserCircle2 className="mr-2 h-4 w-4" />
+                  Thông tin tài khoản
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleSignOut} className="text-destructive focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Đăng xuất
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Link
               to="/auth"
@@ -249,16 +288,28 @@ const Navbar = () => {
           </Link>
 
           {user ? (
-            <button
-              onClick={() => {
-                setOpen(false);
-                handleSignOut();
-              }}
-              className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-            >
-              <LogOut className="h-4 w-4" />
-              Đăng xuất ({user.email})
-            </button>
+            <>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  setAccountInfoOpen(true);
+                }}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <UserCircle2 className="h-4 w-4" />
+                Thông tin tài khoản
+              </button>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  handleSignOut();
+                }}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-destructive transition-colors hover:bg-muted"
+              >
+                <LogOut className="h-4 w-4" />
+                Đăng xuất
+              </button>
+            </>
           ) : (
             <Link
               to="/auth"
@@ -271,6 +322,40 @@ const Navbar = () => {
           )}
         </div>
       )}
+
+      <Dialog open={accountInfoOpen} onOpenChange={setAccountInfoOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserCircle2 className="h-5 w-5" />
+              Thông tin tài khoản
+            </DialogTitle>
+            <DialogDescription>Chi tiết tài khoản đăng nhập của bạn.</DialogDescription>
+          </DialogHeader>
+          {user && (
+            <div className="space-y-3 text-sm">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">Email</span>
+                <span className="font-medium break-all">{user.email ?? "—"}</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">Phương thức đăng nhập</span>
+                <span className="font-medium capitalize">{accountProvider}</span>
+              </div>
+              {accountCreatedAt && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-muted-foreground">Ngày tạo tài khoản</span>
+                  <span className="font-medium">{accountCreatedAt}</span>
+                </div>
+              )}
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">User ID</span>
+                <span className="font-mono text-xs break-all text-muted-foreground">{user.id}</span>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </nav>
   );
 };
