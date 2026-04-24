@@ -164,6 +164,42 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0"
+              title={`Âm lượng ${Math.round((muted ? 0 : volume) * 100)}%`}
+              onDoubleClick={toggleMute}
+            >
+              <VolumeIcon className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent side="top" align="center" className="w-auto p-3">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 shrink-0"
+                onClick={toggleMute}
+                title={muted ? "Bật tiếng" : "Tắt tiếng"}
+              >
+                <VolumeIcon className="h-4 w-4" />
+              </Button>
+              <Slider
+                value={[muted ? 0 : Math.round(volume * 100)]}
+                max={100}
+                step={1}
+                onValueChange={handleVolumeChange}
+                className="w-32"
+              />
+              <span className="w-9 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
+                {muted ? 0 : Math.round(volume * 100)}%
+              </span>
+            </div>
+          </PopoverContent>
+        </Popover>
         <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={restart} title="Restart">
           <RotateCcw className="h-3.5 w-3.5" />
         </Button>
