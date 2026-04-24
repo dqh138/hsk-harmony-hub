@@ -149,7 +149,7 @@ const Auth = () => {
         email: eParsed.data,
         password: pParsed.data,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth`,
+          emailRedirectTo: buildAuthRedirectUrl(),
           data: { display_name: displayName.trim() || undefined },
         },
       });
