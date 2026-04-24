@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { Play, Pause, RotateCcw, Volume2, SkipBack, SkipForward } from "lucide-react";
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Volume1, SkipBack, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
