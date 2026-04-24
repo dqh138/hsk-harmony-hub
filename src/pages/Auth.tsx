@@ -157,8 +157,14 @@ const Auth = () => {
   const handleGoogle = async () => {
     setSubmitting(true);
     try {
+      // Persist remember choice BEFORE redirect so it applies on return.
+      try {
+        if (remember) localStorage.setItem(REMEMBER_KEY, "1");
+        else localStorage.removeItem(REMEMBER_KEY);
+      } catch { /* noop */ }
+
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${window.location.origin}/auth`,
       });
       if (result.error) {
         const msg = result.error instanceof Error ? result.error.message : "Đăng nhập Google thất bại";
@@ -167,6 +173,7 @@ const Auth = () => {
         return;
       }
       if (result.redirected) return;
+      applyRememberPreference(remember);
       navigate("/saved-words", { replace: true });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Lỗi không xác định";
