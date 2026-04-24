@@ -94,6 +94,27 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
     return `${m}:${sec.toString().padStart(2, "0")}`;
   };
 
+  // Apply volume / mute to the audio element and persist
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = volume;
+    audio.muted = muted;
+    try {
+      localStorage.setItem("hskhub:audio-volume", String(volume));
+    } catch { /* noop */ }
+  }, [volume, muted]);
+
+  const handleVolumeChange = (val: number[]) => {
+    const v = Math.min(1, Math.max(0, val[0] / 100));
+    setVolume(v);
+    if (v > 0 && muted) setMuted(false);
+  };
+
+  const toggleMute = () => setMuted((m) => !m);
+
+  const VolumeIcon = muted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
+
   return (
     <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
       <audio ref={audioRef} src={src} preload="metadata" />
