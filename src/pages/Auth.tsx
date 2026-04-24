@@ -138,11 +138,12 @@ const Auth = () => {
         email: eParsed.data,
         password: pParsed.data,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: `${window.location.origin}/auth`,
           data: { display_name: displayName.trim() || undefined },
         },
       });
       if (error) throw error;
+      applyRememberPreference(remember);
       toast({ title: "Tạo tài khoản thành công", description: "Đang đăng nhập..." });
       navigate("/saved-words", { replace: true });
     } catch (err) {
