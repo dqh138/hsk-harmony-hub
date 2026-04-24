@@ -331,12 +331,14 @@ const Flashcards = () => {
             >
               {!flipped ? (
                 <>
-                  <div className="font-serif text-6xl font-bold text-foreground">{current.word.hanzi}</div>
+                  <HanziStrokeAnimation text={current.word.hanzi} size={140} replayKey={current.word.id} />
                   <div className="mt-6 text-sm text-muted-foreground">Nhấn để xem nghĩa</div>
                 </>
               ) : (
                 <div className="space-y-3">
-                  <div className="font-serif text-5xl font-bold text-foreground">{current.word.hanzi}</div>
+                  <div className="flex justify-center">
+                    <HanziStrokeAnimation text={current.word.hanzi} size={110} replayKey={`${current.word.id}-back`} />
+                  </div>
                   <div className="text-xl text-primary">{current.word.pinyin}</div>
                   <div className="text-sm text-muted-foreground">{current.word.pos}</div>
                   <div className="text-lg font-medium">{current.word.meaning}</div>
