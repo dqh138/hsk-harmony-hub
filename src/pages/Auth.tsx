@@ -63,6 +63,38 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [remember, setRemember] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(REMEMBER_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  // Handle OAuth code/error landing on /auth (or accidental landing on /)
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const code = url.searchParams.get("code");
+    const errDesc = url.searchParams.get("error_description");
+    if (errDesc) {
+      toast({ title: "Đăng nhập Google thất bại", description: errDesc, variant: "destructive" });
+      url.searchParams.delete("error");
+      url.searchParams.delete("error_description");
+      window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+      return;
+    }
+    if (code) {
+      // Strip the code from URL immediately to avoid 404 on refresh
+      url.searchParams.delete("code");
+      url.searchParams.delete("state");
+      window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+        if (error) {
+          toast({ title: "Lỗi xác thực", description: error.message, variant: "destructive" });
+        }
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (!loading && session) navigate("/saved-words", { replace: true });
