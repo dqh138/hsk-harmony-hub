@@ -23,6 +23,12 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [speed, setSpeed] = useState(1);
+  const [volume, setVolume] = useState(() => {
+    if (typeof window === "undefined") return 1;
+    const saved = parseFloat(localStorage.getItem("hskhub:audio-volume") ?? "1");
+    return Number.isFinite(saved) ? Math.min(1, Math.max(0, saved)) : 1;
+  });
+  const [muted, setMuted] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
