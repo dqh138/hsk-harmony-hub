@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { Play, Pause, RotateCcw, Volume2, SkipBack, SkipForward } from "lucide-react";
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Volume1, SkipBack, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,12 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [speed, setSpeed] = useState(1);
+  const [volume, setVolume] = useState(() => {
+    if (typeof window === "undefined") return 1;
+    const saved = parseFloat(localStorage.getItem("hskhub:audio-volume") ?? "1");
+    return Number.isFinite(saved) ? Math.min(1, Math.max(0, saved)) : 1;
+  });
+  const [muted, setMuted] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -87,6 +94,27 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
     return `${m}:${sec.toString().padStart(2, "0")}`;
   };
 
+  // Apply volume / mute to the audio element and persist
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = volume;
+    audio.muted = muted;
+    try {
+      localStorage.setItem("hskhub:audio-volume", String(volume));
+    } catch { /* noop */ }
+  }, [volume, muted]);
+
+  const handleVolumeChange = (val: number[]) => {
+    const v = Math.min(1, Math.max(0, val[0] / 100));
+    setVolume(v);
+    if (v > 0 && muted) setMuted(false);
+  };
+
+  const toggleMute = () => setMuted((m) => !m);
+
+  const VolumeIcon = muted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
+
   return (
     <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
       <audio ref={audioRef} src={src} preload="metadata" />
@@ -136,6 +164,42 @@ const AudioPlayer = ({ src, title }: AudioPlayerProps) => {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0"
+              title={`Âm lượng ${Math.round((muted ? 0 : volume) * 100)}%`}
+              onDoubleClick={toggleMute}
+            >
+              <VolumeIcon className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent side="top" align="center" className="w-auto p-3">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 shrink-0"
+                onClick={toggleMute}
+                title={muted ? "Bật tiếng" : "Tắt tiếng"}
+              >
+                <VolumeIcon className="h-4 w-4" />
+              </Button>
+              <Slider
+                value={[muted ? 0 : Math.round(volume * 100)]}
+                max={100}
+                step={1}
+                onValueChange={handleVolumeChange}
+                className="w-32"
+              />
+              <span className="w-9 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
+                {muted ? 0 : Math.round(volume * 100)}%
+              </span>
+            </div>
+          </PopoverContent>
+        </Popover>
         <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={restart} title="Restart">
           <RotateCcw className="h-3.5 w-3.5" />
         </Button>
