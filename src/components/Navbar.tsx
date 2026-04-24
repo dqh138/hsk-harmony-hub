@@ -288,16 +288,28 @@ const Navbar = () => {
           </Link>
 
           {user ? (
-            <button
-              onClick={() => {
-                setOpen(false);
-                handleSignOut();
-              }}
-              className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-            >
-              <LogOut className="h-4 w-4" />
-              Đăng xuất ({user.email})
-            </button>
+            <>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  setAccountInfoOpen(true);
+                }}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <UserCircle2 className="h-4 w-4" />
+                Thông tin tài khoản
+              </button>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  handleSignOut();
+                }}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-destructive transition-colors hover:bg-muted"
+              >
+                <LogOut className="h-4 w-4" />
+                Đăng xuất
+              </button>
+            </>
           ) : (
             <Link
               to="/auth"
@@ -310,6 +322,40 @@ const Navbar = () => {
           )}
         </div>
       )}
+
+      <Dialog open={accountInfoOpen} onOpenChange={setAccountInfoOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserCircle2 className="h-5 w-5" />
+              Thông tin tài khoản
+            </DialogTitle>
+            <DialogDescription>Chi tiết tài khoản đăng nhập của bạn.</DialogDescription>
+          </DialogHeader>
+          {user && (
+            <div className="space-y-3 text-sm">
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">Email</span>
+                <span className="font-medium break-all">{user.email ?? "—"}</span>
+              </div>
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">Phương thức đăng nhập</span>
+                <span className="font-medium capitalize">{accountProvider}</span>
+              </div>
+              {accountCreatedAt && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-muted-foreground">Ngày tạo tài khoản</span>
+                  <span className="font-medium">{accountCreatedAt}</span>
+                </div>
+              )}
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">User ID</span>
+                <span className="font-mono text-xs break-all text-muted-foreground">{user.id}</span>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </nav>
   );
 };
