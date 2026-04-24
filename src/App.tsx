@@ -73,6 +73,7 @@ const App = () => (
       <ChineseDecorBackdrop />
       <BrowserRouter>
         <AuthProvider>
+          <PreviewTokenBridge />
           <SavedWordsBootstrap />
           <StudyToolsLayer />
           <Routes>
