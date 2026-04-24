@@ -50,6 +50,17 @@ const applyRememberPreference = (remember: boolean) => {
   }
 };
 
+const buildAuthRedirectUrl = () => {
+  const url = new URL("/auth", window.location.origin);
+  try {
+    const previewToken = new URLSearchParams(window.location.search).get("__lovable_token");
+    if (previewToken) url.searchParams.set("__lovable_token", previewToken);
+  } catch {
+    /* noop */
+  }
+  return url.toString();
+};
+
 const emailSchema = z.string().trim().email("Email không hợp lệ").max(255);
 const passwordSchema = z
   .string()
