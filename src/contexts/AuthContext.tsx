@@ -22,8 +22,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // CRITICAL: set up listener BEFORE getSession to avoid races.
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
+      // Enforce "remember me": if user opted out, mirror auth token to
+      // sessionStorage so it disappears when the tab closes.
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        try {
+          const remember = localStorage.getItem("hskhub:remember-session") === "1";
+          if (!remember) {
+            const toMove: string[] = [];
+            for (let i = 0; i < localStorage.length; i++) {
+              const k = localStorage.key(i);
+              if (k && k.startsWith("sb-") && k.endsWith("-auth-token")) toMove.push(k);
+            }
+            for (const k of toMove) {
+              const v = localStorage.getItem(k);
+              if (v) sessionStorage.setItem(k, v);
+              localStorage.removeItem(k);
+            }
+          }
+        } catch { /* noop */ }
+      }
     });
 
     supabase.auth.getSession().then(({ data }) => {

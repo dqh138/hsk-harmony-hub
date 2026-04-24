@@ -7,11 +7,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/contexts/AuthContext";
+
+const REMEMBER_KEY = "hskhub:remember-session";
+
+// Move session from localStorage -> sessionStorage when "remember" is OFF.
+// Supabase client persists to localStorage by default; we migrate after auth
+// so closing the tab clears the session.
+const applyRememberPreference = (remember: boolean) => {
+  try {
+    if (remember) {
+      localStorage.setItem(REMEMBER_KEY, "1");
+      // Restore from sessionStorage if it lived there from a previous session
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const k = sessionStorage.key(i);
+        if (k && k.startsWith("sb-") && k.endsWith("-auth-token")) {
+          const v = sessionStorage.getItem(k);
+          if (v && !localStorage.getItem(k)) localStorage.setItem(k, v);
+        }
+      }
+      return;
+    }
+    localStorage.removeItem(REMEMBER_KEY);
+    // Move every supabase auth token key to sessionStorage
+    const keysToMove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith("sb-") && k.endsWith("-auth-token")) keysToMove.push(k);
+    }
+    for (const k of keysToMove) {
+      const v = localStorage.getItem(k);
+      if (v) sessionStorage.setItem(k, v);
+      localStorage.removeItem(k);
+    }
+  } catch {
+    /* storage may be unavailable */
+  }
+};
 
 const emailSchema = z.string().trim().email("Email không hợp lệ").max(255);
 const passwordSchema = z
@@ -26,6 +63,38 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [remember, setRemember] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(REMEMBER_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  // Handle OAuth code/error landing on /auth (or accidental landing on /)
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const code = url.searchParams.get("code");
+    const errDesc = url.searchParams.get("error_description");
+    if (errDesc) {
+      toast({ title: "Đăng nhập Google thất bại", description: errDesc, variant: "destructive" });
+      url.searchParams.delete("error");
+      url.searchParams.delete("error_description");
+      window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+      return;
+    }
+    if (code) {
+      // Strip the code from URL immediately to avoid 404 on refresh
+      url.searchParams.delete("code");
+      url.searchParams.delete("state");
+      window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+        if (error) {
+          toast({ title: "Lỗi xác thực", description: error.message, variant: "destructive" });
+        }
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (!loading && session) navigate("/saved-words", { replace: true });
@@ -45,6 +114,7 @@ const Auth = () => {
         password: pParsed.data,
       });
       if (error) throw error;
+      applyRememberPreference(remember);
       toast({ title: "Đăng nhập thành công" });
       navigate("/saved-words", { replace: true });
     } catch (err) {
@@ -68,11 +138,12 @@ const Auth = () => {
         email: eParsed.data,
         password: pParsed.data,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: `${window.location.origin}/auth`,
           data: { display_name: displayName.trim() || undefined },
         },
       });
       if (error) throw error;
+      applyRememberPreference(remember);
       toast({ title: "Tạo tài khoản thành công", description: "Đang đăng nhập..." });
       navigate("/saved-words", { replace: true });
     } catch (err) {
@@ -86,8 +157,14 @@ const Auth = () => {
   const handleGoogle = async () => {
     setSubmitting(true);
     try {
+      // Persist remember choice BEFORE redirect so it applies on return.
+      try {
+        if (remember) localStorage.setItem(REMEMBER_KEY, "1");
+        else localStorage.removeItem(REMEMBER_KEY);
+      } catch { /* noop */ }
+
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${window.location.origin}/auth`,
       });
       if (result.error) {
         const msg = result.error instanceof Error ? result.error.message : "Đăng nhập Google thất bại";
@@ -96,6 +173,7 @@ const Auth = () => {
         return;
       }
       if (result.redirected) return;
+      applyRememberPreference(remember);
       navigate("/saved-words", { replace: true });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Lỗi không xác định";
@@ -113,6 +191,15 @@ const Auth = () => {
           <p className="mb-6 text-sm text-muted-foreground">
             Đăng nhập để đồng bộ 生词本 trên mọi thiết bị.
           </p>
+
+          <label className="mb-3 flex cursor-pointer select-none items-center gap-2 text-sm text-foreground">
+            <Checkbox
+              id="remember-me"
+              checked={remember}
+              onCheckedChange={(v) => setRemember(v === true)}
+            />
+            <span>Duy trì đăng nhập trên thiết bị này</span>
+          </label>
 
           <Button
             type="button"
