@@ -175,7 +175,7 @@ const Auth = () => {
       } catch { /* noop */ }
 
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/auth`,
+        redirect_uri: buildAuthRedirectUrl(),
       });
       if (result.error) {
         const msg = result.error instanceof Error ? result.error.message : "Đăng nhập Google thất bại";
