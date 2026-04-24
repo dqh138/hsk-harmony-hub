@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User } from "lucide-react";
+import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User, Layers } from "lucide-react";
 import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -107,6 +107,17 @@ const Navbar = () => {
               </Link>
             ))}
           </NavDropdown>
+
+          <Link
+            to="/flashcards"
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              location.pathname === "/flashcards" && "bg-muted"
+            )}
+          >
+            <Layers className="h-4 w-4" />
+            抽认卡
+          </Link>
 
           <Link
             to="/saved-words"
@@ -218,6 +229,15 @@ const Navbar = () => {
               ))}
             </div>
           )}
+
+          <Link
+            to="/flashcards"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          >
+            <Layers className="h-4 w-4" />
+            抽认卡 Flashcards
+          </Link>
 
           <Link
             to="/saved-words"
