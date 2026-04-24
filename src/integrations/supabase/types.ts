@@ -59,6 +59,93 @@ export type Database = {
         }
         Relationships: []
       }
+      flashcard_progress: {
+        Row: {
+          created_at: string
+          due_at: string
+          ease_factor: number
+          hanzi: string
+          id: string
+          interval_days: number
+          lapses: number
+          last_quality: number | null
+          last_reviewed_at: string | null
+          level: number
+          repetitions: number
+          total_reviews: number
+          updated_at: string
+          user_id: string
+          word_id: string
+        }
+        Insert: {
+          created_at?: string
+          due_at?: string
+          ease_factor?: number
+          hanzi: string
+          id?: string
+          interval_days?: number
+          lapses?: number
+          last_quality?: number | null
+          last_reviewed_at?: string | null
+          level: number
+          repetitions?: number
+          total_reviews?: number
+          updated_at?: string
+          user_id: string
+          word_id: string
+        }
+        Update: {
+          created_at?: string
+          due_at?: string
+          ease_factor?: number
+          hanzi?: string
+          id?: string
+          interval_days?: number
+          lapses?: number
+          last_quality?: number | null
+          last_reviewed_at?: string | null
+          level?: number
+          repetitions?: number
+          total_reviews?: number
+          updated_at?: string
+          user_id?: string
+          word_id?: string
+        }
+        Relationships: []
+      }
+      flashcard_reviews: {
+        Row: {
+          ease_factor: number
+          id: string
+          interval_days: number
+          level: number
+          quality: number
+          reviewed_at: string
+          user_id: string
+          word_id: string
+        }
+        Insert: {
+          ease_factor?: number
+          id?: string
+          interval_days?: number
+          level: number
+          quality: number
+          reviewed_at?: string
+          user_id: string
+          word_id: string
+        }
+        Update: {
+          ease_factor?: number
+          id?: string
+          interval_days?: number
+          level?: number
+          quality?: number
+          reviewed_at?: string
+          user_id?: string
+          word_id?: string
+        }
+        Relationships: []
+      }
       highlights: {
         Row: {
           context_after: string

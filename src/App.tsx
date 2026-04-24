@@ -10,6 +10,7 @@ import Grammar from "./pages/Grammar";
 import MockExams from "./pages/MockExams";
 import MockExamPractice from "./pages/MockExamPractice";
 import SavedWords from "./pages/SavedWords";
+import Flashcards from "./pages/Flashcards";
 import VocabularyLevel from "./pages/VocabularyLevel";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/mock-exams" element={<MockExams />} />
             <Route path="/mock-exam/:examId" element={<MockExamPractice />} />
             <Route path="/saved-words" element={<SavedWords />} />
+            <Route path="/flashcards" element={<Flashcards />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
