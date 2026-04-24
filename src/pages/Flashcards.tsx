@@ -14,6 +14,7 @@ import { nextSrs, QUALITY_LABELS, type SrsState } from "@/lib/srs";
 import { saveWord } from "@/lib/savedWords";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import HanziStrokeAnimation from "@/components/HanziStrokeAnimation";
 
 type ProgressRow = {
   word_id: string;
