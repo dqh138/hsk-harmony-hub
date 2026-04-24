@@ -14,6 +14,15 @@ interface Props {
  * Renders Chinese characters as an animated stroke-by-stroke writing,
  * pausing on the completed character. Falls back to plain text on error.
  */
+const resolvePrimaryColor = () => {
+  if (typeof window === "undefined") return "#c8102e";
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue("--primary")
+    .trim();
+  // raw is in form "0 84% 60%" — wrap into hsl()
+  return raw ? `hsl(${raw})` : "#c8102e";
+};
+
 const HanziStrokeAnimation = ({ text, size = 140, replayKey }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const writersRef = useRef<HanziWriter[]>([]);
@@ -25,6 +34,7 @@ const HanziStrokeAnimation = ({ text, size = 140, replayKey }: Props) => {
     containerRef.current.innerHTML = "";
     writersRef.current = [];
 
+    const strokeColor = resolvePrimaryColor();
     const chars = Array.from(text);
     let cancelled = false;
 
@@ -32,7 +42,6 @@ const HanziStrokeAnimation = ({ text, size = 140, replayKey }: Props) => {
       for (let i = 0; i < chars.length; i++) {
         if (cancelled) return;
         const ch = chars[i];
-        // Skip non-CJK characters (render as plain span)
         if (!/\p{Script=Han}/u.test(ch)) {
           const span = document.createElement("span");
           span.textContent = ch;
@@ -55,8 +64,8 @@ const HanziStrokeAnimation = ({ text, size = 140, replayKey }: Props) => {
             padding: 4,
             strokeAnimationSpeed: 1.2,
             delayBetweenStrokes: 80,
-            strokeColor: "hsl(var(--primary))",
-            radicalColor: "hsl(var(--primary))",
+            strokeColor,
+            radicalColor: strokeColor,
           });
           writersRef.current.push(writer);
           await new Promise<void>((resolve) => {
