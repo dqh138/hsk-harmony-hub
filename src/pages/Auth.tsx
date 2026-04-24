@@ -192,6 +192,15 @@ const Auth = () => {
             Đăng nhập để đồng bộ 生词本 trên mọi thiết bị.
           </p>
 
+          <label className="mb-3 flex cursor-pointer select-none items-center gap-2 text-sm text-foreground">
+            <Checkbox
+              id="remember-me"
+              checked={remember}
+              onCheckedChange={(v) => setRemember(v === true)}
+            />
+            <span>Duy trì đăng nhập trên thiết bị này</span>
+          </label>
+
           <Button
             type="button"
             variant="outline"
