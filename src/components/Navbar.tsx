@@ -153,14 +153,31 @@ const Navbar = () => {
           </Link>
 
           {user ? (
-            <button
-              onClick={handleSignOut}
-              className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-              title={user.email ?? "Đã đăng nhập"}
-            >
-              <User className="h-4 w-4" />
-              <LogOut className="h-3.5 w-3.5 opacity-70" />
-            </button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+                  title={user.email ?? "Đã đăng nhập"}
+                >
+                  <User className="h-4 w-4" />
+                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[200px]">
+                <DropdownMenuLabel className="truncate text-xs font-normal text-muted-foreground">
+                  {user.email ?? "Tài khoản"}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => setAccountInfoOpen(true)}>
+                  <UserCircle2 className="mr-2 h-4 w-4" />
+                  Thông tin tài khoản
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleSignOut} className="text-destructive focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Đăng xuất
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Link
               to="/auth"
