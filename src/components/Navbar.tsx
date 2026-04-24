@@ -57,6 +57,7 @@ const Navbar = () => {
   const [grammarOpen, setGrammarOpen] = useState(false);
   const [vocabOpen, setVocabOpen] = useState(false);
   const [examOpen, setExamOpen] = useState(false);
+  const [accountInfoOpen, setAccountInfoOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
 
@@ -64,6 +65,12 @@ const Navbar = () => {
     await signOut();
     toast({ title: "Đã đăng xuất" });
   };
+
+  const accountCreatedAt = user?.created_at
+    ? new Date(user.created_at).toLocaleString("vi-VN")
+    : null;
+  const accountProvider =
+    (user?.app_metadata as { provider?: string } | undefined)?.provider ?? "email";
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
