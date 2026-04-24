@@ -114,6 +114,7 @@ const Auth = () => {
         password: pParsed.data,
       });
       if (error) throw error;
+      applyRememberPreference(remember);
       toast({ title: "Đăng nhập thành công" });
       navigate("/saved-words", { replace: true });
     } catch (err) {
