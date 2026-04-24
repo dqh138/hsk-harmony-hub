@@ -50,6 +50,17 @@ const applyRememberPreference = (remember: boolean) => {
   }
 };
 
+const buildAuthRedirectUrl = () => {
+  const url = new URL("/auth", window.location.origin);
+  try {
+    const previewToken = new URLSearchParams(window.location.search).get("__lovable_token");
+    if (previewToken) url.searchParams.set("__lovable_token", previewToken);
+  } catch {
+    /* noop */
+  }
+  return url.toString();
+};
+
 const emailSchema = z.string().trim().email("Email không hợp lệ").max(255);
 const passwordSchema = z
   .string()
@@ -138,7 +149,7 @@ const Auth = () => {
         email: eParsed.data,
         password: pParsed.data,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth`,
+          emailRedirectTo: buildAuthRedirectUrl(),
           data: { display_name: displayName.trim() || undefined },
         },
       });
@@ -164,7 +175,7 @@ const Auth = () => {
       } catch { /* noop */ }
 
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/auth`,
+        redirect_uri: buildAuthRedirectUrl(),
       });
       if (result.error) {
         const msg = result.error instanceof Error ? result.error.message : "Đăng nhập Google thất bại";
