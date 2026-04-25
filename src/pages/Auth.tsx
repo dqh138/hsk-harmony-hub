@@ -11,7 +11,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/contexts/AuthContext";
 
 const REMEMBER_KEY = "hskhub:remember-session";
@@ -174,18 +173,17 @@ const Auth = () => {
         else localStorage.removeItem(REMEMBER_KEY);
       } catch { /* noop */ }
 
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: buildAuthRedirectUrl(),
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: buildAuthRedirectUrl(),
+        },
       });
-      if (result.error) {
-        const msg = result.error instanceof Error ? result.error.message : "Đăng nhập Google thất bại";
-        toast({ title: "Lỗi", description: msg, variant: "destructive" });
+      if (error) {
+        toast({ title: "Lỗi", description: error.message, variant: "destructive" });
         setSubmitting(false);
-        return;
       }
-      if (result.redirected) return;
-      applyRememberPreference(remember);
-      navigate("/saved-words", { replace: true });
+      // Nếu không lỗi, browser tự redirect đến Google → không cần làm gì thêm
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Lỗi không xác định";
       toast({ title: "Lỗi", description: msg, variant: "destructive" });
