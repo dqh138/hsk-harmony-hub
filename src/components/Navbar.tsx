@@ -281,6 +281,15 @@ const Navbar = () => {
           )}
 
           <Link
+            to="/conversations"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          >
+            <MessageSquare className="h-4 w-4" />
+            对话 Hội thoại
+          </Link>
+
+          <Link
             to="/flashcards"
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
