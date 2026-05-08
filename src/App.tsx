@@ -89,6 +89,9 @@ const App = () => (
             <Route path="/mock-exam/:examId" element={<MockExamPractice />} />
             <Route path="/saved-words" element={<SavedWords />} />
             <Route path="/flashcards" element={<Flashcards />} />
+            <Route path="/conversations" element={<Conversations />} />
+            <Route path="/conversations/:level" element={<ConversationLevel />} />
+            <Route path="/conversations/:level/:id" element={<ConversationPractice />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
