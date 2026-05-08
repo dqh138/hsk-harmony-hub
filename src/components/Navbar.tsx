@@ -131,6 +131,17 @@ const Navbar = () => {
           </NavDropdown>
 
           <Link
+            to="/conversations"
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              location.pathname.startsWith("/conversations") && "bg-muted"
+            )}
+          >
+            <MessageSquare className="h-4 w-4" />
+            对话
+          </Link>
+
+          <Link
             to="/flashcards"
             className={cn(
               "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
