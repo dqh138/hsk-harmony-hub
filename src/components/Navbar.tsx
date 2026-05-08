@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User, Layers, UserCircle2 } from "lucide-react";
+import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User, Layers, UserCircle2, MessageSquare } from "lucide-react";
 import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -129,6 +129,17 @@ const Navbar = () => {
               </Link>
             ))}
           </NavDropdown>
+
+          <Link
+            to="/conversations"
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              location.pathname.startsWith("/conversations") && "bg-muted"
+            )}
+          >
+            <MessageSquare className="h-4 w-4" />
+            对话
+          </Link>
 
           <Link
             to="/flashcards"
@@ -268,6 +279,15 @@ const Navbar = () => {
               ))}
             </div>
           )}
+
+          <Link
+            to="/conversations"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          >
+            <MessageSquare className="h-4 w-4" />
+            对话 Hội thoại
+          </Link>
 
           <Link
             to="/flashcards"

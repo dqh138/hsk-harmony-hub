@@ -13,6 +13,9 @@ import SavedWords from "./pages/SavedWords";
 import Flashcards from "./pages/Flashcards";
 import VocabularyLevel from "./pages/VocabularyLevel";
 import Auth from "./pages/Auth";
+import Conversations from "./pages/Conversations";
+import ConversationLevel from "./pages/ConversationLevel";
+import ConversationPractice from "./pages/ConversationPractice";
 import NotFound from "./pages/NotFound";
 import StudyToolsLayer from "./components/StudyToolsLayer";
 import { ChineseDecorBackdrop } from "./components/ChineseDecor";
@@ -86,6 +89,9 @@ const App = () => (
             <Route path="/mock-exam/:examId" element={<MockExamPractice />} />
             <Route path="/saved-words" element={<SavedWords />} />
             <Route path="/flashcards" element={<Flashcards />} />
+            <Route path="/conversations" element={<Conversations />} />
+            <Route path="/conversations/:level" element={<ConversationLevel />} />
+            <Route path="/conversations/:level/:id" element={<ConversationPractice />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
