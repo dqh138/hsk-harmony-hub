@@ -26,7 +26,7 @@ const ConversationPractice = () => {
   const [scores, setScores] = useState<Record<number, ScoreResult>>({});
   const [recording, setRecording] = useState(false);
   const [recState, setRecState] = useState<"idle" | "starting" | "running" | "stopping">("idle");
-  const recordTranscribeRef = useRef<RecordTranscribe | null>(null);
+  const recordTranscribeRef = useRef<InstanceType<typeof RecordTranscribe> | null>(null);
   const finalTextRef = useRef<string>("");
   const [liveText, setLiveText] = useState("");
 
