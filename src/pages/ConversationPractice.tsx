@@ -10,7 +10,7 @@ import { LEVEL_META, type ConvLevel } from "@/data/conversationTypes";
 import { getConversationById } from "@/data/conversations";
 import { scorePronunciation, type ScoreResult } from "@/lib/pronunciationScore";
 import { supabase } from "@/integrations/supabase/client";
-import { RecordTranscribe } from "@soniox/speech-to-text-web";
+import { SonioxClient } from "@soniox/speech-to-text-web";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,7 @@ const ConversationPractice = () => {
   const [scores, setScores] = useState<Record<number, ScoreResult>>({});
   const [recording, setRecording] = useState(false);
   const [recState, setRecState] = useState<"idle" | "starting" | "running" | "stopping">("idle");
-  const recordTranscribeRef = useRef<InstanceType<typeof RecordTranscribe> | null>(null);
+  const recordTranscribeRef = useRef<InstanceType<typeof SonioxClient> | null>(null);
   const finalTextRef = useRef<string>("");
   const [liveText, setLiveText] = useState("");
 
@@ -57,22 +57,38 @@ const ConversationPractice = () => {
 
   const startRecording = async () => {
     if (recState !== "idle") return;
+    if (!SonioxClient.isSupported) {
+      toast({
+        title: "Trình duyệt không hỗ trợ ghi âm",
+        description: "Hãy mở bằng Chrome/Edge mới nhất và cho phép quyền dùng micro.",
+        variant: "destructive",
+      });
+      return;
+    }
     setRecState("starting");
     finalTextRef.current = "";
     setLiveText("");
     try {
-      const { data, error } = await supabase.functions.invoke("soniox-token");
-      if (error || !data?.api_key) {
-        throw new Error(data?.error || error?.message || "Không lấy được token");
-      }
-      const apiKey = data.api_key as string;
-
-      const rt = new RecordTranscribe({ apiKey });
+      const rt = new SonioxClient({
+        apiKey: async () => {
+          const { data, error } = await supabase.functions.invoke("soniox-token");
+          if (error || !data?.api_key) {
+            throw new Error(data?.error || error?.message || "Không lấy được token Soniox");
+          }
+          return data.api_key as string;
+        },
+      });
       recordTranscribeRef.current = rt;
 
-      rt.start({
+      await rt.start({
         model: "stt-rt-preview-v2",
         languageHints: ["zh"],
+        audioConstraints: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          channelCount: 1,
+        },
         onStarted: () => {
           setRecState("running");
           setRecording(true);
@@ -96,8 +112,15 @@ const ConversationPractice = () => {
           recordTranscribeRef.current = null;
         },
         onError: (status: string, message: string) => {
-          console.error("Soniox error", status, message);
-          toast({ title: "Lỗi ghi âm", description: message, variant: "destructive" });
+          const micMessage = status === "get_user_media_failed"
+            ? "Không truy cập được micro. Hãy kiểm tra micro đã cắm/kết nối, cấp quyền micro cho trình duyệt rồi thử lại."
+            : message;
+          if (status === "get_user_media_failed") {
+            console.warn("Micro unavailable", message);
+          } else {
+            console.error("Soniox error", status, message);
+          }
+          toast({ title: "Lỗi ghi âm", description: micMessage, variant: "destructive" });
           setRecState("idle");
           setRecording(false);
           recordTranscribeRef.current = null;
@@ -105,8 +128,13 @@ const ConversationPractice = () => {
       });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      toast({ title: "Không thể bắt đầu ghi âm", description: msg, variant: "destructive" });
+      const description = msg.includes("Failed to create stream")
+        ? "Không tìm thấy micro khả dụng. Hãy kết nối/cấp quyền micro rồi bấm thử lại."
+        : msg;
+      toast({ title: "Không thể bắt đầu ghi âm", description, variant: "destructive" });
       setRecState("idle");
+      setRecording(false);
+      recordTranscribeRef.current = null;
     }
   };
 
