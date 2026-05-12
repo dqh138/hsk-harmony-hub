@@ -170,8 +170,15 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   const url = new URL(req.url);
-  const source = url.searchParams.get("source") || "";
-  const force = url.searchParams.get("force") === "1";
+  let source = url.searchParams.get("source") || "";
+  let force = url.searchParams.get("force") === "1";
+  if (req.method === "POST") {
+    try {
+      const body = await req.json();
+      source = body.source ?? source;
+      force = body.force ?? force;
+    } catch { /* ignore */ }
+  }
 
   if (!ALLOWED.includes(source)) {
     return new Response(
