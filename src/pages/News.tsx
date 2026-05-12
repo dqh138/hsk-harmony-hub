@@ -51,13 +51,12 @@ const SourceCard = ({ source }: { source: SourceDef }) => {
     setLoading(true);
     setError(null);
     try {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chinese-news?source=${source.id}${force ? "&force=1" : ""}`;
-      const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
-      const r = await fetch(url, {
-        headers: { apikey: key, Authorization: `Bearer ${key}` },
-      });
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const json = (await r.json()) as NewsResponse;
+      const { data: json, error: err } = await supabase.functions.invoke<NewsResponse>(
+        "chinese-news",
+        { body: { source: source.id, force } }
+      );
+      if (err) throw err;
+      if (!json) throw new Error("Empty response");
       setData(json);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Lỗi tải tin");
