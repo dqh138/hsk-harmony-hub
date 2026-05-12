@@ -93,6 +93,7 @@ const App = () => (
             <Route path="/conversations" element={<Conversations />} />
             <Route path="/conversations/:level" element={<ConversationLevel />} />
             <Route path="/conversations/:level/:id" element={<ConversationPractice />} />
+            <Route path="/news" element={<News />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
