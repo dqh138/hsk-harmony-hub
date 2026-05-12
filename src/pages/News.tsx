@@ -169,6 +169,10 @@ const News = () => {
             </TabsContent>
           ))}
         </Tabs>
+
+        <p className="mt-10 text-center text-xs italic text-muted-foreground">
+          Nguồn dữ liệu: NewsNow
+        </p>
       </main>
     </div>
   );
