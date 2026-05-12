@@ -31,15 +31,35 @@ async function f(url: string, init: RequestInit = {}) {
 // ---------- Sources ----------
 const sources: Record<string, () => Promise<NewsItem[]>> = {
   weibo: async () => {
-    const r = await f("https://weibo.com/ajax/side/hotSearch");
-    const j = await r.json();
-    const list = (j?.data?.realtime ?? []) as Array<{ word: string; num?: number; word_scheme?: string }>;
-    return list.slice(0, 30).map((k) => ({
-      id: k.word,
-      title: k.word,
-      url: `https://s.weibo.com/weibo?q=${encodeURIComponent(k.word_scheme || `#${k.word}#`)}`,
-      extra: k.num ? `${(k.num / 10000).toFixed(1)}万热度` : undefined,
-    }));
+    const url = "https://s.weibo.com/top/summary?cate=realtimehot";
+    const r = await f(url, {
+      headers: {
+        Cookie:
+          "SUB=_2AkMWIuNSf8NxqwJRmP8dy2rhaoV2ygrEieKgfhKJJRMxHRl-yT9jqk86tRB6PaLNvQZR6zYUcYVT1zSjoSreQHidcUq7",
+        Referer: url,
+      },
+    });
+    const html = await r.text();
+    const items: NewsItem[] = [];
+    // Match each <tr> row's title+href in td.td-02
+    const rowRe =
+      /<tr[^>]*>[\s\S]*?<td class="td-02">[\s\S]*?<a href="(\/weibo[^"]+)"[^>]*>([^<]+)<\/a>([\s\S]*?)<\/td>/g;
+    let m: RegExpExecArray | null;
+    while ((m = rowRe.exec(html)) !== null) {
+      const href = m[1];
+      const title = m[2].trim();
+      const rest = m[3];
+      const hotMatch = rest.match(/<span>([\d,]+)<\/span>/);
+      if (!title) continue;
+      items.push({
+        id: title,
+        title,
+        url: `https://s.weibo.com${href}`,
+        extra: hotMatch ? `${(Number(hotMatch[1].replace(/,/g, "")) / 10000).toFixed(1)}万` : undefined,
+      });
+      if (items.length >= 30) break;
+    }
+    return items;
   },
 
   baidu: async () => {
