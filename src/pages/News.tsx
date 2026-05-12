@@ -151,9 +151,6 @@ const News = () => {
           <p className="mt-1 text-sm text-muted-foreground">
             Tin nóng tổng hợp từ các nguồn lớn của Trung Quốc · Cache 12 giờ · Click vào tin để xem nguồn gốc.
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Nguồn dữ liệu: <Link to="https://github.com/ourongxing/newsnow" className="underline" target="_blank" rel="noopener noreferrer">NewsNow</Link>
-          </p>
         </div>
 
         <Tabs defaultValue={groups[0].key}>
