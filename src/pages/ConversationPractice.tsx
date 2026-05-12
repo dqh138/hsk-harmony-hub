@@ -112,10 +112,14 @@ const ConversationPractice = () => {
           recordTranscribeRef.current = null;
         },
         onError: (status: string, message: string) => {
-          console.error("Soniox error", status, message);
           const micMessage = status === "get_user_media_failed"
             ? "Không truy cập được micro. Hãy kiểm tra micro đã cắm/kết nối, cấp quyền micro cho trình duyệt rồi thử lại."
             : message;
+          if (status === "get_user_media_failed") {
+            console.warn("Micro unavailable", message);
+          } else {
+            console.error("Soniox error", status, message);
+          }
           toast({ title: "Lỗi ghi âm", description: micMessage, variant: "destructive" });
           setRecState("idle");
           setRecording(false);
