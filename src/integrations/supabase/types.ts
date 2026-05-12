@@ -176,6 +176,24 @@ export type Database = {
         }
         Relationships: []
       }
+      news_cache: {
+        Row: {
+          payload: Json
+          source_id: string
+          updated_at: string
+        }
+        Insert: {
+          payload: Json
+          source_id: string
+          updated_at?: string
+        }
+        Update: {
+          payload?: Json
+          source_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

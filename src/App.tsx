@@ -14,6 +14,7 @@ import Flashcards from "./pages/Flashcards";
 import VocabularyLevel from "./pages/VocabularyLevel";
 import Auth from "./pages/Auth";
 import Conversations from "./pages/Conversations";
+import News from "./pages/News";
 import ConversationLevel from "./pages/ConversationLevel";
 import ConversationPractice from "./pages/ConversationPractice";
 import NotFound from "./pages/NotFound";
@@ -92,6 +93,7 @@ const App = () => (
             <Route path="/conversations" element={<Conversations />} />
             <Route path="/conversations/:level" element={<ConversationLevel />} />
             <Route path="/conversations/:level/:id" element={<ConversationPractice />} />
+            <Route path="/news" element={<News />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
