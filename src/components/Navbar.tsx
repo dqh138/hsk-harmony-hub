@@ -301,6 +301,16 @@ const Navbar = () => {
           </Link>
 
           <Link
+            to="/news"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          >
+            <Newspaper className="h-4 w-4" />
+            新闻 Tin Trung Quốc
+          </Link>
+          </Link>
+
+          <Link
             to="/flashcards"
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
