@@ -53,8 +53,9 @@ const SourceCard = ({ source }: { source: SourceDef }) => {
     setError(null);
     try {
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chinese-news?source=${source.id}${force ? "&force=1" : ""}`;
+      const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
       const r = await fetch(url, {
-        headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string },
+        headers: { apikey: key, Authorization: `Bearer ${key}` },
       });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const json = (await r.json()) as NewsResponse;
