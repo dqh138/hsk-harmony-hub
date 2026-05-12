@@ -142,6 +142,17 @@ const Navbar = () => {
           </Link>
 
           <Link
+            to="/news"
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              location.pathname.startsWith("/news") && "bg-muted"
+            )}
+          >
+            <Newspaper className="h-4 w-4" />
+            新闻
+          </Link>
+
+          <Link
             to="/flashcards"
             className={cn(
               "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
