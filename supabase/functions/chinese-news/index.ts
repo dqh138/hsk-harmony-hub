@@ -128,20 +128,21 @@ const sources: Record<string, () => Promise<NewsItem[]>> = {
   },
 
   ithome: async () => {
-    // Use the ranking JSON endpoint instead of HTML scraping
-    const r = await f("https://m.ithome.com/rankm/");
-    const html = await r.text();
+    const r = await f("https://www.ithome.com/rss/");
+    const xml = await r.text();
     const items: NewsItem[] = [];
-    // Look for article links in the markup
-    const re = /<a[^>]+href="(https?:\/\/www\.ithome\.com\/0\/\d+\/\d+\.htm)"[^>]*>([^<]+)<\/a>/g;
-    const seen = new Set<string>();
+    const itemRe = /<item>([\s\S]*?)<\/item>/g;
+    const get = (s: string, tag: string) => {
+      const re = new RegExp(`<${tag}>(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?<\\/${tag}>`);
+      const m = s.match(re);
+      return m ? m[1].trim() : "";
+    };
     let m: RegExpExecArray | null;
-    while ((m = re.exec(html)) !== null) {
-      const url = m[1];
-      const title = m[2].trim();
-      if (!title || seen.has(url)) continue;
-      seen.add(url);
-      items.push({ id: url, title, url });
+    while ((m = itemRe.exec(xml)) !== null) {
+      const block = m[1];
+      const title = get(block, "title");
+      const link = get(block, "link");
+      if (title && link) items.push({ id: link, title, url: link });
       if (items.length >= 30) break;
     }
     return items;
