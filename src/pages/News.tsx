@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
 import { ExternalLink, RefreshCw, Newspaper } from "lucide-react";
-
+import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
@@ -52,13 +51,12 @@ const SourceCard = ({ source }: { source: SourceDef }) => {
     setLoading(true);
     setError(null);
     try {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chinese-news?source=${source.id}${force ? "&force=1" : ""}`;
-      const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
-      const r = await fetch(url, {
-        headers: { apikey: key, Authorization: `Bearer ${key}` },
-      });
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const json = (await r.json()) as NewsResponse;
+      const { data: json, error: err } = await supabase.functions.invoke<NewsResponse>(
+        "chinese-news",
+        { body: { source: source.id, force } }
+      );
+      if (err) throw err;
+      if (!json) throw new Error("Empty response");
       setData(json);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Lỗi tải tin");
@@ -153,9 +151,6 @@ const News = () => {
           <p className="mt-1 text-sm text-muted-foreground">
             Tin nóng tổng hợp từ các nguồn lớn của Trung Quốc · Cache 12 giờ · Click vào tin để xem nguồn gốc.
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Nguồn dữ liệu: <Link to="https://github.com/ourongxing/newsnow" className="underline" target="_blank" rel="noopener noreferrer">NewsNow</Link>
-          </p>
         </div>
 
         <Tabs defaultValue={groups[0].key}>
@@ -174,6 +169,10 @@ const News = () => {
             </TabsContent>
           ))}
         </Tabs>
+
+        <p className="mt-10 text-center text-xs italic text-muted-foreground">
+          Nguồn dữ liệu: NewsNow
+        </p>
       </main>
     </div>
   );
