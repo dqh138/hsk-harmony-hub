@@ -14,6 +14,7 @@ import Flashcards from "./pages/Flashcards";
 import VocabularyLevel from "./pages/VocabularyLevel";
 import Auth from "./pages/Auth";
 import Conversations from "./pages/Conversations";
+import News from "./pages/News";
 import ConversationLevel from "./pages/ConversationLevel";
 import ConversationPractice from "./pages/ConversationPractice";
 import NotFound from "./pages/NotFound";
