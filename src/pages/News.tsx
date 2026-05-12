@@ -52,12 +52,6 @@ const SourceCard = ({ source }: { source: SourceDef }) => {
     setLoading(true);
     setError(null);
     try {
-      const { data: res, error: err } = await supabase.functions.invoke("chinese-news", {
-        method: "GET",
-        // @ts-expect-error supabase-js supports query via path
-        body: undefined,
-      });
-      // Fallback: use direct fetch to support query params reliably
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chinese-news?source=${source.id}${force ? "&force=1" : ""}`;
       const r = await fetch(url, {
         headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string },
@@ -65,7 +59,6 @@ const SourceCard = ({ source }: { source: SourceDef }) => {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const json = (await r.json()) as NewsResponse;
       setData(json);
-      void res; void err;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Lỗi tải tin");
     } finally {
