@@ -26,7 +26,6 @@ import {
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [accountInfoOpen, setAccountInfoOpen] = useState(false);
-  const [accountInfoOpen, setAccountInfoOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
 
