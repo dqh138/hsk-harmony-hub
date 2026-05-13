@@ -12,6 +12,8 @@ import {
   Volume2,
   Newspaper,
   Loader2,
+  Rewind,
+  FastForward,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -38,6 +40,13 @@ type PlaylistItem = NewsItem & { sourceId: string; sourceCn: string };
 
 const SPEEDS = [0.7, 0.85, 1.0, 1.15, 1.3, 1.5];
 const STORAGE_KEY = "hskhub:passive-listening";
+
+const formatTime = (sec: number) => {
+  if (!isFinite(sec) || sec < 0) sec = 0;
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+};
 
 const PassiveListening = () => {
   const [playlist, setPlaylist] = useState<PlaylistItem[]>([]);
@@ -69,6 +78,32 @@ const PassiveListening = () => {
 
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const stoppedManuallyRef = useRef(false);
+
+  // Time tracking (estimated, since Web Speech API has no native seek)
+  const CHARS_PER_SEC_AT_1X = 4.2; // empirical for Chinese hanzi
+  const [elapsedSec, setElapsedSec] = useState(0);
+  const [durationSec, setDurationSec] = useState(0);
+  const offsetAtStartRef = useRef(0); // seconds offset already played before current utterance
+  const startTimeRef = useRef<number | null>(null); // ms timestamp when current utterance started
+  const tickerRef = useRef<number | null>(null);
+  const pausedOffsetRef = useRef(0); // where to resume when paused
+
+  const stopTicker = () => {
+    if (tickerRef.current !== null) {
+      window.clearInterval(tickerRef.current);
+      tickerRef.current = null;
+    }
+  };
+
+  const startTicker = useCallback((totalDur: number) => {
+    stopTicker();
+    tickerRef.current = window.setInterval(() => {
+      if (startTimeRef.current === null) return;
+      const playedNow = (performance.now() - startTimeRef.current) / 1000;
+      const total = offsetAtStartRef.current + playedNow;
+      setElapsedSec(Math.min(total, totalDur));
+    }, 200) as unknown as number;
+  }, []);
 
   // Persist settings
   useEffect(() => {
@@ -175,11 +210,19 @@ const PassiveListening = () => {
   const stopSpeak = useCallback(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     stoppedManuallyRef.current = true;
+    stopTicker();
     window.speechSynthesis.cancel();
   }, []);
 
+  const buildText = (item: PlaylistItem) => `${item.sourceCn}。${item.title}`;
+
+  const estimateDuration = useCallback(
+    (text: string) => text.length / (CHARS_PER_SEC_AT_1X * speed),
+    [speed]
+  );
+
   const speakIndex = useCallback(
-    (idx: number) => {
+    (idx: number, offsetSec: number = 0) => {
       if (typeof window === "undefined" || !("speechSynthesis" in window)) {
         setError("Trình duyệt không hỗ trợ đọc tiếng. Hãy thử Chrome hoặc Edge mới nhất.");
         return;
@@ -190,9 +233,21 @@ const PassiveListening = () => {
         return;
       }
       stoppedManuallyRef.current = true;
+      stopTicker();
       window.speechSynthesis.cancel();
 
-      const text = `${item.sourceCn}。${item.title}`;
+      const fullText = buildText(item);
+      const totalDur = estimateDuration(fullText);
+      setDurationSec(totalDur);
+
+      const safeOffset = Math.max(0, Math.min(offsetSec, Math.max(0, totalDur - 0.2)));
+      const startCharIdx = Math.floor((safeOffset / Math.max(totalDur, 0.001)) * fullText.length);
+      const text = fullText.slice(startCharIdx);
+
+      offsetAtStartRef.current = safeOffset;
+      pausedOffsetRef.current = safeOffset;
+      setElapsedSec(safeOffset);
+
       const u = new SpeechSynthesisUtterance(text);
       u.lang = "zh-CN";
       u.rate = speed;
@@ -202,24 +257,30 @@ const PassiveListening = () => {
         const zh = voices.find((vv) => vv.lang.toLowerCase().startsWith("zh"));
         if (zh) u.voice = zh;
       }
+      u.onstart = () => {
+        startTimeRef.current = performance.now();
+        startTicker(totalDur);
+      };
       u.onend = () => {
+        stopTicker();
         if (stoppedManuallyRef.current) return;
-        // advance
+        setElapsedSec(totalDur);
         setCurrentIndex((prev) => {
           const next = prev + 1;
           if (next >= playlist.length) {
             if (loop && playlist.length > 0) {
-              setTimeout(() => speakIndex(0), 200);
+              setTimeout(() => speakIndex(0, 0), 200);
               return 0;
             }
             setIsPlaying(false);
             return prev;
           }
-          setTimeout(() => speakIndex(next), 200);
+          setTimeout(() => speakIndex(next, 0), 200);
           return next;
         });
       };
       u.onerror = () => {
+        stopTicker();
         setIsPlaying(false);
       };
       stoppedManuallyRef.current = false;
@@ -227,16 +288,24 @@ const PassiveListening = () => {
       window.speechSynthesis.speak(u);
       setIsPlaying(true);
     },
-    [playlist, speed, voices, voiceURI, loop]
+    [playlist, speed, voices, voiceURI, loop, estimateDuration, startTicker]
   );
 
   const handlePlayPause = () => {
     if (playlist.length === 0) return;
     if (isPlaying) {
+      // Save where we are so resume continues from same spot
+      if (startTimeRef.current !== null) {
+        const playedNow = (performance.now() - startTimeRef.current) / 1000;
+        pausedOffsetRef.current = Math.min(
+          offsetAtStartRef.current + playedNow,
+          durationSec
+        );
+      }
       stopSpeak();
       setIsPlaying(false);
     } else {
-      speakIndex(currentIndex);
+      speakIndex(currentIndex, pausedOffsetRef.current);
     }
   };
 
@@ -244,28 +313,122 @@ const PassiveListening = () => {
     if (playlist.length === 0) return;
     const next = (currentIndex + 1) % playlist.length;
     setCurrentIndex(next);
-    if (isPlaying) speakIndex(next);
+    pausedOffsetRef.current = 0;
+    if (isPlaying) speakIndex(next, 0);
+    else {
+      const item = playlist[next];
+      if (item) {
+        setDurationSec(estimateDuration(buildText(item)));
+        setElapsedSec(0);
+      }
+    }
   };
 
   const handlePrev = () => {
     if (playlist.length === 0) return;
     const prev = (currentIndex - 1 + playlist.length) % playlist.length;
     setCurrentIndex(prev);
-    if (isPlaying) speakIndex(prev);
+    pausedOffsetRef.current = 0;
+    if (isPlaying) speakIndex(prev, 0);
+    else {
+      const item = playlist[prev];
+      if (item) {
+        setDurationSec(estimateDuration(buildText(item)));
+        setElapsedSec(0);
+      }
+    }
   };
+
+  const handleSkip = (deltaSec: number) => {
+    if (playlist.length === 0) return;
+    // Compute current absolute elapsed
+    let current = pausedOffsetRef.current;
+    if (isPlaying && startTimeRef.current !== null) {
+      const playedNow = (performance.now() - startTimeRef.current) / 1000;
+      current = offsetAtStartRef.current + playedNow;
+    }
+    const target = current + deltaSec;
+    if (target < 0) {
+      // Go to previous track at end - |target|
+      if (currentIndex > 0 || loop) {
+        const prev = (currentIndex - 1 + playlist.length) % playlist.length;
+        const prevItem = playlist[prev];
+        if (!prevItem) return;
+        const prevDur = estimateDuration(buildText(prevItem));
+        const newOffset = Math.max(0, prevDur + target); // target is negative
+        setCurrentIndex(prev);
+        if (isPlaying) speakIndex(prev, newOffset);
+        else {
+          pausedOffsetRef.current = newOffset;
+          setDurationSec(prevDur);
+          setElapsedSec(newOffset);
+        }
+      } else {
+        // Clamp at 0
+        if (isPlaying) speakIndex(currentIndex, 0);
+        else {
+          pausedOffsetRef.current = 0;
+          setElapsedSec(0);
+        }
+      }
+      return;
+    }
+    if (target >= durationSec) {
+      // advance to next
+      handleNext();
+      return;
+    }
+    if (isPlaying) speakIndex(currentIndex, target);
+    else {
+      pausedOffsetRef.current = target;
+      setElapsedSec(target);
+    }
+  };
+
+  const handleSeek = (sec: number) => {
+    if (playlist.length === 0 || durationSec <= 0) return;
+    const target = Math.max(0, Math.min(sec, durationSec));
+    if (isPlaying) speakIndex(currentIndex, target);
+    else {
+      pausedOffsetRef.current = target;
+      setElapsedSec(target);
+    }
+  };
+
+  // Update duration when track changes (idle state)
+  useEffect(() => {
+    const item = playlist[currentIndex];
+    if (!item) {
+      setDurationSec(0);
+      setElapsedSec(0);
+      return;
+    }
+    if (!isPlaying) {
+      setDurationSec(estimateDuration(buildText(item)));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, playlist, speed]);
 
   // Stop on unmount
   useEffect(() => {
     return () => {
+      stopTicker();
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
     };
   }, []);
 
-  // Re-apply speed mid-play
+  // Re-apply speed/voice mid-play (keep current position)
   useEffect(() => {
-    if (isPlaying) speakIndex(currentIndex);
+    if (isPlaying) {
+      let current = pausedOffsetRef.current;
+      if (startTimeRef.current !== null) {
+        const playedNow = (performance.now() - startTimeRef.current) / 1000;
+        current = offsetAtStartRef.current + playedNow;
+      }
+      speakIndex(currentIndex, current);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speed, voiceURI]);
 
@@ -339,10 +502,41 @@ const PassiveListening = () => {
               </Button>
             </div>
 
+            {/* Progress bar */}
+            <div className="mt-6">
+              <input
+                type="range"
+                min={0}
+                max={Math.max(durationSec, 0.1)}
+                step={0.1}
+                value={Math.min(elapsedSec, durationSec)}
+                onChange={(e) => handleSeek(parseFloat(e.target.value))}
+                disabled={!playlist.length}
+                className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary disabled:opacity-50"
+                aria-label="Tiến độ đọc"
+              />
+              <div className="mt-1.5 flex justify-between text-[11px] tabular-nums text-muted-foreground">
+                <span>{formatTime(elapsedSec)}</span>
+                <span className="italic">~ ước lượng theo tốc độ</span>
+                <span>{formatTime(durationSec)}</span>
+              </div>
+            </div>
+
             {/* Controls */}
-            <div className="mt-8 flex items-center justify-center gap-3">
-              <Button size="icon" variant="ghost" onClick={handlePrev} disabled={!playlist.length}>
+            <div className="mt-6 flex items-center justify-center gap-2 sm:gap-3">
+              <Button size="icon" variant="ghost" onClick={handlePrev} disabled={!playlist.length} title="Tin trước">
                 <SkipBack className="h-5 w-5" />
+              </Button>
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => handleSkip(-5)}
+                disabled={!playlist.length}
+                title="Tua lùi 5 giây"
+                className="relative"
+              >
+                <Rewind className="h-4 w-4" />
+                <span className="absolute -bottom-1 -right-1 rounded-full bg-background px-1 text-[9px] font-bold text-primary">5</span>
               </Button>
               <Button
                 size="icon"
@@ -352,7 +546,18 @@ const PassiveListening = () => {
               >
                 {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
               </Button>
-              <Button size="icon" variant="ghost" onClick={handleNext} disabled={!playlist.length}>
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => handleSkip(5)}
+                disabled={!playlist.length}
+                title="Tua tới 5 giây"
+                className="relative"
+              >
+                <FastForward className="h-4 w-4" />
+                <span className="absolute -bottom-1 -right-1 rounded-full bg-background px-1 text-[9px] font-bold text-primary">5</span>
+              </Button>
+              <Button size="icon" variant="ghost" onClick={handleNext} disabled={!playlist.length} title="Tin sau">
                 <SkipForward className="h-5 w-5" />
               </Button>
             </div>
