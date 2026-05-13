@@ -1,133 +1,82 @@
 import { Link } from "react-router-dom";
+import { ArrowRight, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import { HSKLevel, hskLevelColors, hskLevelTextColors } from "@/data/grammarTypes";
 import { allMockExams } from "@/data/mockExam1";
-import { Headphones, BookOpen, PenTool } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const levels: HSKLevel[] = [1, 2, 3, 4, 5, 6];
+
+const levelDescriptions: Record<HSKLevel, string> = {
+  1: "Đề thi HSK 1 — sắp ra mắt.",
+  2: "Đề thi HSK 2 — sắp ra mắt.",
+  3: "Đề thi HSK 3 — sắp ra mắt.",
+  4: "Đề thi HSK 4 — sắp ra mắt.",
+  5: "Đề thi HSK 5 — sắp ra mắt.",
+  6: "Đề thi HSK 6 chính thức — Nghe, Đọc, Viết đầy đủ.",
+};
 
 const MockExams = () => {
+  const countsByLevel: Record<HSKLevel, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+  for (const exam of allMockExams) {
+    const lvl = exam.level as HSKLevel;
+    if (countsByLevel[lvl] !== undefined) countsByLevel[lvl] += 1;
+  }
+
   return (
     <div className="min-h-screen relative z-10">
       <Navbar />
 
-      <section className="relative overflow-hidden border-b border-border/30 py-16">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container relative mx-auto px-4">
-          <h1 className="font-serif text-4xl font-black gold-text sm:text-5xl">
-            模拟考试
+      <section className="relative overflow-hidden border-b border-border/30">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent" />
+        <div className="container relative mx-auto px-4 py-16 text-center md:py-20">
+          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary">
+            <FileText className="h-3.5 w-3.5" />
+            模拟考试 · Mock Exams
+          </div>
+          <h1 className="mt-6 font-serif text-4xl font-black tracking-tight gold-text sm:text-5xl md:text-6xl">
+            Đề thi thử HSK 1–6
           </h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            HSK 6 Mock Exams — Practice with real exam questions from Hanban
+          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
+            Chọn cấp độ để vào phòng thi thử với phần Nghe, Đọc, Viết và bấm giờ chuẩn HSK.
           </p>
         </div>
       </section>
 
-      <section className="container mx-auto px-4 py-12">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {allMockExams.map((exam) => {
-            const hasListening = (exam.sections.listening?.length ?? 0) > 0;
-            const hasReading = exam.sections.reading.length > 0;
-            const hasWriting = !!exam.sections.writing;
-
+      <section className="container mx-auto px-4 py-12 md:py-16">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {levels.map((level) => {
+            const count = countsByLevel[level];
+            const available = count > 0;
             return (
-              <div
-                key={exam.id}
-                className="relative overflow-hidden rounded-xl border border-hsk6/30 bg-card p-6"
+              <Link
+                key={level}
+                to={`/mock-exams/${level}`}
+                className={cn(
+                  "group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-6 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10",
+                  !available && "opacity-70"
+                )}
               >
-                <h2 className="font-serif text-2xl font-black text-hsk6">
-                  {exam.titleZh}
-                </h2>
-                <p className="mt-1 text-sm text-muted-foreground">{exam.title}</p>
-
-                <div className="mt-4 flex flex-col gap-2">
-                  {/* 听力 */}
-                  {hasListening ? (
-                    <Link
-                      to={`/mock-exam/${exam.id}?section=listening`}
-                      className="flex items-center gap-2 rounded-lg border border-border/50 px-3 py-2 text-sm font-medium transition-colors hover:border-hsk6/50 hover:bg-hsk6/5"
-                    >
-                      <Headphones className="h-4 w-4 text-hsk6" />
-                      <span>听力</span>
-                      <span className="ml-auto text-xs text-muted-foreground">
-                        {exam.sections.listening!.reduce((s, p) => s + p.questions.length, 0)} 题
-                      </span>
-                    </Link>
-                  ) : (
-                    <div className="flex items-center gap-2 rounded-lg border border-dashed border-border/30 px-3 py-2 text-sm text-muted-foreground opacity-50">
-                      <Headphones className="h-4 w-4" />
-                      <span>听力</span>
-                      <span className="ml-auto text-xs">Coming soon</span>
-                    </div>
-                  )}
-
-                  {/* 阅读 */}
-                  {hasReading ? (
-                    <Link
-                      to={`/mock-exam/${exam.id}?section=reading`}
-                      className="flex items-center gap-2 rounded-lg border border-border/50 px-3 py-2 text-sm font-medium transition-colors hover:border-hsk6/50 hover:bg-hsk6/5"
-                    >
-                      <BookOpen className="h-4 w-4 text-hsk6" />
-                      <span>阅读</span>
-                      <span className="ml-auto text-xs text-muted-foreground">
-                        {exam.sections.reading.reduce(
-                          (sum, part) =>
-                            sum +
-                            (part.questions?.length || 0) +
-                            (part.passages?.reduce((s, p) => s + p.questions.length, 0) || 0) +
-                            (part.blanksPassage?.reduce((s, b) => s + b.questions.length, 0) || 0),
-                          0
-                        )} 题
-                      </span>
-                    </Link>
-                  ) : (
-                    <div className="flex items-center gap-2 rounded-lg border border-dashed border-border/30 px-3 py-2 text-sm text-muted-foreground opacity-50">
-                      <BookOpen className="h-4 w-4" />
-                      <span>阅读</span>
-                      <span className="ml-auto text-xs">Coming soon</span>
-                    </div>
-                  )}
-
-                  {/* 书写 */}
-                  {hasWriting ? (
-                    <Link
-                      to={`/mock-exam/${exam.id}?section=writing`}
-                      className="flex items-center gap-2 rounded-lg border border-border/50 px-3 py-2 text-sm font-medium transition-colors hover:border-hsk6/50 hover:bg-hsk6/5"
-                    >
-                      <PenTool className="h-4 w-4 text-hsk6" />
-                      <span>书写</span>
-                    </Link>
-                  ) : (
-                    <div className="flex items-center gap-2 rounded-lg border border-dashed border-border/30 px-3 py-2 text-sm text-muted-foreground opacity-50">
-                      <PenTool className="h-4 w-4" />
-                      <span>书写</span>
-                      <span className="ml-auto text-xs">Coming soon</span>
-                    </div>
-                  )}
+                <div className="flex items-start justify-between">
+                  <div className={cn("inline-block rounded px-2 py-0.5 text-[10px] font-bold text-background", hskLevelColors[level])}>
+                    LEVEL {level}
+                  </div>
+                  <span className="rounded-full border border-border/60 bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground">
+                    {available ? `${count} đề` : "Coming soon"}
+                  </span>
                 </div>
-              </div>
+                <div className={cn("mt-4 font-serif text-4xl font-black", hskLevelTextColors[level])}>
+                  HSK {level}
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {levelDescriptions[level]}
+                </p>
+                <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-all group-hover:gap-2.5">
+                  {available ? "Vào phòng thi" : "Xem chi tiết"} <ArrowRight className="h-4 w-4" />
+                </div>
+              </Link>
             );
           })}
-
-          {/* Placeholder for future exams */}
-          {([] as number[]).map((num) => (
-            <div
-              key={`placeholder-${num}`}
-              className="relative overflow-hidden rounded-xl border border-dashed border-border/50 bg-card/50 p-6 opacity-50"
-            >
-              <h2 className="font-serif text-2xl font-black text-muted-foreground">
-                HSK（六级）模拟试卷 {num}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                HSK 6 Mock Exam {num}
-              </p>
-              <div className="mt-4 space-y-2">
-                {["听力", "阅读", "书写"].map((label) => (
-                  <div key={label} className="flex items-center gap-2 rounded-lg border border-dashed border-border/30 px-3 py-2 text-sm text-muted-foreground">
-                    <span>{label}</span>
-                    <span className="ml-auto text-xs">Coming soon</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
         </div>
       </section>
     </div>
