@@ -75,7 +75,7 @@ const MockExamsLevel = () => {
                   key={exam.id}
                   className={cn(
                     "relative overflow-hidden rounded-xl border bg-card p-6",
-                    `border-hsk${lvl}/30`
+                    borderByLevel[lvl]
                   )}
                 >
                   <h2 className={cn("font-serif text-2xl font-black", hskLevelTextColors[lvl])}>
