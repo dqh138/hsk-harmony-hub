@@ -87,38 +87,46 @@ const Navbar = () => {
             模拟考试
           </Link>
 
-          <Link
-            to="/conversations"
-            className={cn(
-              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-              location.pathname.startsWith("/conversations") && "bg-muted"
-            )}
-          >
-            <MessageSquare className="h-4 w-4" />
-            对话
-          </Link>
-
-          <Link
-            to="/news"
-            className={cn(
-              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-              location.pathname.startsWith("/news") && "bg-muted"
-            )}
-          >
-            <Newspaper className="h-4 w-4" />
-            新闻
-          </Link>
-
-          <Link
-            to="/passive-listening"
-            className={cn(
-              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-              location.pathname.startsWith("/passive-listening") && "bg-muted"
-            )}
-          >
-            <Headphones className="h-4 w-4" />
-            被动听力
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className={cn(
+                  "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+                  isToolsActive && "bg-muted"
+                )}
+              >
+                <GraduationCap className="h-4 w-4" />
+                学习工具
+                <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-[220px]">
+              <DropdownMenuItem asChild>
+                <Link to="/conversations" className="cursor-pointer">
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  对话 Hội thoại
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/news" className="cursor-pointer">
+                  <Newspaper className="mr-2 h-4 w-4" />
+                  新闻 Tin Trung Quốc
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/passive-listening" className="cursor-pointer">
+                  <Headphones className="mr-2 h-4 w-4" />
+                  被动听力 Nghe thụ động
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/flashcards" className="cursor-pointer">
+                  <Layers className="mr-2 h-4 w-4" />
+                  抽认卡 Flashcards
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Link
             to="/saved-words"
