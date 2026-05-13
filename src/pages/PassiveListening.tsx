@@ -495,10 +495,41 @@ const PassiveListening = () => {
               </Button>
             </div>
 
+            {/* Progress bar */}
+            <div className="mt-6">
+              <input
+                type="range"
+                min={0}
+                max={Math.max(durationSec, 0.1)}
+                step={0.1}
+                value={Math.min(elapsedSec, durationSec)}
+                onChange={(e) => handleSeek(parseFloat(e.target.value))}
+                disabled={!playlist.length}
+                className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-muted accent-primary disabled:opacity-50"
+                aria-label="Tiến độ đọc"
+              />
+              <div className="mt-1.5 flex justify-between text-[11px] tabular-nums text-muted-foreground">
+                <span>{formatTime(elapsedSec)}</span>
+                <span className="italic">~ ước lượng theo tốc độ</span>
+                <span>{formatTime(durationSec)}</span>
+              </div>
+            </div>
+
             {/* Controls */}
-            <div className="mt-8 flex items-center justify-center gap-3">
-              <Button size="icon" variant="ghost" onClick={handlePrev} disabled={!playlist.length}>
+            <div className="mt-6 flex items-center justify-center gap-2 sm:gap-3">
+              <Button size="icon" variant="ghost" onClick={handlePrev} disabled={!playlist.length} title="Tin trước">
                 <SkipBack className="h-5 w-5" />
+              </Button>
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => handleSkip(-5)}
+                disabled={!playlist.length}
+                title="Tua lùi 5 giây"
+                className="relative"
+              >
+                <Rewind className="h-4 w-4" />
+                <span className="absolute -bottom-1 -right-1 rounded-full bg-background px-1 text-[9px] font-bold text-primary">5</span>
               </Button>
               <Button
                 size="icon"
@@ -508,7 +539,18 @@ const PassiveListening = () => {
               >
                 {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
               </Button>
-              <Button size="icon" variant="ghost" onClick={handleNext} disabled={!playlist.length}>
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => handleSkip(5)}
+                disabled={!playlist.length}
+                title="Tua tới 5 giây"
+                className="relative"
+              >
+                <FastForward className="h-4 w-4" />
+                <span className="absolute -bottom-1 -right-1 rounded-full bg-background px-1 text-[9px] font-bold text-primary">5</span>
+              </Button>
+              <Button size="icon" variant="ghost" onClick={handleNext} disabled={!playlist.length} title="Tin sau">
                 <SkipForward className="h-5 w-5" />
               </Button>
             </div>
