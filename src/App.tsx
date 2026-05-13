@@ -87,8 +87,10 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/grammar" element={<Grammar />} />
             <Route path="/hsk/:level" element={<HSKLevel />} />
+            <Route path="/vocabulary" element={<Vocabulary />} />
             <Route path="/vocabulary/:level" element={<VocabularyLevel />} />
             <Route path="/mock-exams" element={<MockExams />} />
+            <Route path="/mock-exams/:level" element={<MockExamsLevel />} />
             <Route path="/mock-exam/:examId" element={<MockExamPractice />} />
             <Route path="/saved-words" element={<SavedWords />} />
             <Route path="/flashcards" element={<Flashcards />} />
