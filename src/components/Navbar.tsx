@@ -25,9 +25,16 @@ import {
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const [accountInfoOpen, setAccountInfoOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
+
+  const isToolsActive =
+    location.pathname.startsWith("/conversations") ||
+    location.pathname.startsWith("/news") ||
+    location.pathname.startsWith("/passive-listening") ||
+    location.pathname.startsWith("/flashcards");
 
   const handleSignOut = async () => {
     await signOut();
