@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User, Layers, UserCircle2, MessageSquare, Newspaper } from "lucide-react";
-import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
@@ -23,40 +22,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const levels: HSKLevel[] = [1, 2, 3, 4, 5, 6];
-
-const NavDropdown = ({
-  label,
-  children,
-  isActive,
-}: {
-  label: string;
-  children: React.ReactNode;
-  isActive: boolean;
-}) => {
-  return (
-    <div className="relative group">
-      <button
-        className={cn(
-          "flex items-center gap-1 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-          isActive && "bg-muted"
-        )}
-      >
-        {label}
-        <ChevronDown className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:rotate-180" />
-      </button>
-      <div className="invisible absolute left-0 top-full z-50 min-w-[160px] rounded-lg border border-border bg-popover p-1.5 shadow-xl opacity-0 transition-all group-hover:visible group-hover:opacity-100">
-        {children}
-      </div>
-    </div>
-  );
-};
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const [grammarOpen, setGrammarOpen] = useState(false);
-  const [vocabOpen, setVocabOpen] = useState(false);
-  const [examOpen, setExamOpen] = useState(false);
   const [accountInfoOpen, setAccountInfoOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
@@ -92,43 +60,25 @@ const Navbar = () => {
             语法
           </Link>
 
-          <NavDropdown
-            label="生词"
-            isActive={location.pathname.startsWith("/vocabulary/")}
+          <Link
+            to="/vocabulary"
+            className={cn(
+              "rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              location.pathname.startsWith("/vocabulary") && "bg-muted"
+            )}
           >
-            {levels.map((level) => (
-              <Link
-                key={level}
-                to={`/vocabulary/${level}`}
-                className={cn(
-                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                  hskLevelTextColors[level],
-                  location.pathname === `/vocabulary/${level}` && "bg-muted"
-                )}
-              >
-                HSK {level}
-              </Link>
-            ))}
-          </NavDropdown>
+            生词
+          </Link>
 
-          <NavDropdown
-            label="模拟考试"
-            isActive={location.pathname.startsWith("/mock-exam")}
+          <Link
+            to="/mock-exams"
+            className={cn(
+              "rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              (location.pathname.startsWith("/mock-exams") || location.pathname.startsWith("/mock-exam/")) && "bg-muted"
+            )}
           >
-            {levels.map((level) => (
-              <Link
-                key={level}
-                to={`/mock-exams?level=${level}`}
-                className={cn(
-                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                  hskLevelTextColors[level],
-                  location.pathname.startsWith("/mock-exam") && location.search === `?level=${level}` && "bg-muted"
-                )}
-              >
-                HSK {level}
-              </Link>
-            ))}
-          </NavDropdown>
+            模拟考试
+          </Link>
 
           <Link
             to="/conversations"
@@ -153,17 +103,6 @@ const Navbar = () => {
           </Link>
 
           <Link
-            to="/flashcards"
-            className={cn(
-              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-              location.pathname === "/flashcards" && "bg-muted"
-            )}
-          >
-            <Layers className="h-4 w-4" />
-            抽认卡
-          </Link>
-
-          <Link
             to="/saved-words"
             className={cn(
               "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
@@ -185,7 +124,7 @@ const Navbar = () => {
                   <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-[200px]">
+              <DropdownMenuContent align="end" className="min-w-[220px]">
                 <DropdownMenuLabel className="truncate text-xs font-normal text-muted-foreground">
                   {user.email ?? "Tài khoản"}
                 </DropdownMenuLabel>
@@ -194,6 +133,13 @@ const Navbar = () => {
                   <UserCircle2 className="mr-2 h-4 w-4" />
                   Thông tin tài khoản
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/flashcards" className="cursor-pointer">
+                    <Layers className="mr-2 h-4 w-4" />
+                    抽认卡 Flashcards
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={handleSignOut} className="text-destructive focus:text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
                   Đăng xuất
@@ -201,16 +147,32 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link
-              to="/auth"
-              className={cn(
-                "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-                location.pathname === "/auth" && "bg-muted"
-              )}
-            >
-              <LogIn className="h-4 w-4" />
-              登录
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+                  title="Tài khoản"
+                >
+                  <User className="h-4 w-4" />
+                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[220px]">
+                <DropdownMenuItem asChild>
+                  <Link to="/auth" className="cursor-pointer">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    登录 Đăng nhập
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/flashcards" className="cursor-pointer">
+                    <Layers className="mr-2 h-4 w-4" />
+                    抽认卡 Flashcards
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
 
           <ThemeToggle />
@@ -239,57 +201,21 @@ const Navbar = () => {
             语法
           </Link>
 
-          {/* Vocabulary section */}
-          <button
-            onClick={() => setVocabOpen(!vocabOpen)}
-            className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          <Link
+            to="/vocabulary"
+            onClick={() => setOpen(false)}
+            className="block rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             生词
-            <ChevronDown className={cn("h-4 w-4 transition-transform", vocabOpen && "rotate-180")} />
-          </button>
-          {vocabOpen && (
-            <div className="ml-3 border-l border-border/50 pl-2">
-              {levels.map((level) => (
-                <Link
-                  key={level}
-                  to={`/vocabulary/${level}`}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                    hskLevelTextColors[level]
-                  )}
-                >
-                  HSK {level}
-                </Link>
-              ))}
-            </div>
-          )}
+          </Link>
 
-          {/* Mock exams section */}
-          <button
-            onClick={() => setExamOpen(!examOpen)}
-            className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          <Link
+            to="/mock-exams"
+            onClick={() => setOpen(false)}
+            className="block rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             模拟考试
-            <ChevronDown className={cn("h-4 w-4 transition-transform", examOpen && "rotate-180")} />
-          </button>
-          {examOpen && (
-            <div className="ml-3 border-l border-border/50 pl-2">
-              {levels.map((level) => (
-                <Link
-                  key={level}
-                  to={`/mock-exams?level=${level}`}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                    hskLevelTextColors[level]
-                  )}
-                >
-                  HSK {level}
-                </Link>
-              ))}
-            </div>
-          )}
+          </Link>
 
           <Link
             to="/conversations"
@@ -307,15 +233,6 @@ const Navbar = () => {
           >
             <Newspaper className="h-4 w-4" />
             新闻 Tin Trung Quốc
-          </Link>
-
-          <Link
-            to="/flashcards"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-          >
-            <Layers className="h-4 w-4" />
-            抽认卡 Flashcards
           </Link>
 
           <Link
@@ -339,6 +256,14 @@ const Navbar = () => {
                 <UserCircle2 className="h-4 w-4" />
                 Thông tin tài khoản
               </button>
+              <Link
+                to="/flashcards"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <Layers className="h-4 w-4" />
+                抽认卡 Flashcards
+              </Link>
               <button
                 onClick={() => {
                   setOpen(false);
@@ -351,14 +276,24 @@ const Navbar = () => {
               </button>
             </>
           ) : (
-            <Link
-              to="/auth"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-            >
-              <LogIn className="h-4 w-4" />
-              Đăng nhập
-            </Link>
+            <>
+              <Link
+                to="/auth"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <LogIn className="h-4 w-4" />
+                Đăng nhập
+              </Link>
+              <Link
+                to="/flashcards"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <Layers className="h-4 w-4" />
+                抽认卡 Flashcards
+              </Link>
+            </>
           )}
         </div>
       )}

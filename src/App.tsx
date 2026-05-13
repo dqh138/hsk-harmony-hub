@@ -8,9 +8,11 @@ import Index from "./pages/Index";
 import HSKLevel from "./pages/HSKLevel";
 import Grammar from "./pages/Grammar";
 import MockExams from "./pages/MockExams";
+import MockExamsLevel from "./pages/MockExamsLevel";
 import MockExamPractice from "./pages/MockExamPractice";
 import SavedWords from "./pages/SavedWords";
 import Flashcards from "./pages/Flashcards";
+import Vocabulary from "./pages/Vocabulary";
 import VocabularyLevel from "./pages/VocabularyLevel";
 import Auth from "./pages/Auth";
 import Conversations from "./pages/Conversations";
@@ -85,8 +87,10 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/grammar" element={<Grammar />} />
             <Route path="/hsk/:level" element={<HSKLevel />} />
+            <Route path="/vocabulary" element={<Vocabulary />} />
             <Route path="/vocabulary/:level" element={<VocabularyLevel />} />
             <Route path="/mock-exams" element={<MockExams />} />
+            <Route path="/mock-exams/:level" element={<MockExamsLevel />} />
             <Route path="/mock-exam/:examId" element={<MockExamPractice />} />
             <Route path="/saved-words" element={<SavedWords />} />
             <Route path="/flashcards" element={<Flashcards />} />
