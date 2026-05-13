@@ -14,9 +14,12 @@ import {
   Loader2,
   Rewind,
   FastForward,
+  ExternalLink,
+  BookOpen,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -467,6 +470,17 @@ const PassiveListening = () => {
       </section>
 
       <section className="container mx-auto px-4 py-8">
+        <Tabs defaultValue="headlines">
+          <TabsList className="mb-6">
+            <TabsTrigger value="headlines" className="gap-2">
+              <Headphones className="h-4 w-4" /> Danh sách tiêu đề
+            </TabsTrigger>
+            <TabsTrigger value="article" className="gap-2">
+              <BookOpen className="h-4 w-4" /> Đọc bài đầy đủ
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="headlines">
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           {/* Player */}
           <div className="rounded-2xl border border-border/50 bg-card p-6 md:p-8">
@@ -690,7 +704,235 @@ const PassiveListening = () => {
             </Link>
           </aside>
         </div>
+          </TabsContent>
+
+          <TabsContent value="article">
+            <ArticleReader playlist={playlist} voices={voices} speed={speed} setSpeed={setSpeed} voiceURI={voiceURI} setVoiceURI={setVoiceURI} loading={loading} fetchAll={fetchAll} />
+          </TabsContent>
+        </Tabs>
       </section>
+    </div>
+  );
+};
+
+// ---------- Article Reader ----------
+const ARTICLE_SOURCES = new Set(["thepaper", "ithome", "juejin", "cls"]);
+const SPEEDS_AR = [0.7, 0.85, 1.0, 1.15, 1.3];
+
+type ArticleReaderProps = {
+  playlist: PlaylistItem[];
+  voices: SpeechSynthesisVoice[];
+  speed: number;
+  setSpeed: (s: number) => void;
+  voiceURI: string | null;
+  setVoiceURI: (v: string | null) => void;
+  loading: boolean;
+  fetchAll: () => void;
+};
+
+const ArticleReader = ({ playlist, voices, speed, setSpeed, voiceURI, setVoiceURI, loading, fetchAll }: ArticleReaderProps) => {
+  const [selected, setSelected] = useState<PlaylistItem | null>(null);
+  const [content, setContent] = useState("");
+  const [fetching, setFetching] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const uttRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const articleItems = playlist.filter((i) => ARTICLE_SOURCES.has(i.sourceId));
+  const trendItems = playlist.filter((i) => !ARTICLE_SOURCES.has(i.sourceId));
+
+  const selectItem = async (item: PlaylistItem) => {
+    window.speechSynthesis.cancel();
+    setIsPlaying(false);
+    setSelected(item);
+    setContent("");
+    if (!ARTICLE_SOURCES.has(item.sourceId)) return;
+    setFetching(true);
+    try {
+      const { data } = await supabase.functions.invoke("fetch-article", {
+        body: { source: item.sourceId, id: item.id, url: item.url },
+      });
+      setContent(data?.content ?? "");
+    } catch {
+      setContent("");
+    } finally {
+      setFetching(false);
+    }
+  };
+
+  const play = () => {
+    if (!selected) return;
+    const text = [selected.sourceCn, selected.title, content].filter(Boolean).join("。");
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "zh-CN";
+    u.rate = speed;
+    const v = voices.find((vv) => vv.voiceURI === voiceURI) ?? voices.find((vv) => vv.lang.toLowerCase().startsWith("zh"));
+    if (v) u.voice = v;
+    u.onstart = () => setIsPlaying(true);
+    u.onend = () => setIsPlaying(false);
+    u.onerror = () => setIsPlaying(false);
+    uttRef.current = u;
+    window.speechSynthesis.speak(u);
+  };
+
+  const stop = () => {
+    window.speechSynthesis.cancel();
+    setIsPlaying(false);
+  };
+
+  useEffect(() => () => { window.speechSynthesis.cancel(); }, []);
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+      {/* Article player */}
+      <div className="rounded-2xl border border-border/50 bg-card p-6">
+        {!selected ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <BookOpen className="mb-3 h-10 w-10 text-muted-foreground/40" />
+            <p className="text-muted-foreground">Chọn một bài từ danh sách →</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              ThePaper, ITHome, Juejin, CLS hỗ trợ tải toàn bài.
+            </p>
+          </div>
+        ) : (
+          <>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary">{selected.sourceCn}</p>
+            <h2 className="mt-1 font-serif text-2xl font-black leading-tight">{selected.title}</h2>
+            {selected.extra && <p className="mt-1 text-xs text-muted-foreground">{selected.extra}</p>}
+
+            <div className="mt-4">
+              {fetching ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Đang tải nội dung bài…
+                </div>
+              ) : content ? (
+                <div className="max-h-[360px] overflow-y-auto rounded-xl bg-muted/30 p-4 text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap">
+                  {content}
+                </div>
+              ) : ARTICLE_SOURCES.has(selected.sourceId) ? (
+                <p className="text-sm italic text-muted-foreground">Không tải được nội dung bài này.</p>
+              ) : (
+                <p className="text-sm italic text-muted-foreground">
+                  Nguồn <strong>{selected.sourceCn}</strong> là trending topic — không có bài viết đầy đủ.
+                </p>
+              )}
+            </div>
+
+            {/* Controls */}
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <Button onClick={isPlaying ? stop : play} disabled={fetching} className="gap-2 min-w-[130px]">
+                {isPlaying ? <><Pause className="h-4 w-4" /> Dừng</> : <><Play className="h-4 w-4" /> Phát giọng</>}
+              </Button>
+
+              <div className="flex items-center gap-1 rounded-full border border-border/50 bg-background/50 p-1">
+                {SPEEDS_AR.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => { setSpeed(s); if (isPlaying) { stop(); setTimeout(play, 100); } }}
+                    className={cn(
+                      "rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors",
+                      speed === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {s}×
+                  </button>
+                ))}
+              </div>
+
+              {voices.length > 0 && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Volume2 className="h-3.5 w-3.5" />
+                  <select
+                    value={voiceURI ?? ""}
+                    onChange={(e) => setVoiceURI(e.target.value || null)}
+                    className="rounded-md border border-border/50 bg-background px-2 py-1 text-xs"
+                  >
+                    <option value="">Mặc định (zh-CN)</option>
+                    {voices.map((v) => (
+                      <option key={v.voiceURI} value={v.voiceURI}>{v.name} ({v.lang})</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+
+            <a
+              href={selected.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+            >
+              Đọc bài gốc <ExternalLink className="h-3 w-3" />
+            </a>
+          </>
+        )}
+      </div>
+
+      {/* Article list */}
+      <aside className="rounded-2xl border border-border/50 bg-card p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="font-serif text-lg font-bold">Chọn bài đọc</h3>
+          <Button size="icon" variant="ghost" className="h-7 w-7" onClick={fetchAll} disabled={loading} title="Tải lại">
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+          </Button>
+        </div>
+
+        {playlist.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            {loading ? "Đang tải tin…" : "Chưa có tin. Bấm tải lại."}
+          </p>
+        ) : (
+          <div className="max-h-[640px] space-y-1.5 overflow-y-auto pr-1">
+            {/* Article sources */}
+            {articleItems.length > 0 && (
+              <>
+                <p className="mb-1 px-1 text-[10px] font-bold uppercase tracking-wider text-primary">
+                  Hỗ trợ toàn bài
+                </p>
+                {articleItems.map((item, i) => (
+                  <button
+                    key={`ar-${item.sourceId}-${item.id}-${i}`}
+                    onClick={() => selectItem(item)}
+                    className={cn(
+                      "w-full rounded-lg border px-3 py-2 text-left text-sm transition-colors",
+                      selected?.id === item.id && selected?.sourceId === item.sourceId
+                        ? "border-primary/60 bg-primary/5"
+                        : "border-border/40 hover:bg-muted"
+                    )}
+                  >
+                    <p className="line-clamp-2 font-medium leading-snug">{item.title}</p>
+                    <p className="mt-0.5 text-xs text-primary">{item.sourceCn}</p>
+                  </button>
+                ))}
+              </>
+            )}
+
+            {/* Trend sources */}
+            {trendItems.length > 0 && (
+              <>
+                <p className="mb-1 mt-3 px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Chỉ tiêu đề (trending)
+                </p>
+                {trendItems.slice(0, 30).map((item, i) => (
+                  <button
+                    key={`tr-${item.sourceId}-${item.id}-${i}`}
+                    onClick={() => selectItem(item)}
+                    className={cn(
+                      "w-full rounded-lg border px-3 py-2 text-left text-sm transition-colors opacity-70",
+                      selected?.id === item.id && selected?.sourceId === item.sourceId
+                        ? "border-primary/60 bg-primary/5 opacity-100"
+                        : "border-border/40 hover:bg-muted"
+                    )}
+                  >
+                    <p className="line-clamp-1 font-medium">{item.title}</p>
+                    <p className="text-xs text-muted-foreground">{item.sourceCn}</p>
+                  </button>
+                ))}
+              </>
+            )}
+          </div>
+        )}
+      </aside>
     </div>
   );
 };
