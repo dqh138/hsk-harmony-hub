@@ -184,10 +184,6 @@ const Navbar = () => {
                     登录 Đăng nhập
                   </Link>
                 </DropdownMenuItem>
-                    <Layers className="mr-2 h-4 w-4" />
-                    抽认卡 Flashcards
-                  </Link>
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
