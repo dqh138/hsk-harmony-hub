@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User, Layers, UserCircle2, MessageSquare, Newspaper } from "lucide-react";
-import { HSKLevel, hskLevelTextColors } from "@/data/grammarTypes";
+import { HSKLevel } from "@/data/grammarTypes";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
