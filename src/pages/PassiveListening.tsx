@@ -72,6 +72,32 @@ const PassiveListening = () => {
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const stoppedManuallyRef = useRef(false);
 
+  // Time tracking (estimated, since Web Speech API has no native seek)
+  const CHARS_PER_SEC_AT_1X = 4.2; // empirical for Chinese hanzi
+  const [elapsedSec, setElapsedSec] = useState(0);
+  const [durationSec, setDurationSec] = useState(0);
+  const offsetAtStartRef = useRef(0); // seconds offset already played before current utterance
+  const startTimeRef = useRef<number | null>(null); // ms timestamp when current utterance started
+  const tickerRef = useRef<number | null>(null);
+  const pausedOffsetRef = useRef(0); // where to resume when paused
+
+  const stopTicker = () => {
+    if (tickerRef.current !== null) {
+      window.clearInterval(tickerRef.current);
+      tickerRef.current = null;
+    }
+  };
+
+  const startTicker = useCallback((totalDur: number) => {
+    stopTicker();
+    tickerRef.current = window.setInterval(() => {
+      if (startTimeRef.current === null) return;
+      const playedNow = (performance.now() - startTimeRef.current) / 1000;
+      const total = offsetAtStartRef.current + playedNow;
+      setElapsedSec(Math.min(total, totalDur));
+    }, 200) as unknown as number;
+  }, []);
+
   // Persist settings
   useEffect(() => {
     try {
