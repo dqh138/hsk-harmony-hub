@@ -203,11 +203,19 @@ const PassiveListening = () => {
   const stopSpeak = useCallback(() => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     stoppedManuallyRef.current = true;
+    stopTicker();
     window.speechSynthesis.cancel();
   }, []);
 
+  const buildText = (item: PlaylistItem) => `${item.sourceCn}。${item.title}`;
+
+  const estimateDuration = useCallback(
+    (text: string) => text.length / (CHARS_PER_SEC_AT_1X * speed),
+    [speed]
+  );
+
   const speakIndex = useCallback(
-    (idx: number) => {
+    (idx: number, offsetSec: number = 0) => {
       if (typeof window === "undefined" || !("speechSynthesis" in window)) {
         setError("Trình duyệt không hỗ trợ đọc tiếng. Hãy thử Chrome hoặc Edge mới nhất.");
         return;
@@ -218,9 +226,21 @@ const PassiveListening = () => {
         return;
       }
       stoppedManuallyRef.current = true;
+      stopTicker();
       window.speechSynthesis.cancel();
 
-      const text = `${item.sourceCn}。${item.title}`;
+      const fullText = buildText(item);
+      const totalDur = estimateDuration(fullText);
+      setDurationSec(totalDur);
+
+      const safeOffset = Math.max(0, Math.min(offsetSec, Math.max(0, totalDur - 0.2)));
+      const startCharIdx = Math.floor((safeOffset / Math.max(totalDur, 0.001)) * fullText.length);
+      const text = fullText.slice(startCharIdx);
+
+      offsetAtStartRef.current = safeOffset;
+      pausedOffsetRef.current = safeOffset;
+      setElapsedSec(safeOffset);
+
       const u = new SpeechSynthesisUtterance(text);
       u.lang = "zh-CN";
       u.rate = speed;
@@ -230,24 +250,30 @@ const PassiveListening = () => {
         const zh = voices.find((vv) => vv.lang.toLowerCase().startsWith("zh"));
         if (zh) u.voice = zh;
       }
+      u.onstart = () => {
+        startTimeRef.current = performance.now();
+        startTicker(totalDur);
+      };
       u.onend = () => {
+        stopTicker();
         if (stoppedManuallyRef.current) return;
-        // advance
+        setElapsedSec(totalDur);
         setCurrentIndex((prev) => {
           const next = prev + 1;
           if (next >= playlist.length) {
             if (loop && playlist.length > 0) {
-              setTimeout(() => speakIndex(0), 200);
+              setTimeout(() => speakIndex(0, 0), 200);
               return 0;
             }
             setIsPlaying(false);
             return prev;
           }
-          setTimeout(() => speakIndex(next), 200);
+          setTimeout(() => speakIndex(next, 0), 200);
           return next;
         });
       };
       u.onerror = () => {
+        stopTicker();
         setIsPlaying(false);
       };
       stoppedManuallyRef.current = false;
@@ -255,16 +281,24 @@ const PassiveListening = () => {
       window.speechSynthesis.speak(u);
       setIsPlaying(true);
     },
-    [playlist, speed, voices, voiceURI, loop]
+    [playlist, speed, voices, voiceURI, loop, estimateDuration, startTicker]
   );
 
   const handlePlayPause = () => {
     if (playlist.length === 0) return;
     if (isPlaying) {
+      // Save where we are so resume continues from same spot
+      if (startTimeRef.current !== null) {
+        const playedNow = (performance.now() - startTimeRef.current) / 1000;
+        pausedOffsetRef.current = Math.min(
+          offsetAtStartRef.current + playedNow,
+          durationSec
+        );
+      }
       stopSpeak();
       setIsPlaying(false);
     } else {
-      speakIndex(currentIndex);
+      speakIndex(currentIndex, pausedOffsetRef.current);
     }
   };
 
@@ -272,15 +306,101 @@ const PassiveListening = () => {
     if (playlist.length === 0) return;
     const next = (currentIndex + 1) % playlist.length;
     setCurrentIndex(next);
-    if (isPlaying) speakIndex(next);
+    pausedOffsetRef.current = 0;
+    if (isPlaying) speakIndex(next, 0);
+    else {
+      const item = playlist[next];
+      if (item) {
+        setDurationSec(estimateDuration(buildText(item)));
+        setElapsedSec(0);
+      }
+    }
   };
 
   const handlePrev = () => {
     if (playlist.length === 0) return;
     const prev = (currentIndex - 1 + playlist.length) % playlist.length;
     setCurrentIndex(prev);
-    if (isPlaying) speakIndex(prev);
+    pausedOffsetRef.current = 0;
+    if (isPlaying) speakIndex(prev, 0);
+    else {
+      const item = playlist[prev];
+      if (item) {
+        setDurationSec(estimateDuration(buildText(item)));
+        setElapsedSec(0);
+      }
+    }
   };
+
+  const handleSkip = (deltaSec: number) => {
+    if (playlist.length === 0) return;
+    // Compute current absolute elapsed
+    let current = pausedOffsetRef.current;
+    if (isPlaying && startTimeRef.current !== null) {
+      const playedNow = (performance.now() - startTimeRef.current) / 1000;
+      current = offsetAtStartRef.current + playedNow;
+    }
+    const target = current + deltaSec;
+    if (target < 0) {
+      // Go to previous track at end - |target|
+      if (currentIndex > 0 || loop) {
+        const prev = (currentIndex - 1 + playlist.length) % playlist.length;
+        const prevItem = playlist[prev];
+        if (!prevItem) return;
+        const prevDur = estimateDuration(buildText(prevItem));
+        const newOffset = Math.max(0, prevDur + target); // target is negative
+        setCurrentIndex(prev);
+        if (isPlaying) speakIndex(prev, newOffset);
+        else {
+          pausedOffsetRef.current = newOffset;
+          setDurationSec(prevDur);
+          setElapsedSec(newOffset);
+        }
+      } else {
+        // Clamp at 0
+        if (isPlaying) speakIndex(currentIndex, 0);
+        else {
+          pausedOffsetRef.current = 0;
+          setElapsedSec(0);
+        }
+      }
+      return;
+    }
+    if (target >= durationSec) {
+      // advance to next
+      handleNext();
+      return;
+    }
+    if (isPlaying) speakIndex(currentIndex, target);
+    else {
+      pausedOffsetRef.current = target;
+      setElapsedSec(target);
+    }
+  };
+
+  const handleSeek = (sec: number) => {
+    if (playlist.length === 0 || durationSec <= 0) return;
+    const target = Math.max(0, Math.min(sec, durationSec));
+    if (isPlaying) speakIndex(currentIndex, target);
+    else {
+      pausedOffsetRef.current = target;
+      setElapsedSec(target);
+    }
+  };
+
+  // Update duration when track changes (idle state)
+  useEffect(() => {
+    const item = playlist[currentIndex];
+    if (!item) {
+      setDurationSec(0);
+      setElapsedSec(0);
+      return;
+    }
+    if (!isPlaying) {
+      setDurationSec(estimateDuration(buildText(item)));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, playlist, speed]);
 
   // Stop on unmount
   useEffect(() => {
