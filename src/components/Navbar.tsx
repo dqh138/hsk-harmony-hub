@@ -184,9 +184,6 @@ const Navbar = () => {
                     登录 Đăng nhập
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/flashcards" className="cursor-pointer">
                     <Layers className="mr-2 h-4 w-4" />
                     抽认卡 Flashcards
                   </Link>
