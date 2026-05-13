@@ -230,32 +230,50 @@ const Navbar = () => {
             模拟考试
           </Link>
 
-          <Link
-            to="/conversations"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          <button
+            onClick={() => setToolsOpen((v) => !v)}
+            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
-            <MessageSquare className="h-4 w-4" />
-            对话 Hội thoại
-          </Link>
-
-          <Link
-            to="/news"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-          >
-            <Newspaper className="h-4 w-4" />
-            新闻 Tin Trung Quốc
-          </Link>
-
-          <Link
-            to="/passive-listening"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-          >
-            <Headphones className="h-4 w-4" />
-            被动听力 Nghe thụ động
-          </Link>
+            <GraduationCap className="h-4 w-4" />
+            学习工具 Công cụ học tập
+            <ChevronRight className={cn("ml-auto h-4 w-4 transition-transform", toolsOpen && "rotate-90")} />
+          </button>
+          {toolsOpen && (
+            <div className="ml-4 border-l border-border/40 pl-2">
+              <Link
+                to="/conversations"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <MessageSquare className="h-4 w-4" />
+                对话 Hội thoại
+              </Link>
+              <Link
+                to="/news"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <Newspaper className="h-4 w-4" />
+                新闻 Tin Trung Quốc
+              </Link>
+              <Link
+                to="/passive-listening"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <Headphones className="h-4 w-4" />
+                被动听力 Nghe thụ động
+              </Link>
+              <Link
+                to="/flashcards"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <Layers className="h-4 w-4" />
+                抽认卡 Flashcards
+              </Link>
+            </div>
+          )}
 
           <Link
             to="/saved-words"
