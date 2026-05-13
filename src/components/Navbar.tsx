@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, ChevronDown, Bookmark, LogIn, LogOut, User, Layers, UserCircle2, MessageSquare, Newspaper } from "lucide-react";
-import { cn as _cnUnused } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
