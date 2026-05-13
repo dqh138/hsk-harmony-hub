@@ -7,6 +7,15 @@ import { cn } from "@/lib/utils";
 
 const VALID_LEVELS = ["1", "2", "3", "4", "5", "6"];
 
+const borderByLevel: Record<HSKLevel, string> = {
+  1: "border-hsk1/30",
+  2: "border-hsk2/30",
+  3: "border-hsk3/30",
+  4: "border-hsk4/30",
+  5: "border-hsk5/30",
+  6: "border-hsk6/30",
+};
+
 const MockExamsLevel = () => {
   const { level } = useParams<{ level: string }>();
 
