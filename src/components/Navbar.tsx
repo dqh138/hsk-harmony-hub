@@ -25,9 +25,7 @@ import {
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const [grammarOpen, setGrammarOpen] = useState(false);
-  const [vocabOpen, setVocabOpen] = useState(false);
-  const [examOpen, setExamOpen] = useState(false);
+  const [accountInfoOpen, setAccountInfoOpen] = useState(false);
   const [accountInfoOpen, setAccountInfoOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
