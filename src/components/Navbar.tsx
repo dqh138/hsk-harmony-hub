@@ -103,6 +103,17 @@ const Navbar = () => {
           </Link>
 
           <Link
+            to="/passive-listening"
+            className={cn(
+              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              location.pathname.startsWith("/passive-listening") && "bg-muted"
+            )}
+          >
+            <Headphones className="h-4 w-4" />
+            被动听力
+          </Link>
+
+          <Link
             to="/saved-words"
             className={cn(
               "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
