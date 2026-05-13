@@ -23,34 +23,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const levels: HSKLevel[] = [1, 2, 3, 4, 5, 6];
-
-const NavDropdown = ({
-  label,
-  children,
-  isActive,
-}: {
-  label: string;
-  children: React.ReactNode;
-  isActive: boolean;
-}) => {
-  return (
-    <div className="relative group">
-      <button
-        className={cn(
-          "flex items-center gap-1 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-          isActive && "bg-muted"
-        )}
-      >
-        {label}
-        <ChevronDown className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:rotate-180" />
-      </button>
-      <div className="invisible absolute left-0 top-full z-50 min-w-[160px] rounded-lg border border-border bg-popover p-1.5 shadow-xl opacity-0 transition-all group-hover:visible group-hover:opacity-100">
-        {children}
-      </div>
-    </div>
-  );
-};
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
