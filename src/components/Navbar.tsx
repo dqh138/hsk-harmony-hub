@@ -159,12 +159,6 @@ const Navbar = () => {
                   <UserCircle2 className="mr-2 h-4 w-4" />
                   Thông tin tài khoản
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/flashcards" className="cursor-pointer">
-                    <Layers className="mr-2 h-4 w-4" />
-                    抽认卡 Flashcards
-                  </Link>
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={handleSignOut} className="text-destructive focus:text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
