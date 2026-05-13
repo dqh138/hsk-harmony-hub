@@ -12,6 +12,8 @@ import {
   Volume2,
   Newspaper,
   Loader2,
+  Rewind,
+  FastForward,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
