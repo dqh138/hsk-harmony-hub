@@ -92,43 +92,25 @@ const Navbar = () => {
             语法
           </Link>
 
-          <NavDropdown
-            label="生词"
-            isActive={location.pathname.startsWith("/vocabulary/")}
+          <Link
+            to="/vocabulary"
+            className={cn(
+              "rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              location.pathname.startsWith("/vocabulary") && "bg-muted"
+            )}
           >
-            {levels.map((level) => (
-              <Link
-                key={level}
-                to={`/vocabulary/${level}`}
-                className={cn(
-                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                  hskLevelTextColors[level],
-                  location.pathname === `/vocabulary/${level}` && "bg-muted"
-                )}
-              >
-                HSK {level}
-              </Link>
-            ))}
-          </NavDropdown>
+            生词
+          </Link>
 
-          <NavDropdown
-            label="模拟考试"
-            isActive={location.pathname.startsWith("/mock-exam")}
+          <Link
+            to="/mock-exams"
+            className={cn(
+              "rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              (location.pathname.startsWith("/mock-exams") || location.pathname.startsWith("/mock-exam/")) && "bg-muted"
+            )}
           >
-            {levels.map((level) => (
-              <Link
-                key={level}
-                to={`/mock-exams?level=${level}`}
-                className={cn(
-                  "block rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                  hskLevelTextColors[level],
-                  location.pathname.startsWith("/mock-exam") && location.search === `?level=${level}` && "bg-muted"
-                )}
-              >
-                HSK {level}
-              </Link>
-            ))}
-          </NavDropdown>
+            模拟考试
+          </Link>
 
           <Link
             to="/conversations"
