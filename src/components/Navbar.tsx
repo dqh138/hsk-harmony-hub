@@ -135,17 +135,6 @@ const Navbar = () => {
           </Link>
 
           <Link
-            to="/flashcards"
-            className={cn(
-              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-              location.pathname === "/flashcards" && "bg-muted"
-            )}
-          >
-            <Layers className="h-4 w-4" />
-            抽认卡
-          </Link>
-
-          <Link
             to="/saved-words"
             className={cn(
               "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
@@ -167,7 +156,7 @@ const Navbar = () => {
                   <ChevronDown className="h-3.5 w-3.5 opacity-60" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-[200px]">
+              <DropdownMenuContent align="end" className="min-w-[220px]">
                 <DropdownMenuLabel className="truncate text-xs font-normal text-muted-foreground">
                   {user.email ?? "Tài khoản"}
                 </DropdownMenuLabel>
@@ -176,6 +165,13 @@ const Navbar = () => {
                   <UserCircle2 className="mr-2 h-4 w-4" />
                   Thông tin tài khoản
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/flashcards" className="cursor-pointer">
+                    <Layers className="mr-2 h-4 w-4" />
+                    抽认卡 Flashcards
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={handleSignOut} className="text-destructive focus:text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
                   Đăng xuất
@@ -183,16 +179,32 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link
-              to="/auth"
-              className={cn(
-                "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-                location.pathname === "/auth" && "bg-muted"
-              )}
-            >
-              <LogIn className="h-4 w-4" />
-              登录
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+                  title="Tài khoản"
+                >
+                  <User className="h-4 w-4" />
+                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[220px]">
+                <DropdownMenuItem asChild>
+                  <Link to="/auth" className="cursor-pointer">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    登录 Đăng nhập
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/flashcards" className="cursor-pointer">
+                    <Layers className="mr-2 h-4 w-4" />
+                    抽认卡 Flashcards
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
 
           <ThemeToggle />
