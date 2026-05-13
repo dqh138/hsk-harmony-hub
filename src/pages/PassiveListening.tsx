@@ -41,6 +41,13 @@ type PlaylistItem = NewsItem & { sourceId: string; sourceCn: string };
 const SPEEDS = [0.7, 0.85, 1.0, 1.15, 1.3, 1.5];
 const STORAGE_KEY = "hskhub:passive-listening";
 
+const formatTime = (sec: number) => {
+  if (!isFinite(sec) || sec < 0) sec = 0;
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+};
+
 const PassiveListening = () => {
   const [playlist, setPlaylist] = useState<PlaylistItem[]>([]);
   const [loading, setLoading] = useState(true);
