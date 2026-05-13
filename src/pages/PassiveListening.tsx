@@ -405,15 +405,23 @@ const PassiveListening = () => {
   // Stop on unmount
   useEffect(() => {
     return () => {
+      stopTicker();
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
     };
   }, []);
 
-  // Re-apply speed mid-play
+  // Re-apply speed/voice mid-play (keep current position)
   useEffect(() => {
-    if (isPlaying) speakIndex(currentIndex);
+    if (isPlaying) {
+      let current = pausedOffsetRef.current;
+      if (startTimeRef.current !== null) {
+        const playedNow = (performance.now() - startTimeRef.current) / 1000;
+        current = offsetAtStartRef.current + playedNow;
+      }
+      speakIndex(currentIndex, current);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [speed, voiceURI]);
 
