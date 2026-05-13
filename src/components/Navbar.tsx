@@ -296,14 +296,6 @@ const Navbar = () => {
                 <UserCircle2 className="h-4 w-4" />
                 Thông tin tài khoản
               </button>
-              <Link
-                to="/flashcards"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-              >
-                <Layers className="h-4 w-4" />
-                抽认卡 Flashcards
-              </Link>
               <button
                 onClick={() => {
                   setOpen(false);
