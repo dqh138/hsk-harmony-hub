@@ -716,8 +716,26 @@ const PassiveListening = () => {
 };
 
 // ---------- Article Reader ----------
-const ARTICLE_SOURCES = new Set(["thepaper", "ithome", "juejin", "cls"]);
+const TREND_SOURCES = new Set(["weibo", "baidu", "zhihu", "toutiao"]);
 const SPEEDS_AR = [0.7, 0.85, 1.0, 1.15, 1.3];
+
+// Split text into TTS-safe chunks (≤170 chars, break on sentence punctuation)
+function splitChunks(text: string, maxLen = 170): string[] {
+  const chunks: string[] = [];
+  const sentences = text.split(/(?<=[。！？；\n])/);
+  let cur = "";
+  for (const s of sentences) {
+    if (!s.trim()) continue;
+    if ((cur + s).length > maxLen && cur.length > 0) {
+      chunks.push(cur.trim());
+      cur = s;
+    } else {
+      cur += s;
+    }
+  }
+  if (cur.trim()) chunks.push(cur.trim());
+  return chunks;
+}
 
 type ArticleReaderProps = {
   playlist: PlaylistItem[];
@@ -734,53 +752,117 @@ const ArticleReader = ({ playlist, voices, speed, setSpeed, voiceURI, setVoiceUR
   const [selected, setSelected] = useState<PlaylistItem | null>(null);
   const [content, setContent] = useState("");
   const [fetching, setFetching] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const uttRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const [activeChunk, setActiveChunk] = useState(-1);
+  const contentCache = useRef(new Map<string, string>());
+  const chunkIdxRef = useRef(0);
+  const chunksRef = useRef<string[]>([]);
+  const stoppedRef = useRef(false);
+  const chunkRefs = useRef<(HTMLParagraphElement | null)[]>([]);
 
-  const articleItems = playlist.filter((i) => ARTICLE_SOURCES.has(i.sourceId));
-  const trendItems = playlist.filter((i) => !ARTICLE_SOURCES.has(i.sourceId));
+  const trendItem = selected ? TREND_SOURCES.has(selected.sourceId) : false;
+  const hasContent = content.length > 0;
+  const chunks = useMemo(() => (hasContent ? splitChunks([selected?.sourceCn, selected?.title, content].filter(Boolean).join("。")) : []), [content, selected]);
 
-  const selectItem = async (item: PlaylistItem) => {
+  const pickVoice = useCallback(() => {
+    const v = voices.find((vv) => vv.voiceURI === voiceURI) ?? voices.find((vv) => vv.lang.toLowerCase().startsWith("zh"));
+    return v ?? null;
+  }, [voices, voiceURI]);
+
+  const speakChunk = useCallback((idx: number, chunkList: string[]) => {
+    if (idx >= chunkList.length) {
+      setIsPlaying(false);
+      setActiveChunk(-1);
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(chunkList[idx]);
+    u.lang = "zh-CN";
+    u.rate = speed;
+    const v = pickVoice();
+    if (v) u.voice = v;
+    u.onstart = () => {
+      setActiveChunk(idx);
+      // Scroll active chunk into view
+      chunkRefs.current[idx]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    };
+    u.onend = () => {
+      if (stoppedRef.current) return;
+      chunkIdxRef.current = idx + 1;
+      speakChunk(idx + 1, chunkList);
+    };
+    u.onerror = () => {
+      if (stoppedRef.current) return;
+      // skip broken chunk
+      chunkIdxRef.current = idx + 1;
+      speakChunk(idx + 1, chunkList);
+    };
+    window.speechSynthesis.speak(u);
+  }, [speed, pickVoice]);
+
+  const play = useCallback((fromChunk = 0) => {
+    if (chunks.length === 0) return;
+    stoppedRef.current = false;
+    chunksRef.current = chunks;
+    chunkIdxRef.current = fromChunk;
+    window.speechSynthesis.cancel();
+    setIsPlaying(true);
+    speakChunk(fromChunk, chunks);
+  }, [chunks, speakChunk]);
+
+  const stop = useCallback(() => {
+    stoppedRef.current = true;
     window.speechSynthesis.cancel();
     setIsPlaying(false);
+    setActiveChunk(-1);
+  }, []);
+
+  // Re-start from same chunk when speed/voice changes mid-play
+  useEffect(() => {
+    if (isPlaying) {
+      const cur = chunkIdxRef.current;
+      stop();
+      setTimeout(() => play(cur), 80);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speed, voiceURI]);
+
+  useEffect(() => () => { window.speechSynthesis.cancel(); }, []);
+
+  const selectItem = async (item: PlaylistItem) => {
+    stop();
     setSelected(item);
+    setActiveChunk(-1);
+    if (TREND_SOURCES.has(item.sourceId)) {
+      setContent("");
+      setFetchError(false);
+      return;
+    }
+    const cacheKey = item.url;
+    if (contentCache.current.has(cacheKey)) {
+      setContent(contentCache.current.get(cacheKey)!);
+      setFetchError(false);
+      return;
+    }
     setContent("");
-    if (!ARTICLE_SOURCES.has(item.sourceId)) return;
+    setFetchError(false);
     setFetching(true);
     try {
-      const { data } = await supabase.functions.invoke("fetch-article", {
-        body: { source: item.sourceId, id: item.id, url: item.url },
+      const { data, error } = await supabase.functions.invoke("article-content", {
+        body: { url: item.url },
       });
-      setContent(data?.content ?? "");
+      if (error || !data?.content) {
+        setFetchError(true);
+      } else {
+        contentCache.current.set(cacheKey, data.content);
+        setContent(data.content);
+      }
     } catch {
-      setContent("");
+      setFetchError(true);
     } finally {
       setFetching(false);
     }
   };
-
-  const play = () => {
-    if (!selected) return;
-    const text = [selected.sourceCn, selected.title, content].filter(Boolean).join("。");
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "zh-CN";
-    u.rate = speed;
-    const v = voices.find((vv) => vv.voiceURI === voiceURI) ?? voices.find((vv) => vv.lang.toLowerCase().startsWith("zh"));
-    if (v) u.voice = v;
-    u.onstart = () => setIsPlaying(true);
-    u.onend = () => setIsPlaying(false);
-    u.onerror = () => setIsPlaying(false);
-    uttRef.current = u;
-    window.speechSynthesis.speak(u);
-  };
-
-  const stop = () => {
-    window.speechSynthesis.cancel();
-    setIsPlaying(false);
-  };
-
-  useEffect(() => () => { window.speechSynthesis.cancel(); }, []);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
@@ -791,36 +873,69 @@ const ArticleReader = ({ playlist, voices, speed, setSpeed, voiceURI, setVoiceUR
             <BookOpen className="mb-3 h-10 w-10 text-muted-foreground/40" />
             <p className="text-muted-foreground">Chọn một bài từ danh sách →</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              ThePaper, ITHome, Juejin, CLS hỗ trợ tải toàn bài.
+              Bất kỳ nguồn nào đều thử tải toàn bài qua Jina Reader.
             </p>
           </div>
         ) : (
           <>
-            <p className="text-xs font-semibold uppercase tracking-wider text-primary">{selected.sourceCn}</p>
-            <h2 className="mt-1 font-serif text-2xl font-black leading-tight">{selected.title}</h2>
-            {selected.extra && <p className="mt-1 text-xs text-muted-foreground">{selected.extra}</p>}
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">{selected.sourceCn}</p>
+                <h2 className="mt-1 font-serif text-2xl font-black leading-tight">{selected.title}</h2>
+                {selected.extra && <p className="mt-1 text-xs text-muted-foreground">{selected.extra}</p>}
+              </div>
+              <a
+                href={selected.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 text-xs text-primary hover:underline flex items-center gap-1"
+              >
+                Bài gốc <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
 
-            <div className="mt-4">
+            {/* Content display */}
+            <div className="mt-4 max-h-[380px] overflow-y-auto rounded-xl bg-muted/30 p-4">
               {fetching ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" /> Đang tải nội dung bài…
+                <div className="flex items-center gap-2 text-sm text-muted-foreground py-8 justify-center">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Đang tải nội dung…
                 </div>
-              ) : content ? (
-                <div className="max-h-[360px] overflow-y-auto rounded-xl bg-muted/30 p-4 text-sm leading-relaxed text-foreground/90 whitespace-pre-wrap">
-                  {content}
-                </div>
-              ) : ARTICLE_SOURCES.has(selected.sourceId) ? (
-                <p className="text-sm italic text-muted-foreground">Không tải được nội dung bài này.</p>
-              ) : (
+              ) : trendItem ? (
                 <p className="text-sm italic text-muted-foreground">
-                  Nguồn <strong>{selected.sourceCn}</strong> là trending topic — không có bài viết đầy đủ.
+                  <strong>{selected.sourceCn}</strong> là trending topic — không có bài đầy đủ.
                 </p>
+              ) : fetchError ? (
+                <p className="text-sm italic text-muted-foreground">Không tải được nội dung bài này.</p>
+              ) : chunks.length > 0 ? (
+                <div className="space-y-1.5 text-sm leading-relaxed">
+                  {chunks.map((chunk, i) => (
+                    <p
+                      key={i}
+                      ref={(el) => { chunkRefs.current[i] = el; }}
+                      onClick={() => { stop(); play(i); }}
+                      className={cn(
+                        "cursor-pointer rounded px-1 py-0.5 transition-colors",
+                        activeChunk === i
+                          ? "bg-primary/20 text-foreground font-medium"
+                          : "text-foreground/80 hover:bg-muted"
+                      )}
+                    >
+                      {chunk}
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm italic text-muted-foreground py-8 text-center">Đang tải nội dung…</p>
               )}
             </div>
 
             {/* Controls */}
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <Button onClick={isPlaying ? stop : play} disabled={fetching} className="gap-2 min-w-[130px]">
+              <Button
+                onClick={isPlaying ? stop : () => play(0)}
+                disabled={fetching || (!hasContent && !trendItem)}
+                className="gap-2 min-w-[130px]"
+              >
                 {isPlaying ? <><Pause className="h-4 w-4" /> Dừng</> : <><Play className="h-4 w-4" /> Phát giọng</>}
               </Button>
 
@@ -828,7 +943,7 @@ const ArticleReader = ({ playlist, voices, speed, setSpeed, voiceURI, setVoiceUR
                 {SPEEDS_AR.map((s) => (
                   <button
                     key={s}
-                    onClick={() => { setSpeed(s); if (isPlaying) { stop(); setTimeout(play, 100); } }}
+                    onClick={() => setSpeed(s)}
                     className={cn(
                       "rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors",
                       speed === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
@@ -856,14 +971,11 @@ const ArticleReader = ({ playlist, voices, speed, setSpeed, voiceURI, setVoiceUR
               )}
             </div>
 
-            <a
-              href={selected.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-1 text-xs text-primary hover:underline"
-            >
-              Đọc bài gốc <ExternalLink className="h-3 w-3" />
-            </a>
+            {isPlaying && chunks.length > 0 && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Đoạn {activeChunk + 1}/{chunks.length} · Bấm vào đoạn bất kỳ để phát từ đó
+              </p>
+            )}
           </>
         )}
       </div>
@@ -883,53 +995,31 @@ const ArticleReader = ({ playlist, voices, speed, setSpeed, voiceURI, setVoiceUR
           </p>
         ) : (
           <div className="max-h-[640px] space-y-1.5 overflow-y-auto pr-1">
-            {/* Article sources */}
-            {articleItems.length > 0 && (
-              <>
-                <p className="mb-1 px-1 text-[10px] font-bold uppercase tracking-wider text-primary">
-                  Hỗ trợ toàn bài
-                </p>
-                {articleItems.map((item, i) => (
-                  <button
-                    key={`ar-${item.sourceId}-${item.id}-${i}`}
-                    onClick={() => selectItem(item)}
-                    className={cn(
-                      "w-full rounded-lg border px-3 py-2 text-left text-sm transition-colors",
-                      selected?.id === item.id && selected?.sourceId === item.sourceId
-                        ? "border-primary/60 bg-primary/5"
-                        : "border-border/40 hover:bg-muted"
-                    )}
-                  >
-                    <p className="line-clamp-2 font-medium leading-snug">{item.title}</p>
-                    <p className="mt-0.5 text-xs text-primary">{item.sourceCn}</p>
-                  </button>
-                ))}
-              </>
-            )}
-
-            {/* Trend sources */}
-            {trendItems.length > 0 && (
-              <>
-                <p className="mb-1 mt-3 px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Chỉ tiêu đề (trending)
-                </p>
-                {trendItems.slice(0, 30).map((item, i) => (
-                  <button
-                    key={`tr-${item.sourceId}-${item.id}-${i}`}
-                    onClick={() => selectItem(item)}
-                    className={cn(
-                      "w-full rounded-lg border px-3 py-2 text-left text-sm transition-colors opacity-70",
-                      selected?.id === item.id && selected?.sourceId === item.sourceId
-                        ? "border-primary/60 bg-primary/5 opacity-100"
-                        : "border-border/40 hover:bg-muted"
-                    )}
-                  >
-                    <p className="line-clamp-1 font-medium">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">{item.sourceCn}</p>
-                  </button>
-                ))}
-              </>
-            )}
+            {playlist.map((item, i) => {
+              const isTrend = TREND_SOURCES.has(item.sourceId);
+              const isActive = selected?.id === item.id && selected?.sourceId === item.sourceId;
+              return (
+                <button
+                  key={`${item.sourceId}-${item.id}-${i}`}
+                  onClick={() => selectItem(item)}
+                  className={cn(
+                    "w-full rounded-lg border px-3 py-2 text-left text-sm transition-colors",
+                    isActive ? "border-primary/60 bg-primary/5" : "border-border/40 hover:bg-muted"
+                  )}
+                >
+                  <p className="line-clamp-2 font-medium leading-snug">{item.title}</p>
+                  <div className="mt-0.5 flex items-center gap-1.5">
+                    <span className="text-xs text-muted-foreground">{item.sourceCn}</span>
+                    <span className={cn(
+                      "rounded-full px-1.5 py-0 text-[10px] font-semibold",
+                      isTrend ? "bg-amber-500/15 text-amber-600" : "bg-green-500/15 text-green-600"
+                    )}>
+                      {isTrend ? "Chỉ tiêu đề" : "Có toàn bài"}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
       </aside>
