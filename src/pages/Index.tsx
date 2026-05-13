@@ -259,12 +259,13 @@ const Index = () => {
           <p className="mt-3 text-sm text-muted-foreground">Một vòng lặp đơn giản, hiệu quả từ HSK 1 đến HSK 6.</p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {[
-            { step: "01", icon: BookOpen, title: "Học ngữ pháp", desc: "Nắm chắc cấu trúc và ví dụ từng level." , href: "/hsk/1"},
-            { step: "02", icon: Layers, title: "Mở rộng từ vựng", desc: "Thêm từ mới theo level HSK chuẩn.", href: "/vocabulary/1" },
-            { step: "03", icon: Bookmark, title: "Lưu & ôn lại", desc: "Bôi đen từ bất kỳ → lưu vào sổ tay.", href: "/saved-words" },
-            { step: "04", icon: FileText, title: "Luyện đề thật", desc: "Bấm giờ, làm đề HSK đầy đủ 3 phần.", href: "/mock-exams" },
+            { step: "01", icon: BookOpen, title: "Học ngữ pháp", desc: "Nắm chắc cấu trúc HSK theo level.", href: "/grammar" },
+            { step: "02", icon: Layers, title: "Mở rộng từ vựng", desc: "Thêm từ mới — lưu vào sổ tay.", href: "/vocabulary" },
+            { step: "03", icon: Mic, title: "Luyện nói", desc: "Karaoke hội thoại + AI chấm phát âm.", href: "/conversations" },
+            { step: "04", icon: Headphones, title: "Nghe thụ động", desc: "Bật tin tức zh-CN nghe nền.", href: "/passive-listening" },
+            { step: "05", icon: FileText, title: "Luyện đề thật", desc: "Bấm giờ, làm đề HSK đầy đủ 3 phần.", href: "/mock-exams" },
           ].map((s) => {
             const Icon = s.icon;
             return (
