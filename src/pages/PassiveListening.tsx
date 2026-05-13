@@ -23,8 +23,6 @@ const ARTICLE_SOURCES = [
   { id: "juejin",   cn: "掘金热榜" },
   { id: "cls",      cn: "财联社电报" },
 ];
-const ARTICLE_SOURCE_IDS = new Set(ARTICLE_SOURCES.map((s) => s.id));
-
 type PlaylistItem = NewsItem & { sourceId: string; sourceCn: string };
 
 const SPEEDS = [0.7, 0.85, 1.0, 1.15, 1.3];
