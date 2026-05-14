@@ -208,24 +208,27 @@ const Navbar = () => {
           <Link
             to="/grammar"
             onClick={() => setOpen(false)}
-            className="block rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
+            <BookOpen className="h-4 w-4" />
             语法
           </Link>
 
           <Link
             to="/vocabulary"
             onClick={() => setOpen(false)}
-            className="block rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
+            <Languages className="h-4 w-4" />
             生词
           </Link>
 
           <Link
             to="/mock-exams"
             onClick={() => setOpen(false)}
-            className="block rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
+            <ClipboardCheck className="h-4 w-4" />
             模拟考试
           </Link>
 
@@ -271,17 +274,16 @@ const Navbar = () => {
                 <Layers className="h-4 w-4" />
                 抽认卡 Flashcards
               </Link>
+              <Link
+                to="/saved-words"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <Bookmark className="h-4 w-4" />
+                生词本 Sổ từ vựng
+              </Link>
             </div>
           )}
-
-          <Link
-            to="/saved-words"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-          >
-            <Bookmark className="h-4 w-4" />
-            生词本
-          </Link>
 
           {user ? (
             <>
