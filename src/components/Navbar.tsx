@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ChevronDown, ChevronRight, Bookmark, LogIn, LogOut, User, Layers, UserCircle2, MessageSquare, Newspaper, Headphones, GraduationCap } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronRight, Bookmark, LogIn, LogOut, User, Layers, UserCircle2, MessageSquare, Newspaper, Headphones, GraduationCap, BookOpen, Languages, ClipboardCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
@@ -34,7 +34,8 @@ const Navbar = () => {
     location.pathname.startsWith("/conversations") ||
     location.pathname.startsWith("/news") ||
     location.pathname.startsWith("/passive-listening") ||
-    location.pathname.startsWith("/flashcards");
+    location.pathname.startsWith("/flashcards") ||
+    location.pathname === "/saved-words";
 
   const handleSignOut = async () => {
     await signOut();
@@ -60,30 +61,33 @@ const Navbar = () => {
           <Link
             to="/grammar"
             className={cn(
-              "rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
               (location.pathname === "/grammar" || location.pathname.startsWith("/hsk/")) && "bg-muted"
             )}
           >
+            <BookOpen className="h-4 w-4" />
             语法
           </Link>
 
           <Link
             to="/vocabulary"
             className={cn(
-              "rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
               location.pathname.startsWith("/vocabulary") && "bg-muted"
             )}
           >
+            <Languages className="h-4 w-4" />
             生词
           </Link>
 
           <Link
             to="/mock-exams"
             className={cn(
-              "rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
+              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
               (location.pathname.startsWith("/mock-exams") || location.pathname.startsWith("/mock-exam/")) && "bg-muted"
             )}
           >
+            <ClipboardCheck className="h-4 w-4" />
             模拟考试
           </Link>
 
@@ -125,19 +129,14 @@ const Navbar = () => {
                   抽认卡 Flashcards
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/saved-words" className="cursor-pointer">
+                  <Bookmark className="mr-2 h-4 w-4" />
+                  生词本 Sổ từ vựng
+                </Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <Link
-            to="/saved-words"
-            className={cn(
-              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-              location.pathname === "/saved-words" && "bg-muted"
-            )}
-          >
-            <Bookmark className="h-4 w-4" />
-            生词本
-          </Link>
 
           {user ? (
             <DropdownMenu>
@@ -209,24 +208,27 @@ const Navbar = () => {
           <Link
             to="/grammar"
             onClick={() => setOpen(false)}
-            className="block rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
+            <BookOpen className="h-4 w-4" />
             语法
           </Link>
 
           <Link
             to="/vocabulary"
             onClick={() => setOpen(false)}
-            className="block rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
+            <Languages className="h-4 w-4" />
             生词
           </Link>
 
           <Link
             to="/mock-exams"
             onClick={() => setOpen(false)}
-            className="block rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
+            <ClipboardCheck className="h-4 w-4" />
             模拟考试
           </Link>
 
@@ -272,17 +274,16 @@ const Navbar = () => {
                 <Layers className="h-4 w-4" />
                 抽认卡 Flashcards
               </Link>
+              <Link
+                to="/saved-words"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <Bookmark className="h-4 w-4" />
+                生词本 Sổ từ vựng
+              </Link>
             </div>
           )}
-
-          <Link
-            to="/saved-words"
-            onClick={() => setOpen(false)}
-            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-          >
-            <Bookmark className="h-4 w-4" />
-            生词本
-          </Link>
 
           {user ? (
             <>
