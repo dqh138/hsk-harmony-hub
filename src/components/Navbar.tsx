@@ -129,19 +129,14 @@ const Navbar = () => {
                   抽认卡 Flashcards
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/saved-words" className="cursor-pointer">
+                  <Bookmark className="mr-2 h-4 w-4" />
+                  生词本 Sổ từ vựng
+                </Link>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <Link
-            to="/saved-words"
-            className={cn(
-              "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-muted text-foreground",
-              location.pathname === "/saved-words" && "bg-muted"
-            )}
-          >
-            <Bookmark className="h-4 w-4" />
-            生词本
-          </Link>
 
           {user ? (
             <DropdownMenu>
