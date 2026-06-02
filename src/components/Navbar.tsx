@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ChevronDown, ChevronRight, Bookmark, LogIn, LogOut, User, Layers, UserCircle2, MessageSquare, Newspaper, Headphones, GraduationCap, BookOpen, Languages, ClipboardCheck } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronRight, Bookmark, LogIn, LogOut, User, Layers, UserCircle2, MessageSquare, Newspaper, Headphones, GraduationCap, BookOpen, Languages, ClipboardCheck, PenLine } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
@@ -34,6 +34,7 @@ const Navbar = () => {
     location.pathname.startsWith("/conversations") ||
     location.pathname.startsWith("/news") ||
     location.pathname.startsWith("/passive-listening") ||
+    location.pathname.startsWith("/dictation") ||
     location.pathname.startsWith("/flashcards") ||
     location.pathname === "/saved-words";
 
@@ -121,6 +122,12 @@ const Navbar = () => {
                 <Link to="/passive-listening" className="cursor-pointer">
                   <Headphones className="mr-2 h-4 w-4" />
                   被动听力 Nghe thụ động
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/dictation" className="cursor-pointer">
+                  <PenLine className="mr-2 h-4 w-4" />
+                  听写 Chép chính tả
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -265,6 +272,14 @@ const Navbar = () => {
               >
                 <Headphones className="h-4 w-4" />
                 被动听力 Nghe thụ động
+              </Link>
+              <Link
+                to="/dictation"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <PenLine className="h-4 w-4" />
+                听写 Chép chính tả
               </Link>
               <Link
                 to="/flashcards"

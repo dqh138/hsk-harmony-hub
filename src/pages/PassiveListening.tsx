@@ -443,13 +443,13 @@ const ArticleReader = ({
           <p className="text-sm text-muted-foreground">Chưa có tin. Bấm tải lại.</p>
         ) : (
           <div className="max-h-[640px] space-y-4 overflow-y-auto pr-1">
-            {ARTICLE_SOURCES.map(({ id: sid, cn }) => {
+            {ARTICLE_SOURCES.map(({ id: sid, cn: cnLabel }) => {
               const items = bySource.get(sid);
               if (!items || items.length === 0) return null;
               return (
                 <div key={sid}>
                   <p className="mb-1.5 px-1 text-[10px] font-bold uppercase tracking-wider text-primary">
-                    {cn}
+                    {cnLabel}
                   </p>
                   <div className="space-y-1">
                     {items.map((item, i) => {
