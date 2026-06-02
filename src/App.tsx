@@ -20,6 +20,7 @@ import News from "./pages/News";
 import ConversationLevel from "./pages/ConversationLevel";
 import ConversationPractice from "./pages/ConversationPractice";
 import PassiveListening from "./pages/PassiveListening";
+import Dictation from "./pages/Dictation";
 import NotFound from "./pages/NotFound";
 import StudyToolsLayer from "./components/StudyToolsLayer";
 import { ChineseDecorBackdrop } from "./components/ChineseDecor";
@@ -100,6 +101,7 @@ const App = () => (
             <Route path="/conversations/:level/:id" element={<ConversationPractice />} />
             <Route path="/news" element={<News />} />
             <Route path="/passive-listening" element={<PassiveListening />} />
+            <Route path="/dictation" element={<Dictation />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
