@@ -1,86 +1,89 @@
-# Kế hoạch: Video Dictation (听写) từ YouTube
+# Kế hoạch: Thư viện video Dictation + phím tắt
 
-## Luồng người dùng
+## 1. Dữ liệu video curated
 
-1. Vào trang mới `/dictation` (thêm vào dropdown 学习工具 với icon `PenLine`, label `听写 / Chép chính tả`).
-2. Dán URL YouTube tiếng Trung → bấm "Tải phụ đề".
-3. App nhúng YouTube player + hiển thị danh sách câu (segment) từ phụ đề (chỉ thời gian, ẩn hanzi).
-4. Người dùng bấm **▶ Câu N** → player phát đúng đoạn từ `start` đến `start+duration` rồi tự pause.
-5. Người dùng gõ hanzi vào ô input → bấm "Kiểm tra" → so sánh với transcript gốc, highlight đúng/sai theo ký tự (tái dùng `scorePronunciation` từ `src/lib/pronunciationScore.ts`, lấy `hanziDiff`).
-6. Có nút "Hiện đáp án", "Pinyin", "Nghĩa VN" (dịch lười, gọi khi cần), "Câu trước/sau", "Nghe lại".
-7. Tổng điểm trung bình ở cuối, lưu lịch sử video gần đây vào `localStorage`.
+Tạo `src/data/dictationVideos.ts` (pattern giống `conversations.ts`):
 
-## Kiến trúc kỹ thuật
+```ts
+export type DictationLevel = 1 | 2 | 3 | 4 | 5 | 6;
+export type DictationCategory = "news" | "vlog" | "cartoon" | "drama" | "education" | "other";
 
-### 1. Lấy phụ đề YouTube — Edge Function mới `youtube-captions`
+export interface DictationVideo {
+  id: string;            // slug nội bộ
+  youtubeId: string;     // mã video YouTube
+  title: string;         // tiêu đề tiếng Trung
+  titleVi?: string;      // tiêu đề tiếng Việt (tùy chọn)
+  level: DictationLevel;
+  category: DictationCategory;
+  description?: string;
+  durationLabel?: string; // "3:45" hiển thị nhanh
+  thumbnail?: string;     // mặc định dùng https://i.ytimg.com/vi/<id>/hqdefault.jpg
+}
 
-Trình duyệt không gọi trực tiếp được endpoint phụ đề YT (CORS + nhiều endpoint cần token). Cần edge function:
+export const DICTATION_VIDEOS: DictationVideo[] = [
+  // bạn paste video tại đây
+];
 
-- Input: `{ videoId }` (parse từ URL ở client).
-- Bước 1: GET `https://www.youtube.com/watch?v=<id>` (User-Agent giả lập), regex lấy `ytInitialPlayerResponse` → `captions.playerCaptionsTracklistRenderer.captionTracks[]`.
-- Bước 2: Chọn track tiếng Trung theo thứ tự ưu tiên: `zh-Hans` > `zh-CN` > `zh` > `zh-Hant` > track đầu tiên có `languageCode` bắt đầu `zh`. Nếu không có → trả lỗi rõ ràng "Video này không có phụ đề tiếng Trung".
-- Bước 3: GET `baseUrl + "&fmt=json3"` → parse `events[]` thành mảng `{ start, duration, text }`. Lọc bỏ event rỗng, ghép các segment cực ngắn (<1.5s) với segment kế tiếp để câu đủ dài để chép.
-- Bước 4: Trả về JSON `{ title, segments: [{ idx, start, dur, hanzi }] }`.
-- CORS chuẩn, dùng `corsHeaders` từ `npm:@supabase/supabase-js@2/cors`. `verify_jwt = false` (mặc định).
-
-### 2. Pinyin & dịch nghĩa (lazy, theo câu)
-
-- **Pinyin**: tạo client-side bằng `pinyin-pro` (đã có trong project).
-- **Dịch VN**: tái dùng edge function `pinyin-translate` (đã có) — chỉ gọi khi user bấm "Nghĩa VN" cho 1 câu, không dịch hàng loạt để tiết kiệm.
-
-### 3. YouTube player — kiểm soát pause theo segment
-
-- Dùng IFrame Player API qua component nhỏ `YouTubeSegmentPlayer.tsx`:
-  - Load `https://www.youtube.com/iframe_api` 1 lần.
-  - Expose method `playSegment(start, dur)`: `seekTo(start, true)` → `playVideo()` → `setTimeout(pauseVideo, dur*1000)`. Có cờ cancel khi user bấm câu khác.
-  - Nút "Nghe lại" gọi lại `playSegment` của câu hiện tại.
-
-### 4. Trang `src/pages/Dictation.tsx`
-
-Layout:
-
-```text
-[Navbar]
-[Input URL YT] [Tải phụ đề]
-─────────────────────────────
-[YouTube iframe player 16:9]
-─────────────────────────────
-[Card câu hiện tại]
-  Câu 3 / 42   ⏱ 00:42 → 00:48     [▶ Nghe]
-  [Input hanzi __________________]
-  [Kiểm tra] [Hiện đáp án] [Pinyin] [Nghĩa VN]
-  → so sánh: 我❌爱✓中✓国✓
-[← Câu trước]  [Câu sau →]
-─────────────────────────────
-Tiến độ: 12/42 câu • Điểm TB: 86%
+export const DICTATION_CATEGORIES: { id: DictationCategory; label: string }[] = [
+  { id: "news", label: "Tin tức" },
+  { id: "vlog", label: "Vlog" },
+  { id: "cartoon", label: "Hoạt hình" },
+  { id: "drama", label: "Phim" },
+  { id: "education", label: "Học tập" },
+  { id: "other", label: "Khác" },
+];
 ```
 
-Quản lý state với `useState`/`useMemo`. Lưu `{ url, segments, scores, currentIdx }` vào `localStorage` theo `videoId` để quay lại học tiếp.
+Phụ đề vẫn lấy động qua edge function `youtube-captions` đã có — không cần paste segments thủ công.
 
-### 5. Menu & routing
+## 2. Trang chọn video `src/pages/Dictation.tsx` (refactor)
 
-- Thêm route `/dictation` vào `src/App.tsx`.
-- Thêm vào dropdown **学习工具** (desktop + mobile accordion) trong `src/components/Navbar.tsx`, icon `PenLine` từ lucide-react, label `听写`.
+Chia thành 2 chế độ qua `Tabs`:
 
-## Files cần tạo / sửa
+- **Tab "Thư viện"** (mặc định):
+  - Filter theo HSK level (1–6, dùng màu HSK trong `mem://style/color-palette`).
+  - Filter theo category (chip).
+  - Grid card: thumbnail YouTube + title + badge level + category. Click → vào chế độ luyện với `youtubeId` đó.
+- **Tab "Dán link"**: giữ nguyên ô input + nút "Tải phụ đề" hiện tại.
 
-- **Tạo** `supabase/functions/youtube-captions/index.ts` — fetch + parse phụ đề.
-- **Tạo** `src/pages/Dictation.tsx` — trang chính.
-- **Tạo** `src/components/YouTubeSegmentPlayer.tsx` — wrapper IFrame API.
-- **Sửa** `src/App.tsx` — thêm route.
-- **Sửa** `src/components/Navbar.tsx` — thêm item vào 学习工具.
+Khi chọn xong video, hiển thị panel luyện (player + segment card) hiện có. Thêm nút "← Đổi video" để quay lại danh sách.
 
-## Hạn chế & rủi ro cần biết trước
+## 3. Phím tắt trong panel luyện
 
-1. **Phụ đề YT có thể bị chặn**: YouTube đôi khi yêu cầu token (`pot`/`signatureCipher`) cho `timedtext`. Phương án regex `ytInitialPlayerResponse` hoạt động cho ~90% video công khai có sub thủ công; với video chỉ có **auto-generated caption** (asr) tỉ lệ thành công thấp hơn và cần thêm tham số `&kind=asr`. Plan này cover cả 2 trường hợp nhưng vẫn có thể fail với video bị giới hạn vùng/age-restricted — khi đó hiện lỗi rõ ràng cho user.
-2. **Không phải video nào cũng có sub tiếng Trung**: cần kiểm tra và báo lỗi sớm.
-3. **Auto-caption thường thiếu dấu câu** → câu sẽ dài/khó tách. Có thể bổ sung bước cắt theo độ dài (>15 ký tự thì cắt) ở phase 2.
-4. **Chấm điểm**: dùng lại thuật toán LCS hiện có, so theo ký tự hanzi (bỏ qua dấu câu) — đủ tốt cho dictation, không cần Soniox/STT.
-5. **Tốc độ phát**: YT IFrame API hỗ trợ `setPlaybackRate(0.75 / 1 / 1.25)` — sẽ thêm 3 nút tốc độ.
+Đăng ký `useEffect` global keydown trên trang Dictation, chỉ active khi `data && seg`:
 
-## Phase 2 (không làm ở plan này)
+| Phím | Hành động |
+|---|---|
+| `Ctrl` (hoặc `Cmd`) đơn lẻ | Phát lại câu hiện tại (`playCurrent()`) |
+| `Enter` (trong textarea, không Shift) | Nộp đáp án (`checkAnswer()`); nếu đã có score → đi câu tiếp |
+| `Ctrl/Cmd + →` | Câu tiếp |
+| `Ctrl/Cmd + ←` | Câu trước |
 
-- Lưu video & tiến độ lên Lovable Cloud thay vì localStorage.
-- Curated library video HSK theo cấp độ.
-- Chế độ cloze (điền chỗ trống).
-- Export kết quả dictation ra PDF.
+Chi tiết:
+- `Ctrl` đơn lẻ: lắng nghe `keydown` với `e.key === "Control"` (hoặc Meta), bỏ qua nếu đang giữ thêm phím khác (check `e.repeat` để không spam). Để tránh trigger khi user dùng Ctrl+C copy, chỉ play khi `keyup` của Control mà không có phím nào khác bấm cùng (track flag `ctrlAlone`).
+- `Enter` trong `<Textarea>`: xử lý ngay `onKeyDown` (đã có; thay thế shortcut Ctrl+Enter cũ). `Shift+Enter` vẫn xuống dòng bình thường.
+- Mũi tên: handler global, `preventDefault` khi match.
+
+Thêm khối "Phím tắt" nhỏ dưới card hướng dẫn cho người dùng.
+
+## 4. Navbar / routing
+
+Không đổi — route `/dictation` đã có, mục **听写** đã ở 学习工具.
+
+## 5. Lưu ý kỹ thuật
+
+- Chinese text trong `dictationVideos.ts` để trong backtick (theo `mem://architecture/encoding-standards`).
+- Thumbnail dùng `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`, có fallback `mqdefault.jpg`.
+- `localStorage` state hiện tại được giữ; khi chọn video mới từ thư viện thì reset như khi load URL.
+- Không thêm DB / bảng mới.
+
+## Files thay đổi
+
+- **Tạo** `src/data/dictationVideos.ts`
+- **Sửa** `src/pages/Dictation.tsx` (thêm Tabs, grid thư viện, filter, phím tắt)
+
+## Ngoài phạm vi (có thể làm sau)
+
+- Đánh dấu video đã hoàn thành / tiến độ theo từng video.
+- Lưu segments đã cache để không phải gọi lại edge function.
+- Admin UI thêm/sửa video.
