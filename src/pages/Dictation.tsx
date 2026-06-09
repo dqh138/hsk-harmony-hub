@@ -611,18 +611,31 @@ const Dictation = () => {
                   <div className="space-y-2 rounded-md border border-primary/30 bg-primary/5 p-3">
                     <div className="flex flex-wrap items-center gap-3 text-sm">
                       <span>So sánh ký tự:</span>
-                      <p className="text-lg">
-                        {currentScore.hanziDiff.map((d, i) => (
-                          <span
-                            key={i}
-                            className={cn(
-                              d.status === "match" ? "text-emerald-500" : "text-red-500 underline"
-                            )}
-                          >
-                            {d.char}
-                          </span>
-                        ))}
-                      </p>
+                      <TooltipProvider delayDuration={100}>
+                        <p className="text-lg">
+                          {currentScore.hanziDiff.map((d, i) => {
+                            if (d.status === "match") {
+                              return (
+                                <span key={i} className="text-emerald-500">
+                                  {d.char}
+                                </span>
+                              );
+                            }
+                            return (
+                              <Tooltip key={i}>
+                                <TooltipTrigger asChild>
+                                  <span className="cursor-help rounded bg-red-500/15 px-0.5 text-red-500 underline decoration-dotted">
+                                    ▢
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">
+                                  <span className="font-serif text-base">{d.char}</span>
+                                </TooltipContent>
+                              </Tooltip>
+                            );
+                          })}
+                        </p>
+                      </TooltipProvider>
                       <span
                         className={cn(
                           "ml-auto rounded px-2 py-1 text-base font-bold",
@@ -636,6 +649,9 @@ const Dictation = () => {
                         {currentScore.total}%
                       </span>
                     </div>
+                    <p className="text-xs text-muted-foreground">
+                      Các ô <span className="text-red-500">▢</span> là chỗ còn sai — di chuột vào để xem chữ đúng.
+                    </p>
                   </div>
                 )}
               </CardContent>
