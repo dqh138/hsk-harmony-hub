@@ -139,6 +139,7 @@ async function fetchPlayer(videoId: string) {
             contentCheckOk: true,
             racyCheckOk: true,
           }),
+        }
       );
       if (!resp.ok) {
         lastErr = `${c.name} HTTP ${resp.status}`;
