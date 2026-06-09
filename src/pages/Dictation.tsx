@@ -238,6 +238,20 @@ const Dictation = () => {
     const allCorrect = normalizedAnswer.length > 0 && normalizedInput === normalizedAnswer;
     if (allCorrect) {
       setTimeout(() => goNext(), 350);
+    } else {
+      // Reveal next correct character right after the longest correct prefix
+      let prefix = 0;
+      while (
+        prefix < normalizedInput.length &&
+        prefix < normalizedAnswer.length &&
+        normalizedInput[prefix] === normalizedAnswer[prefix]
+      ) {
+        prefix++;
+      }
+      if (prefix < normalizedAnswer.length) {
+        const hinted = normalizedAnswer.slice(0, prefix + 1);
+        setInputs((p) => ({ ...p, [currentIdx]: hinted }));
+      }
     }
     return result;
   }, [seg, inputs, currentIdx, goNext]);
