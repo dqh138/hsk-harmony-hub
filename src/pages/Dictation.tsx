@@ -219,7 +219,9 @@ const Dictation = () => {
   const playCurrent = useCallback(() => {
     if (!seg) return;
     playerRef.current?.setRate(rate);
-    playerRef.current?.playSegment(seg.start, seg.dur);
+    const start = Math.max(0, seg.start + AUDIO_OFFSET);
+    const dur = seg.dur + PLAYBACK_PAD_END;
+    playerRef.current?.playSegment(start, dur);
   }, [seg, rate]);
 
   const goPrev = useCallback(() => setCurrentIdx((i) => Math.max(0, i - 1)), []);
@@ -243,9 +245,10 @@ const Dictation = () => {
     const normalizedInput = normalizeHanzi(input);
     const allCorrect = normalizedAnswer.length > 0 && normalizedInput === normalizedAnswer;
     if (allCorrect) {
+      setHints((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
       setTimeout(() => goNext(), 350);
     } else {
-      // Reveal next correct character right after the longest correct prefix
+      // Tìm tiền tố đúng dài nhất, hiển thị thêm 1 chữ kế tiếp ở khu so sánh
       let prefix = 0;
       while (
         prefix < normalizedInput.length &&
@@ -255,8 +258,7 @@ const Dictation = () => {
         prefix++;
       }
       if (prefix < normalizedAnswer.length) {
-        const hinted = normalizedAnswer.slice(0, prefix + 1);
-        setInputs((p) => ({ ...p, [currentIdx]: hinted }));
+        setHints((p) => ({ ...p, [currentIdx]: prefix + 1 }));
       }
     }
     return result;
@@ -264,6 +266,7 @@ const Dictation = () => {
 
   const resetCurrent = () => {
     setScores((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
+    setHints((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
     setInputs((p) => ({ ...p, [currentIdx]: "" }));
     setShowAnswer((p) => ({ ...p, [currentIdx]: false }));
   };
