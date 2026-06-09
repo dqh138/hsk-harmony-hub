@@ -128,11 +128,17 @@ async function fetchPlayer(videoId: string) {
             "Content-Type": "application/json",
             "User-Agent": c.ua,
             "Accept-Language": "zh-CN,zh;q=0.9",
-            "X-YouTube-Client-Name": c.name === "ANDROID" ? "3" : c.name === "IOS" ? "5" : "1",
+            "X-YouTube-Client-Name": c.clientNameId,
             "X-YouTube-Client-Version": c.body.context.client.clientVersion,
+            Origin: "https://www.youtube.com",
+            Referer: "https://www.youtube.com/",
           },
-          body: JSON.stringify({ ...c.body, videoId }),
-        }
+          body: JSON.stringify({
+            ...c.body,
+            videoId,
+            contentCheckOk: true,
+            racyCheckOk: true,
+          }),
       );
       if (!resp.ok) {
         lastErr = `${c.name} HTTP ${resp.status}`;
