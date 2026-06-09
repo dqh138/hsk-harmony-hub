@@ -224,7 +224,15 @@ const Dictation = () => {
     }
     const result = scorePronunciation(seg.hanzi, input);
     setScores((p) => ({ ...p, [currentIdx]: result }));
-  }, [seg, inputs, currentIdx]);
+    const allCorrect =
+      result.hanziDiff.length > 0 &&
+      result.hanziDiff.every((d) => d.status === "match");
+    if (allCorrect) {
+      // Đúng hết → tự động sang câu tiếp theo
+      setTimeout(() => goNext(), 350);
+    }
+    return result;
+  }, [seg, inputs, currentIdx, goNext]);
 
   const resetCurrent = () => {
     setScores((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
