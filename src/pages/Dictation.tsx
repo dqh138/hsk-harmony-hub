@@ -269,11 +269,6 @@ const Dictation = () => {
     }
   };
 
-  const goPrev = useCallback(() => setCurrentIdx((i) => Math.max(0, i - 1)), []);
-  const goNext = useCallback(() => {
-    if (!data) return;
-    setCurrentIdx((i) => Math.min(data.segments.length - 1, i + 1));
-  }, [data]);
 
   // Keyboard shortcuts
   // - Ctrl/Cmd alone (press + release without other key) → replay current segment
