@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import {
   Play,
   Loader2,
@@ -215,6 +216,14 @@ const Dictation = () => {
     playerRef.current?.playSegment(seg.start, seg.dur);
   }, [seg, rate]);
 
+  const goPrev = useCallback(() => setCurrentIdx((i) => Math.max(0, i - 1)), []);
+  const goNext = useCallback(() => {
+    setCurrentIdx((i) => {
+      const max = (data?.segments.length ?? 1) - 1;
+      return Math.min(max, i + 1);
+    });
+  }, [data]);
+
   const checkAnswer = useCallback(() => {
     if (!seg) return;
     const input = inputs[currentIdx] ?? "";
@@ -224,7 +233,14 @@ const Dictation = () => {
     }
     const result = scorePronunciation(seg.hanzi, input);
     setScores((p) => ({ ...p, [currentIdx]: result }));
-  }, [seg, inputs, currentIdx]);
+    const allCorrect =
+      result.hanziDiff.length > 0 &&
+      result.hanziDiff.every((d) => d.status === "match");
+    if (allCorrect) {
+      setTimeout(() => goNext(), 350);
+    }
+    return result;
+  }, [seg, inputs, currentIdx, goNext]);
 
   const resetCurrent = () => {
     setScores((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
@@ -254,11 +270,6 @@ const Dictation = () => {
     }
   };
 
-  const goPrev = useCallback(() => setCurrentIdx((i) => Math.max(0, i - 1)), []);
-  const goNext = useCallback(() => {
-    if (!data) return;
-    setCurrentIdx((i) => Math.min(data.segments.length - 1, i + 1));
-  }, [data]);
 
   // Keyboard shortcuts
   // - Ctrl/Cmd alone (press + release without other key) → replay current segment
@@ -600,18 +611,31 @@ const Dictation = () => {
                   <div className="space-y-2 rounded-md border border-primary/30 bg-primary/5 p-3">
                     <div className="flex flex-wrap items-center gap-3 text-sm">
                       <span>So sánh ký tự:</span>
-                      <p className="text-lg">
-                        {currentScore.hanziDiff.map((d, i) => (
-                          <span
-                            key={i}
-                            className={cn(
-                              d.status === "match" ? "text-emerald-500" : "text-red-500 underline"
-                            )}
-                          >
-                            {d.char}
-                          </span>
-                        ))}
-                      </p>
+                      <TooltipProvider delayDuration={100}>
+                        <p className="text-lg">
+                          {currentScore.hanziDiff.map((d, i) => {
+                            if (d.status === "match") {
+                              return (
+                                <span key={i} className="text-emerald-500">
+                                  {d.char}
+                                </span>
+                              );
+                            }
+                            return (
+                              <Tooltip key={i}>
+                                <TooltipTrigger asChild>
+                                  <span className="cursor-help rounded bg-red-500/15 px-0.5 text-red-500 underline decoration-dotted">
+                                    ▢
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">
+                                  <span className="font-serif text-base">{d.char}</span>
+                                </TooltipContent>
+                              </Tooltip>
+                            );
+                          })}
+                        </p>
+                      </TooltipProvider>
                       <span
                         className={cn(
                           "ml-auto rounded px-2 py-1 text-base font-bold",
@@ -625,6 +649,9 @@ const Dictation = () => {
                         {currentScore.total}%
                       </span>
                     </div>
+                    <p className="text-xs text-muted-foreground">
+                      Các ô <span className="text-red-500">▢</span> là chỗ còn sai — di chuột vào để xem chữ đúng.
+                    </p>
                   </div>
                 )}
               </CardContent>
