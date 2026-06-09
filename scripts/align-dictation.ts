@@ -4,18 +4,14 @@
  * Usage:
  *   bun scripts/align-dictation.ts <youtubeId>
  *
- * What it does:
- *   1. Downloads audio of the YouTube video (via yt-dlp).
- *   2. Sends it to Soniox async STT (Chinese) → per-token timestamps.
- *   3. Loads the existing `segments` for that videoId from
- *      `src/data/dictationVideos.ts` and re-aligns each segment's
- *      `start` / `dur` by matching Han characters one-by-one.
- *   4. Writes the realigned segments to
- *      `scripts/out/<youtubeId>.segments.ts` (paste into dictationVideos.ts).
- *
- * Requirements:
- *   - env SONIOX_API_KEY  (already in this project's secrets)
- *   - nix (yt-dlp is fetched on demand)
+ * Strategy:
+ *   1. Download YouTube audio (yt-dlp).
+ *   2. Soniox async STT → per-token timestamps.
+ *   3. Align reference text (existing curated hanzi) 1:1 to Soniox char stream.
+ *   4. Detect natural segment boundaries from Soniox silence gaps + strong
+ *      punctuation in the reference text.
+ *   5. Emit new segments where audio chunks dictate boundaries, but text comes
+ *      from the curated reference (preserves spelling + punctuation).
  */
 
 import { spawn } from "node:child_process";
@@ -80,9 +76,7 @@ async function sonioxFetch(path: string, init: RequestInit = {}) {
       ...(init.headers || {}),
     },
   });
-  if (!r.ok) {
-    throw new Error(`Soniox ${path} → ${r.status}: ${await r.text()}`);
-  }
+  if (!r.ok) throw new Error(`Soniox ${path} → ${r.status}: ${await r.text()}`);
   return r.json();
 }
 
@@ -120,7 +114,6 @@ async function transcribe(fileId: string): Promise<SonioxToken[]> {
     }),
   });
   const id = job.id as string;
-  // poll
   for (let i = 0; i < 120; i++) {
     await new Promise((r) => setTimeout(r, 3000));
     const s = await sonioxFetch(`/v1/transcriptions/${id}`);
@@ -134,13 +127,14 @@ async function transcribe(fileId: string): Promise<SonioxToken[]> {
 }
 
 const isHan = (ch: string) => /[\u3400-\u9FFF]/.test(ch);
+const STRONG_PUNCT = new Set(["\u3002", "\uff1f", "\uff01", "\uff1b"]); // 。？！；
+const SOFT_PUNCT = new Set(["\uff0c", "\u3001", "\uff1a"]); // ，、：
 
 function align(tokens: SonioxToken[]) {
-  // Flatten Soniox tokens into per-Han-char stream
+  // 1) Flatten Soniox into per-Han-char stream
   const chars: { ch: string; start: number; end: number }[] = [];
   for (const tok of tokens) {
-    const text = tok.text || "";
-    const hans = [...text].filter(isHan);
+    const hans = [...(tok.text || "")].filter(isHan);
     if (!hans.length) continue;
     const dur = (tok.end_ms - tok.start_ms) / 1000;
     const per = dur / hans.length;
@@ -152,49 +146,125 @@ function align(tokens: SonioxToken[]) {
       });
     });
   }
+  if (!chars.length) throw new Error("Soniox returned no Han chars");
   console.log(`  Soniox produced ${chars.length} Han chars`);
 
-  const segs = video!.segments!;
-  if (!chars.length) throw new Error("Soniox returned no Han chars");
-  const totalAudio = chars[chars.length - 1].end;
-  // Estimate total reference duration from last seg
-  const lastSeg = segs[segs.length - 1];
-  const totalRef = lastSeg.start + lastSeg.dur;
+  // 2) Full reference string (keep punctuation)
+  const refFull = video!.segments!.map((s) => s.hanzi).join("");
+  const refArr = [...refFull];
 
-  const out = segs.map((seg) => {
-    const refChars = [...seg.hanzi].filter(isHan);
-    if (!refChars.length) return seg;
-    // Expected position: scale original seg.start to Soniox char index
-    const expected = Math.round((seg.start / totalRef) * chars.length);
-    const lo = Math.max(0, expected - 200);
-    const hi = Math.min(chars.length, expected + 200 + refChars.length);
-    let bestStart = -1;
-    let bestScore = -1;
-    for (let i = lo; i <= hi - refChars.length; i++) {
-      let score = 0;
-      for (let j = 0; j < refChars.length; j++) {
-        if (chars[i + j].ch === refChars[j]) score++;
-      }
-      // small bias toward expected position to break ties
-      const adj = score - Math.abs(i - expected) * 0.001;
-      if (adj > bestScore) {
-        bestScore = adj;
-        bestStart = i;
-        if (score === refChars.length) break;
+  // 3) Greedy 1:1 alignment: walk Soniox chars, find matching Han in ref
+  //    within a small lookahead. Skip Soniox char if no match (STT error).
+  const LOOKAHEAD = 5;
+  const refTime: number[] = new Array(refArr.length).fill(-1);
+  let refPos = 0;
+  for (let s = 0; s < chars.length; s++) {
+    const sCh = chars[s].ch;
+    // attach any leading non-Han ref chars (punctuation) to current time
+    while (refPos < refArr.length && !isHan(refArr[refPos])) {
+      refTime[refPos] = chars[s].start;
+      refPos++;
+    }
+    if (refPos >= refArr.length) break;
+    let found = -1;
+    for (let k = 0; k <= LOOKAHEAD && refPos + k < refArr.length; k++) {
+      if (!isHan(refArr[refPos + k])) continue;
+      if (refArr[refPos + k] === sCh) {
+        found = refPos + k;
+        break;
       }
     }
-    if (bestStart < 0 || bestScore < refChars.length * 0.4) {
-      console.warn(`  ! weak align seg ${seg.idx} (score=${bestScore.toFixed(1)}/${refChars.length}): "${seg.hanzi}"`);
-      return seg;
+    if (found < 0) continue; // STT mismatch, skip this Soniox char
+    for (let i = refPos; i < found; i++) refTime[i] = chars[s].start;
+    refTime[found] = chars[s].start;
+    refPos = found + 1;
+  }
+  // Fill remaining unmapped ref chars (forward then backward)
+  let last = chars[chars.length - 1].end;
+  for (let i = refArr.length - 1; i >= 0; i--) {
+    if (refTime[i] < 0) refTime[i] = last;
+    else last = refTime[i];
+  }
+
+  // Map each ref position back to a Soniox char index (for gap detection)
+  const refToSonioxIdx: number[] = new Array(refArr.length).fill(-1);
+  {
+    let si = 0;
+    for (let i = 0; i < refArr.length; i++) {
+      while (si < chars.length - 1 && chars[si].start < refTime[i]) si++;
+      refToSonioxIdx[i] = si;
     }
-    const startSec = chars[bestStart].start;
-    const endSec = chars[bestStart + refChars.length - 1].end;
-    return {
-      ...seg,
+  }
+
+  // 4) Boundaries from silence gaps in Soniox stream
+  const GAP_THRESHOLD = 0.35;
+  const gapAfterSoniox = new Set<number>();
+  for (let i = 1; i < chars.length; i++) {
+    if (chars[i].start - chars[i - 1].end >= GAP_THRESHOLD) {
+      gapAfterSoniox.add(i - 1);
+    }
+  }
+  console.log(`  Detected ${gapAfterSoniox.size} silence boundaries`);
+
+  // 5) Walk ref, cut segments at:
+  //    (a) strong punctuation 。？！；
+  //    (b) soft punctuation ，、： IF Soniox gap right after the corresponding char
+  //    (c) Soniox gap inside a run (cut after the ref Han char that maps to it)
+  //    (d) max-length safety net
+  const MAX_HAN = 22;
+  const MIN_HAN_BEFORE_CUT = 3;
+  const out: { idx: number; start: number; dur: number; hanzi: string }[] = [];
+  let bufStart = 0;
+  const flush = (endIdx: number) => {
+    let hanzi = refArr.slice(bufStart, endIdx + 1).join("").trim();
+    if (!hanzi) {
+      bufStart = endIdx + 1;
+      return;
+    }
+    const hanCount = [...hanzi].filter(isHan).length;
+    if (hanCount === 0) {
+      bufStart = endIdx + 1;
+      return;
+    }
+    // Find first/last ref index with valid time
+    let s = bufStart;
+    while (s <= endIdx && refTime[s] < 0) s++;
+    let e = endIdx;
+    while (e >= bufStart && refTime[e] < 0) e--;
+    const startSec = refTime[s] ?? 0;
+    const endSec = (refTime[e] ?? startSec) + 0.05;
+    out.push({
+      idx: out.length,
       start: +startSec.toFixed(2),
       dur: +Math.max(0.4, endSec - startSec).toFixed(2),
-    };
-  });
+      hanzi,
+    });
+    bufStart = endIdx + 1;
+  };
+
+  let hanInBuf = 0;
+  for (let i = 0; i < refArr.length; i++) {
+    const ch = refArr[i];
+    if (isHan(ch)) hanInBuf++;
+    const isStrong = STRONG_PUNCT.has(ch);
+    const isSoft = SOFT_PUNCT.has(ch);
+    const sIdx = refToSonioxIdx[i];
+    const hasGapHere = sIdx >= 0 && gapAfterSoniox.has(sIdx);
+
+    let cut = false;
+    if (isStrong && hanInBuf >= MIN_HAN_BEFORE_CUT) cut = true;
+    else if (isSoft && hasGapHere && hanInBuf >= MIN_HAN_BEFORE_CUT) cut = true;
+    else if (hasGapHere && isHan(ch) && hanInBuf >= MIN_HAN_BEFORE_CUT) cut = true;
+    else if (hanInBuf >= MAX_HAN && (isSoft || isStrong)) cut = true;
+    else if (hanInBuf >= MAX_HAN + 6) cut = true;
+
+    if (cut) {
+      flush(i);
+      hanInBuf = 0;
+    }
+  }
+  if (bufStart < refArr.length) flush(refArr.length - 1);
+
   return out;
 }
 
@@ -224,6 +294,5 @@ function toTs(segments: { idx: number; start: number; dur: number; hanzi: string
   const aligned = align(tokens);
   const outFile = resolve(OUT_DIR, `${youtubeId}.segments.ts`);
   writeFileSync(outFile, toTs(aligned));
-  console.log(`\n✅ Wrote ${outFile}`);
-  console.log(`   Paste its array into src/data/dictationVideos.ts (replace SILK_ROAD_SEGMENTS).`);
+  console.log(`\n✅ Wrote ${aligned.length} segments → ${outFile}`);
 })();
