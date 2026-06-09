@@ -97,6 +97,7 @@ const Dictation = () => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [inputs, setInputs] = useState<Record<number, string>>({});
   const [scores, setScores] = useState<Record<number, ScoreResult>>({});
+  const [hints, setHints] = useState<Record<number, number>>({});
   const [showAnswer, setShowAnswer] = useState<Record<number, boolean>>({});
   const [showPinyin, setShowPinyin] = useState<Record<number, boolean>>({});
   const [translations, setTranslations] = useState<Record<number, string>>({});
@@ -106,6 +107,10 @@ const Dictation = () => {
   const [categoryFilter, setCategoryFilter] = useState<DictationCategory | "all">("all");
   const playerRef = useRef<YouTubeSegmentPlayerHandle>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Phụ đề YouTube auto thường hiển thị sớm hơn giọng đọc. Bù khi phát.
+  const AUDIO_OFFSET = 0.5; // giây
+  const PLAYBACK_PAD_END = 0.4; // kéo dài thêm chút đuôi để khỏi cụt
 
   // Restore last session
   useEffect(() => {
