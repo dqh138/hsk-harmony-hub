@@ -206,33 +206,64 @@ function align(tokens: SonioxToken[]) {
   }
   console.log(`  Detected ${gapAfterSoniox.size} silence boundaries`);
 
-  // 5) Walk ref, cut segments at:
-  //    (a) strong punctuation 。？！；
-  //    (b) soft punctuation ，、： IF Soniox gap right after the corresponding char
-  //    (c) Soniox gap inside a run (cut after the ref Han char that maps to it)
-  //    (d) max-length safety net
-  const MAX_HAN = 22;
-  const MIN_HAN_BEFORE_CUT = 3;
+  // 5) Walk ref, decide cut points.
+  //    Priority: strong punctuation → soft punctuation (especially near gaps) →
+  //    soft punctuation as max-length safety net. Bare gaps without nearby
+  //    punctuation are ignored to avoid mid-clause cuts.
+  const MIN_HAN = 5;
+  const SOFT_HAN_TARGET = 12; // prefer cutting at soft punct after this many han
+  const MAX_HAN = 25;
+
+  // Pre-compute boolean "this index is a good cut point"
+  const cutAfter: boolean[] = new Array(refArr.length).fill(false);
+  let hanRunning = 0;
+  for (let i = 0; i < refArr.length; i++) {
+    const ch = refArr[i];
+    if (isHan(ch)) hanRunning++;
+    const isStrong = STRONG_PUNCT.has(ch);
+    const isSoft = SOFT_PUNCT.has(ch);
+    if (isStrong && hanRunning >= MIN_HAN) {
+      cutAfter[i] = true;
+      hanRunning = 0;
+      continue;
+    }
+    // Look at nearby Soniox gap (±2 ref positions) for soft punctuation
+    let nearGap = false;
+    for (let k = -2; k <= 2; k++) {
+      const j = i + k;
+      if (j < 0 || j >= refArr.length) continue;
+      const sIdx = refToSonioxIdx[j];
+      if (sIdx >= 0 && gapAfterSoniox.has(sIdx)) { nearGap = true; break; }
+    }
+    if (isSoft && nearGap && hanRunning >= MIN_HAN) {
+      cutAfter[i] = true;
+      hanRunning = 0;
+      continue;
+    }
+    if (isSoft && hanRunning >= SOFT_HAN_TARGET) {
+      cutAfter[i] = true;
+      hanRunning = 0;
+      continue;
+    }
+    if (hanRunning >= MAX_HAN && (isSoft || isStrong)) {
+      cutAfter[i] = true;
+      hanRunning = 0;
+    }
+  }
+
   const out: { idx: number; start: number; dur: number; hanzi: string }[] = [];
   let bufStart = 0;
   const flush = (endIdx: number) => {
-    let hanzi = refArr.slice(bufStart, endIdx + 1).join("").trim();
-    if (!hanzi) {
-      bufStart = endIdx + 1;
-      return;
-    }
-    const hanCount = [...hanzi].filter(isHan).length;
-    if (hanCount === 0) {
-      bufStart = endIdx + 1;
-      return;
-    }
-    // Find first/last ref index with valid time
+    // trim leading punctuation/whitespace from segment
     let s = bufStart;
-    while (s <= endIdx && refTime[s] < 0) s++;
+    while (s <= endIdx && !isHan(refArr[s])) s++;
+    if (s > endIdx) { bufStart = endIdx + 1; return; }
+    const hanzi = refArr.slice(s, endIdx + 1).join("").trim();
+    if (!hanzi) { bufStart = endIdx + 1; return; }
     let e = endIdx;
-    while (e >= bufStart && refTime[e] < 0) e--;
+    while (e >= s && refTime[e] < 0) e--;
     const startSec = refTime[s] ?? 0;
-    const endSec = (refTime[e] ?? startSec) + 0.05;
+    const endSec = (refTime[e] ?? startSec) + 0.08;
     out.push({
       idx: out.length,
       start: +startSec.toFixed(2),
@@ -241,22 +272,13 @@ function align(tokens: SonioxToken[]) {
     });
     bufStart = endIdx + 1;
   };
-
-  let hanInBuf = 0;
   for (let i = 0; i < refArr.length; i++) {
-    const ch = refArr[i];
-    if (isHan(ch)) hanInBuf++;
-    const isStrong = STRONG_PUNCT.has(ch);
-    const isSoft = SOFT_PUNCT.has(ch);
-    const sIdx = refToSonioxIdx[i];
-    const hasGapHere = sIdx >= 0 && gapAfterSoniox.has(sIdx);
+    if (cutAfter[i]) flush(i);
+  }
+  if (bufStart < refArr.length) flush(refArr.length - 1);
 
-    let cut = false;
-    if (isStrong && hanInBuf >= MIN_HAN_BEFORE_CUT) cut = true;
-    else if (isSoft && hasGapHere && hanInBuf >= MIN_HAN_BEFORE_CUT) cut = true;
-    else if (hasGapHere && isHan(ch) && hanInBuf >= MIN_HAN_BEFORE_CUT) cut = true;
-    else if (hanInBuf >= MAX_HAN && (isSoft || isStrong)) cut = true;
-    else if (hanInBuf >= MAX_HAN + 6) cut = true;
+  return out;
+}
 
     if (cut) {
       flush(i);
