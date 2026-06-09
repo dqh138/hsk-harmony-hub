@@ -155,32 +155,40 @@ function align(tokens: SonioxToken[]) {
   console.log(`  Soniox produced ${chars.length} Han chars`);
 
   const segs = video!.segments!;
-  let cursor = 0;
+  if (!chars.length) throw new Error("Soniox returned no Han chars");
+  const totalAudio = chars[chars.length - 1].end;
+  // Estimate total reference duration from last seg
+  const lastSeg = segs[segs.length - 1];
+  const totalRef = lastSeg.start + lastSeg.dur;
+
   const out = segs.map((seg) => {
     const refChars = [...seg.hanzi].filter(isHan);
-    // Greedy: find first cursor position where the next refChars.length chars
-    // best match (exact match preferred, allow up to 2 mismatches).
+    if (!refChars.length) return seg;
+    // Expected position: scale original seg.start to Soniox char index
+    const expected = Math.round((seg.start / totalRef) * chars.length);
+    const lo = Math.max(0, expected - 200);
+    const hi = Math.min(chars.length, expected + 200 + refChars.length);
     let bestStart = -1;
     let bestScore = -1;
-    const window = Math.min(chars.length, cursor + 200);
-    for (let i = cursor; i <= window - refChars.length; i++) {
+    for (let i = lo; i <= hi - refChars.length; i++) {
       let score = 0;
       for (let j = 0; j < refChars.length; j++) {
         if (chars[i + j].ch === refChars[j]) score++;
       }
-      if (score > bestScore) {
-        bestScore = score;
+      // small bias toward expected position to break ties
+      const adj = score - Math.abs(i - expected) * 0.001;
+      if (adj > bestScore) {
+        bestScore = adj;
         bestStart = i;
         if (score === refChars.length) break;
       }
     }
-    if (bestStart < 0) {
-      console.warn(`  ! could not align seg ${seg.idx}: "${seg.hanzi}"`);
+    if (bestStart < 0 || bestScore < refChars.length * 0.4) {
+      console.warn(`  ! weak align seg ${seg.idx} (score=${bestScore.toFixed(1)}/${refChars.length}): "${seg.hanzi}"`);
       return seg;
     }
     const startSec = chars[bestStart].start;
     const endSec = chars[bestStart + refChars.length - 1].end;
-    cursor = bestStart + refChars.length;
     return {
       ...seg,
       start: +startSec.toFixed(2),
