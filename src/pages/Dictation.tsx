@@ -28,7 +28,8 @@ import YouTubeSegmentPlayer, { type YouTubeSegmentPlayerHandle } from "@/compone
 import {
   DICTATION_VIDEOS,
   DICTATION_CATEGORIES,
-  HSK_LEVEL_COLORS,
+  DICTATION_LEVELS,
+  LEVEL_COLORS,
   getThumbnail,
   type DictationCategory,
   type DictationLevel,
@@ -340,21 +341,21 @@ const Dictation = () => {
               <Card>
                 <CardContent className="space-y-3 p-4">
                   <div className="flex flex-wrap gap-2">
-                    <span className="text-xs text-muted-foreground self-center mr-1">HSK:</span>
+                    <span className="text-xs text-muted-foreground self-center mr-1">Cấp độ:</span>
                     <Button
                       size="sm"
                       variant={levelFilter === "all" ? "default" : "outline"}
                       onClick={() => setLevelFilter("all")}
                       className="h-7 px-2 text-xs"
                     >Tất cả</Button>
-                    {([1, 2, 3, 4, 5, 6] as DictationLevel[]).map((lv) => (
+                    {DICTATION_LEVELS.map((lv) => (
                       <Button
-                        key={lv}
+                        key={lv.id}
                         size="sm"
-                        variant={levelFilter === lv ? "default" : "outline"}
-                        onClick={() => setLevelFilter(lv)}
+                        variant={levelFilter === lv.id ? "default" : "outline"}
+                        onClick={() => setLevelFilter(lv.id)}
                         className="h-7 px-2 text-xs"
-                      >HSK {lv}</Button>
+                      >{lv.label}</Button>
                     ))}
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -415,8 +416,8 @@ const Dictation = () => {
                       </div>
                       <div className="space-y-1.5 p-3">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <Badge variant="outline" className={cn("text-[10px]", HSK_LEVEL_COLORS[v.level])}>
-                            HSK {v.level}
+                          <Badge variant="outline" className={cn("text-[10px]", LEVEL_COLORS[v.level])}>
+                            {DICTATION_LEVELS.find((l) => l.id === v.level)?.short}
                           </Badge>
                           <Badge variant="outline" className="text-[10px]">
                             {DICTATION_CATEGORIES.find((c) => c.id === v.category)?.label}
