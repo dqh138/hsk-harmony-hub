@@ -52,12 +52,12 @@ export const getThumbnail = (v: DictationVideo) =>
 
 export const DICTATION_VIDEOS: DictationVideo[] = [
   {
-    id: "history-three-kingdoms-k-jjFZQNw",
+    id: "teded-silk-road-k-jjFZQNw",
     youtubeId: "k-jjFZQNw_Y",
-    title: `\u4e2d\u56fd\u5386\u53f2 \u00b7 \u89c6\u9891\u8bb2\u89e3`,
-    titleVi: "Video lịch sử Trung Quốc (có phụ đề tiếng Trung)",
-    level: "intermediate",
-    category: "history",
-    description: "Video lịch sử Trung Quốc có phụ đề tiếng Trung rõ ràng, phù hợp luyện nghe chép chính tả.",
+    title: `\u4e1d\u7ef8\u4e4b\u8def\uff1a\u8fde\u7ed3\u53e4\u4ee3\u4e16\u754c\u7684\u8d38\u6613\u4e4b\u8def`,
+    titleVi: "Con đường tơ lụa: Con đường thương mại kết nối thế giới cổ đại",
+    level: "advanced",
+    category: "discovery",
+    durationLabel: "05:23",
   },
 ];
