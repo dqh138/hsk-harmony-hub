@@ -1,4 +1,5 @@
 // Edge function: lấy phụ đề tiếng Trung của 1 video YouTube và trả về dưới dạng segments.
+// Dùng InnerTube API (client ANDROID) để tránh bị YouTube chặn (429) khi scrape HTML.
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -6,14 +7,11 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-const UA =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
-
 interface CaptionTrack {
   baseUrl: string;
   languageCode: string;
-  kind?: string; // "asr" for auto-generated
-  name?: { simpleText?: string };
+  kind?: string;
+  name?: { simpleText?: string; runs?: { text: string }[] };
 }
 
 interface Segment {
@@ -34,8 +32,7 @@ function pickChineseTrack(tracks: CaptionTrack[]): CaptionTrack | null {
     const t = tracks.find((x) => x.languageCode === code);
     if (t) return t;
   }
-  const anyZh = tracks.find((x) => x.languageCode?.toLowerCase().startsWith("zh"));
-  return anyZh ?? null;
+  return tracks.find((x) => x.languageCode?.toLowerCase().startsWith("zh")) ?? null;
 }
 
 interface Json3Event {
@@ -51,14 +48,8 @@ function parseJson3(json: { events?: Json3Event[] }): Segment[] {
     if (!ev.segs || ev.tStartMs == null) continue;
     const text = ev.segs.map((s) => s.utf8 ?? "").join("").replace(/\n+/g, "").trim();
     if (!text) continue;
-    raw.push({
-      idx: 0,
-      start: ev.tStartMs / 1000,
-      dur: (ev.dDurationMs ?? 2000) / 1000,
-      hanzi: text,
-    });
+    raw.push({ idx: 0, start: ev.tStartMs / 1000, dur: (ev.dDurationMs ?? 2000) / 1000, hanzi: text });
   }
-  // Ghép các segment quá ngắn với segment kế tiếp
   const merged: Segment[] = [];
   for (const s of raw) {
     const last = merged[merged.length - 1];
@@ -70,6 +61,90 @@ function parseJson3(json: { events?: Json3Event[] }): Segment[] {
     }
   }
   return merged.map((s, i) => ({ ...s, idx: i }));
+}
+
+// InnerTube clients ta sẽ thử lần lượt
+const CLIENTS = [
+  {
+    name: "ANDROID",
+    body: {
+      context: {
+        client: {
+          clientName: "ANDROID",
+          clientVersion: "19.09.37",
+          androidSdkVersion: 30,
+          hl: "zh-CN",
+          gl: "US",
+          userAgent: "com.google.android.youtube/19.09.37 (Linux; U; Android 11) gzip",
+        },
+      },
+    },
+    ua: "com.google.android.youtube/19.09.37 (Linux; U; Android 11) gzip",
+  },
+  {
+    name: "IOS",
+    body: {
+      context: {
+        client: {
+          clientName: "IOS",
+          clientVersion: "19.09.3",
+          deviceModel: "iPhone14,3",
+          hl: "zh-CN",
+          gl: "US",
+          userAgent: "com.google.ios.youtube/19.09.3 (iPhone14,3; U; CPU iOS 15_6 like Mac OS X)",
+        },
+      },
+    },
+    ua: "com.google.ios.youtube/19.09.3 (iPhone14,3; U; CPU iOS 15_6 like Mac OS X)",
+  },
+  {
+    name: "WEB",
+    body: {
+      context: {
+        client: { clientName: "WEB", clientVersion: "2.20240726.00.00", hl: "zh-CN", gl: "US" },
+      },
+    },
+    ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+  },
+];
+
+// Public InnerTube API key (đã công khai từ lâu, không phải bí mật)
+const INNERTUBE_KEY = "AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w";
+
+async function fetchPlayer(videoId: string) {
+  let lastErr = "";
+  for (const c of CLIENTS) {
+    try {
+      const resp = await fetch(
+        `https://www.youtube.com/youtubei/v1/player?key=${INNERTUBE_KEY}&prettyPrint=false`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "User-Agent": c.ua,
+            "Accept-Language": "zh-CN,zh;q=0.9",
+            "X-YouTube-Client-Name": c.name === "ANDROID" ? "3" : c.name === "IOS" ? "5" : "1",
+            "X-YouTube-Client-Version": c.body.context.client.clientVersion,
+          },
+          body: JSON.stringify({ ...c.body, videoId }),
+        }
+      );
+      if (!resp.ok) {
+        lastErr = `${c.name} HTTP ${resp.status}`;
+        continue;
+      }
+      const data = await resp.json();
+      const tracks =
+        data?.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? [];
+      if (tracks.length > 0 || data?.playabilityStatus?.status === "OK") {
+        return { data, clientUa: c.ua };
+      }
+      lastErr = `${c.name}: no captions / ${data?.playabilityStatus?.status}`;
+    } catch (e) {
+      lastErr = `${c.name}: ${e instanceof Error ? e.message : String(e)}`;
+    }
+  }
+  throw new Error(`Không lấy được dữ liệu player từ YouTube (${lastErr})`);
 }
 
 Deno.serve(async (req) => {
@@ -84,43 +159,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 1) Lấy HTML watch page
-    const watchResp = await fetch(`https://www.youtube.com/watch?v=${videoId}&hl=zh-CN`, {
-      headers: {
-        "User-Agent": UA,
-        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-      },
-    });
-    if (!watchResp.ok) {
-      return new Response(JSON.stringify({ error: `Không tải được trang YouTube (${watchResp.status})` }), {
-        status: 502,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-    const html = await watchResp.text();
-
-    // 2) Trích ytInitialPlayerResponse
-    const m = html.match(/ytInitialPlayerResponse\s*=\s*(\{.+?\})\s*;\s*(?:var|<\/script>)/s);
-    if (!m) {
-      return new Response(JSON.stringify({ error: "Không đọc được dữ liệu player từ YouTube" }), {
-        status: 502,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    let player: {
-      videoDetails?: { title?: string; videoId?: string };
-      captions?: { playerCaptionsTracklistRenderer?: { captionTracks?: CaptionTrack[] } };
-      playabilityStatus?: { status?: string; reason?: string };
-    };
-    try {
-      player = JSON.parse(m[1]);
-    } catch {
-      return new Response(JSON.stringify({ error: "Lỗi parse dữ liệu player" }), {
-        status: 502,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const { data: player, clientUa } = await fetchPlayer(videoId);
 
     if (player.playabilityStatus?.status && player.playabilityStatus.status !== "OK") {
       return new Response(
@@ -131,7 +170,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    const tracks = player.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? [];
+    const tracks: CaptionTrack[] =
+      player.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? [];
     const track = pickChineseTrack(tracks);
     if (!track) {
       return new Response(
@@ -143,9 +183,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    // 3) Tải caption ở định dạng json3
     const captionUrl = track.baseUrl + (track.baseUrl.includes("fmt=") ? "" : "&fmt=json3");
-    const capResp = await fetch(captionUrl, { headers: { "User-Agent": UA } });
+    const capResp = await fetch(captionUrl, { headers: { "User-Agent": clientUa } });
     if (!capResp.ok) {
       return new Response(JSON.stringify({ error: `Không tải được phụ đề (${capResp.status})` }), {
         status: 502,
