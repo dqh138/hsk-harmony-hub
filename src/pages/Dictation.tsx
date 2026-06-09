@@ -626,53 +626,73 @@ const Dictation = () => {
                   </div>
                 )}
 
-                {currentScore && (
-                  <div className="space-y-2 rounded-md border border-primary/30 bg-primary/5 p-3">
-                    <div className="flex flex-wrap items-center gap-3 text-sm">
-                      <span>So sánh ký tự:</span>
-                      <TooltipProvider delayDuration={100}>
-                        <p className="text-lg">
-                          {currentScore.hanziDiff.map((d, i) => {
-                            if (d.status === "match") {
-                              return (
-                                <span key={i} className="text-emerald-500">
-                                  {d.char}
-                                </span>
-                              );
-                            }
-                            return (
-                              <Tooltip key={i}>
-                                <TooltipTrigger asChild>
-                                  <span className="cursor-help rounded bg-red-500/15 px-0.5 text-red-500 underline decoration-dotted">
-                                    ▢
+                {currentScore && (() => {
+                  const answerChars = normalizeHanzi(seg.hanzi).split("");
+                  const userChars = normalizeHanzi(inputs[currentIdx] ?? "").split("");
+                  let matchedLen = 0;
+                  while (
+                    matchedLen < answerChars.length &&
+                    matchedLen < userChars.length &&
+                    answerChars[matchedLen] === userChars[matchedLen]
+                  ) matchedLen++;
+                  const revealLen = hints[currentIdx] ?? 0;
+                  return (
+                    <div className="space-y-2 rounded-md border border-primary/30 bg-primary/5 p-3">
+                      <div className="flex flex-wrap items-center gap-3 text-sm">
+                        <span>So sánh ký tự:</span>
+                        <TooltipProvider delayDuration={100}>
+                          <p className="text-lg">
+                            {answerChars.map((ch, i) => {
+                              if (i < matchedLen) {
+                                return <span key={i} className="text-emerald-500">{ch}</span>;
+                              }
+                              if (i < revealLen) {
+                                return (
+                                  <span
+                                    key={i}
+                                    className="rounded bg-amber-500/15 px-0.5 text-amber-600 underline decoration-dotted"
+                                    title="Gợi ý chữ tiếp theo"
+                                  >
+                                    {ch}
                                   </span>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                  <span className="font-serif text-base">{d.char}</span>
-                                </TooltipContent>
-                              </Tooltip>
-                            );
-                          })}
-                        </p>
-                      </TooltipProvider>
-                      <span
-                        className={cn(
-                          "ml-auto rounded px-2 py-1 text-base font-bold",
-                          currentScore.total >= 80
-                            ? "bg-emerald-500/20 text-emerald-500"
-                            : currentScore.total >= 50
-                              ? "bg-amber-500/20 text-amber-500"
-                              : "bg-red-500/20 text-red-500"
-                        )}
-                      >
-                        {currentScore.total}%
-                      </span>
+                                );
+                              }
+                              return (
+                                <Tooltip key={i}>
+                                  <TooltipTrigger asChild>
+                                    <span className="cursor-help rounded bg-red-500/15 px-0.5 text-red-500 underline decoration-dotted">
+                                      ▢
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top">
+                                    <span className="font-serif text-base">{ch}</span>
+                                  </TooltipContent>
+                                </Tooltip>
+                              );
+                            })}
+                          </p>
+                        </TooltipProvider>
+                        <span
+                          className={cn(
+                            "ml-auto rounded px-2 py-1 text-base font-bold",
+                            currentScore.total >= 80
+                              ? "bg-emerald-500/20 text-emerald-500"
+                              : currentScore.total >= 50
+                                ? "bg-amber-500/20 text-amber-500"
+                                : "bg-red-500/20 text-red-500"
+                          )}
+                        >
+                          {currentScore.total}%
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        <span className="text-emerald-500">Xanh</span>: đúng ·{" "}
+                        <span className="text-amber-600">Vàng</span>: gợi ý chữ tiếp theo ·{" "}
+                        <span className="text-red-500">▢</span>: chỗ còn lại (rê chuột để xem).
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Các ô <span className="text-red-500">▢</span> là chỗ còn sai — di chuột vào để xem chữ đúng.
-                    </p>
-                  </div>
-                )}
+                  );
+                })()}
               </CardContent>
             </Card>
 
