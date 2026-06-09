@@ -215,6 +215,14 @@ const Dictation = () => {
     playerRef.current?.playSegment(seg.start, seg.dur);
   }, [seg, rate]);
 
+  const goPrev = useCallback(() => setCurrentIdx((i) => Math.max(0, i - 1)), []);
+  const goNext = useCallback(() => {
+    setCurrentIdx((i) => {
+      const max = (data?.segments.length ?? 1) - 1;
+      return Math.min(max, i + 1);
+    });
+  }, [data]);
+
   const checkAnswer = useCallback(() => {
     if (!seg) return;
     const input = inputs[currentIdx] ?? "";
@@ -228,7 +236,6 @@ const Dictation = () => {
       result.hanziDiff.length > 0 &&
       result.hanziDiff.every((d) => d.status === "match");
     if (allCorrect) {
-      // Đúng hết → tự động sang câu tiếp theo
       setTimeout(() => goNext(), 350);
     }
     return result;
