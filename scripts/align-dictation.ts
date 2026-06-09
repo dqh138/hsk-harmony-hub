@@ -114,8 +114,9 @@ async function transcribe(fileId: string): Promise<SonioxToken[]> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       file_id: fileId,
-      model: "stt-async-preview",
+      model: "stt-async-v4",
       language_hints: ["zh"],
+      language_hints_strict: true,
     }),
   });
   const id = job.id as string;
