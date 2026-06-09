@@ -24,7 +24,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { pinyin } from "pinyin-pro";
-import { scorePronunciation, type ScoreResult } from "@/lib/pronunciationScore";
+import { normalizeHanzi, scorePronunciation, type ScoreResult } from "@/lib/pronunciationScore";
 import YouTubeSegmentPlayer, { type YouTubeSegmentPlayerHandle } from "@/components/YouTubeSegmentPlayer";
 import {
   DICTATION_VIDEOS,
@@ -233,9 +233,9 @@ const Dictation = () => {
     }
     const result = scorePronunciation(seg.hanzi, input);
     setScores((p) => ({ ...p, [currentIdx]: result }));
-    const allCorrect =
-      result.hanziDiff.length > 0 &&
-      result.hanziDiff.every((d) => d.status === "match");
+    const normalizedAnswer = normalizeHanzi(seg.hanzi);
+    const normalizedInput = normalizeHanzi(input);
+    const allCorrect = normalizedAnswer.length > 0 && normalizedInput === normalizedAnswer;
     if (allCorrect) {
       setTimeout(() => goNext(), 350);
     }
@@ -318,11 +318,7 @@ const Dictation = () => {
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
-      if (scores[currentIdx]) {
-        goNext();
-      } else {
-        checkAnswer();
-      }
+      checkAnswer();
     }
   };
 
