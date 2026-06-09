@@ -280,16 +280,6 @@ function align(tokens: SonioxToken[]) {
   return out;
 }
 
-    if (cut) {
-      flush(i);
-      hanInBuf = 0;
-    }
-  }
-  if (bufStart < refArr.length) flush(refArr.length - 1);
-
-  return out;
-}
-
 function escapeHanzi(s: string) {
   return [...s]
     .map((c) => {
