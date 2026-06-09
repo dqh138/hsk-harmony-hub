@@ -63,48 +63,53 @@ function parseJson3(json: { events?: Json3Event[] }): Segment[] {
   return merged.map((s, i) => ({ ...s, idx: i }));
 }
 
-// InnerTube clients ta sẽ thử lần lượt
+// InnerTube clients ta sẽ thử lần lượt. TVHTML5_SIMPLY_EMBEDDED_PLAYER & MWEB
+// thường bypass được kiểm tra "đăng nhập để xác minh bạn không phải bot".
 const CLIENTS = [
   {
-    name: "ANDROID",
+    name: "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+    clientNameId: "85",
     body: {
       context: {
         client: {
-          clientName: "ANDROID",
-          clientVersion: "19.09.37",
-          androidSdkVersion: 30,
+          clientName: "TVHTML5_SIMPLY_EMBEDDED_PLAYER",
+          clientVersion: "2.0",
           hl: "zh-CN",
           gl: "US",
-          userAgent: "com.google.android.youtube/19.09.37 (Linux; U; Android 11) gzip",
         },
+        thirdParty: { embedUrl: "https://www.youtube.com" },
       },
     },
-    ua: "com.google.android.youtube/19.09.37 (Linux; U; Android 11) gzip",
+    ua: "Mozilla/5.0 (PlayStation; PlayStation 4/12.00) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15",
   },
   {
     name: "IOS",
+    clientNameId: "5",
     body: {
       context: {
         client: {
           clientName: "IOS",
-          clientVersion: "19.09.3",
-          deviceModel: "iPhone14,3",
+          clientVersion: "20.10.4",
+          deviceMake: "Apple",
+          deviceModel: "iPhone16,2",
+          osName: "iPhone",
+          osVersion: "18.3.2.22D82",
           hl: "zh-CN",
           gl: "US",
-          userAgent: "com.google.ios.youtube/19.09.3 (iPhone14,3; U; CPU iOS 15_6 like Mac OS X)",
         },
       },
     },
-    ua: "com.google.ios.youtube/19.09.3 (iPhone14,3; U; CPU iOS 15_6 like Mac OS X)",
+    ua: "com.google.ios.youtube/20.10.4 (iPhone16,2; U; CPU iOS 18_3_2 like Mac OS X)",
   },
   {
-    name: "WEB",
+    name: "MWEB",
+    clientNameId: "2",
     body: {
       context: {
-        client: { clientName: "WEB", clientVersion: "2.20240726.00.00", hl: "zh-CN", gl: "US" },
+        client: { clientName: "MWEB", clientVersion: "2.20240726.01.00", hl: "zh-CN", gl: "US" },
       },
     },
-    ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+    ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
   },
 ];
 
