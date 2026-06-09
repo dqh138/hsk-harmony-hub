@@ -144,6 +144,7 @@ const Dictation = () => {
   const resetAll = () => {
     setCurrentIdx(0);
     setScores({});
+    setHints({});
     setInputs({});
     setShowAnswer({});
     setShowPinyin({});
