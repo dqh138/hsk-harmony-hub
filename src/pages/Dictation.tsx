@@ -97,6 +97,7 @@ const Dictation = () => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [inputs, setInputs] = useState<Record<number, string>>({});
   const [scores, setScores] = useState<Record<number, ScoreResult>>({});
+  const [hints, setHints] = useState<Record<number, number>>({});
   const [showAnswer, setShowAnswer] = useState<Record<number, boolean>>({});
   const [showPinyin, setShowPinyin] = useState<Record<number, boolean>>({});
   const [translations, setTranslations] = useState<Record<number, string>>({});
@@ -106,6 +107,10 @@ const Dictation = () => {
   const [categoryFilter, setCategoryFilter] = useState<DictationCategory | "all">("all");
   const playerRef = useRef<YouTubeSegmentPlayerHandle>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Phụ đề YouTube auto thường hiển thị sớm hơn giọng đọc. Bù khi phát.
+  const AUDIO_OFFSET = 0.5; // giây
+  const PLAYBACK_PAD_END = 0.4; // kéo dài thêm chút đuôi để khỏi cụt
 
   // Restore last session
   useEffect(() => {
@@ -139,6 +144,7 @@ const Dictation = () => {
   const resetAll = () => {
     setCurrentIdx(0);
     setScores({});
+    setHints({});
     setInputs({});
     setShowAnswer({});
     setShowPinyin({});
@@ -213,7 +219,9 @@ const Dictation = () => {
   const playCurrent = useCallback(() => {
     if (!seg) return;
     playerRef.current?.setRate(rate);
-    playerRef.current?.playSegment(seg.start, seg.dur);
+    const start = Math.max(0, seg.start + AUDIO_OFFSET);
+    const dur = seg.dur + PLAYBACK_PAD_END;
+    playerRef.current?.playSegment(start, dur);
   }, [seg, rate]);
 
   const goPrev = useCallback(() => setCurrentIdx((i) => Math.max(0, i - 1)), []);
@@ -237,9 +245,10 @@ const Dictation = () => {
     const normalizedInput = normalizeHanzi(input);
     const allCorrect = normalizedAnswer.length > 0 && normalizedInput === normalizedAnswer;
     if (allCorrect) {
+      setHints((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
       setTimeout(() => goNext(), 350);
     } else {
-      // Reveal next correct character right after the longest correct prefix
+      // Tìm tiền tố đúng dài nhất, hiển thị thêm 1 chữ kế tiếp ở khu so sánh
       let prefix = 0;
       while (
         prefix < normalizedInput.length &&
@@ -249,8 +258,7 @@ const Dictation = () => {
         prefix++;
       }
       if (prefix < normalizedAnswer.length) {
-        const hinted = normalizedAnswer.slice(0, prefix + 1);
-        setInputs((p) => ({ ...p, [currentIdx]: hinted }));
+        setHints((p) => ({ ...p, [currentIdx]: prefix + 1 }));
       }
     }
     return result;
@@ -258,6 +266,7 @@ const Dictation = () => {
 
   const resetCurrent = () => {
     setScores((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
+    setHints((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
     setInputs((p) => ({ ...p, [currentIdx]: "" }));
     setShowAnswer((p) => ({ ...p, [currentIdx]: false }));
   };
@@ -617,53 +626,73 @@ const Dictation = () => {
                   </div>
                 )}
 
-                {currentScore && (
-                  <div className="space-y-2 rounded-md border border-primary/30 bg-primary/5 p-3">
-                    <div className="flex flex-wrap items-center gap-3 text-sm">
-                      <span>So sánh ký tự:</span>
-                      <TooltipProvider delayDuration={100}>
-                        <p className="text-lg">
-                          {currentScore.hanziDiff.map((d, i) => {
-                            if (d.status === "match") {
-                              return (
-                                <span key={i} className="text-emerald-500">
-                                  {d.char}
-                                </span>
-                              );
-                            }
-                            return (
-                              <Tooltip key={i}>
-                                <TooltipTrigger asChild>
-                                  <span className="cursor-help rounded bg-red-500/15 px-0.5 text-red-500 underline decoration-dotted">
-                                    ▢
+                {currentScore && (() => {
+                  const answerChars = normalizeHanzi(seg.hanzi).split("");
+                  const userChars = normalizeHanzi(inputs[currentIdx] ?? "").split("");
+                  let matchedLen = 0;
+                  while (
+                    matchedLen < answerChars.length &&
+                    matchedLen < userChars.length &&
+                    answerChars[matchedLen] === userChars[matchedLen]
+                  ) matchedLen++;
+                  const revealLen = hints[currentIdx] ?? 0;
+                  return (
+                    <div className="space-y-2 rounded-md border border-primary/30 bg-primary/5 p-3">
+                      <div className="flex flex-wrap items-center gap-3 text-sm">
+                        <span>So sánh ký tự:</span>
+                        <TooltipProvider delayDuration={100}>
+                          <p className="text-lg">
+                            {answerChars.map((ch, i) => {
+                              if (i < matchedLen) {
+                                return <span key={i} className="text-emerald-500">{ch}</span>;
+                              }
+                              if (i < revealLen) {
+                                return (
+                                  <span
+                                    key={i}
+                                    className="rounded bg-amber-500/15 px-0.5 text-amber-600 underline decoration-dotted"
+                                    title="Gợi ý chữ tiếp theo"
+                                  >
+                                    {ch}
                                   </span>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                  <span className="font-serif text-base">{d.char}</span>
-                                </TooltipContent>
-                              </Tooltip>
-                            );
-                          })}
-                        </p>
-                      </TooltipProvider>
-                      <span
-                        className={cn(
-                          "ml-auto rounded px-2 py-1 text-base font-bold",
-                          currentScore.total >= 80
-                            ? "bg-emerald-500/20 text-emerald-500"
-                            : currentScore.total >= 50
-                              ? "bg-amber-500/20 text-amber-500"
-                              : "bg-red-500/20 text-red-500"
-                        )}
-                      >
-                        {currentScore.total}%
-                      </span>
+                                );
+                              }
+                              return (
+                                <Tooltip key={i}>
+                                  <TooltipTrigger asChild>
+                                    <span className="cursor-help rounded bg-red-500/15 px-0.5 text-red-500 underline decoration-dotted">
+                                      ▢
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top">
+                                    <span className="font-serif text-base">{ch}</span>
+                                  </TooltipContent>
+                                </Tooltip>
+                              );
+                            })}
+                          </p>
+                        </TooltipProvider>
+                        <span
+                          className={cn(
+                            "ml-auto rounded px-2 py-1 text-base font-bold",
+                            currentScore.total >= 80
+                              ? "bg-emerald-500/20 text-emerald-500"
+                              : currentScore.total >= 50
+                                ? "bg-amber-500/20 text-amber-500"
+                                : "bg-red-500/20 text-red-500"
+                          )}
+                        >
+                          {currentScore.total}%
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        <span className="text-emerald-500">Xanh</span>: đúng ·{" "}
+                        <span className="text-amber-600">Vàng</span>: gợi ý chữ tiếp theo ·{" "}
+                        <span className="text-red-500">▢</span>: chỗ còn lại (rê chuột để xem).
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Các ô <span className="text-red-500">▢</span> là chỗ còn sai — di chuột vào để xem chữ đúng.
-                    </p>
-                  </div>
-                )}
+                  );
+                })()}
               </CardContent>
             </Card>
 
