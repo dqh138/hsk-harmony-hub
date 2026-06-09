@@ -108,9 +108,9 @@ const Dictation = () => {
   const playerRef = useRef<YouTubeSegmentPlayerHandle>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Phụ đề YouTube auto thường hiển thị sớm hơn giọng đọc. Bù khi phát.
-  const AUDIO_OFFSET = 0.5; // giây
-  const PLAYBACK_PAD_END = 0.4; // kéo dài thêm chút đuôi để khỏi cụt
+  // Timestamps đã được forced-align bằng Soniox; chỉ pad nhẹ đuôi để khỏi cụt.
+  const AUDIO_OFFSET = 0; // giây
+  const PLAYBACK_PAD_END = 0.2;
 
   // Restore last session
   useEffect(() => {
