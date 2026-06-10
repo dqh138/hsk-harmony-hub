@@ -373,10 +373,21 @@ const Dictation = () => {
     return () => clearTimeout(timer);
   }, [data, seg, playCurrent]);
 
+  const isCurrentCorrect = useMemo(() => {
+    if (!seg) return false;
+    const ans = normalizeHanzi(seg.hanzi);
+    const inp = normalizeHanzi(inputs[currentIdx] ?? "");
+    return ans.length > 0 && inp === ans;
+  }, [seg, inputs, currentIdx]);
+
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
-      checkAnswer();
+      if (isCurrentCorrect && showAnswer[currentIdx]) {
+        goNext();
+      } else {
+        checkAnswer();
+      }
     }
   };
 
