@@ -160,6 +160,7 @@ const Dictation = () => {
     setShowAnswer({});
     setShowPinyin({});
     setTranslations({});
+    setCompleted(false);
   };
 
   const loadVideoId = async (videoId: string) => {
