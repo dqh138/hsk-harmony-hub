@@ -32,9 +32,13 @@ if (!youtubeId) {
 }
 
 const video = DICTATION_VIDEOS.find((v) => v.youtubeId === youtubeId);
-if (!video || !video.segments?.length) {
-  console.error(`No segments found for youtubeId=${youtubeId} in dictationVideos.ts`);
+if (!video) {
+  console.error(`Video not found for youtubeId=${youtubeId} in dictationVideos.ts`);
   process.exit(1);
+}
+const HAS_REFERENCE = !!video.segments?.length;
+if (!HAS_REFERENCE) {
+  console.log("⚠ No reference segments — bootstrapping from Soniox transcript only.");
 }
 
 const OUT_DIR = resolve("scripts/out");
