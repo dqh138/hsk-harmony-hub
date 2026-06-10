@@ -73,13 +73,23 @@ export function normalizeNumbers(s: string): string {
       return p !== null ? `${p}%` : `${n}%`;
     }
   );
-  // 2) Chuyển các đoạn chữ số Hán liên tiếp thành số Ả Rập
+  // 2) Chuyển các đoạn chữ số Hán liên tiếp thành số Ả Rập.
+  //    - Có đơn vị (千/百/十/万/亿) → parse theo nghĩa (六千 → 6000).
+  //    - Không có đơn vị → đọc rời từng chữ số (一八三九 → 1839, dùng cho năm,
+  //      số điện thoại, mã số…). Đáp án chuẩn vẫn luôn giữ dạng số Ả Rập.
   let out = "";
   let buf = "";
   const flush = () => {
     if (!buf) return;
-    const n = parseCnNumber(buf);
-    out += n !== null ? String(n) : buf;
+    const hasUnit = [...buf].some((c) => c in CN_UNIT || c in CN_BIG);
+    if (hasUnit) {
+      const n = parseCnNumber(buf);
+      out += n !== null ? String(n) : buf;
+    } else {
+      // Tất cả là chữ số đơn (0-9) → ghép thành digits.
+      const digits = [...buf].map((c) => (c in CN_NUM ? String(CN_NUM[c]) : c)).join("");
+      out += digits;
+    }
     buf = "";
   };
   for (const ch of s) {
