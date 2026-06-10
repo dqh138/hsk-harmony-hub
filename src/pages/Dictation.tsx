@@ -120,7 +120,13 @@ const Dictation = () => {
       if (!raw) return;
       const s = JSON.parse(raw) as PersistedState;
       if (s?.data?.segments?.length) {
-        setData(s.data);
+        // Rehydrate translations từ thư viện curated nếu localStorage cũ chưa có
+        const curated = DICTATION_VIDEOS.find((v) => v.youtubeId === s.videoId);
+        const merged: VideoData = {
+          ...s.data,
+          translations: s.data.translations ?? curated?.translations,
+        };
+        setData(merged);
         setUrl(`https://www.youtube.com/watch?v=${s.videoId}`);
         setScores(s.scores ?? {});
         setInputs(s.inputs ?? {});
