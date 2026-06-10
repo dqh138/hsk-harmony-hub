@@ -32,9 +32,13 @@ if (!youtubeId) {
 }
 
 const video = DICTATION_VIDEOS.find((v) => v.youtubeId === youtubeId);
-if (!video || !video.segments?.length) {
-  console.error(`No segments found for youtubeId=${youtubeId} in dictationVideos.ts`);
+if (!video) {
+  console.error(`Video not found for youtubeId=${youtubeId} in dictationVideos.ts`);
   process.exit(1);
+}
+const HAS_REFERENCE = !!video.segments?.length;
+if (!HAS_REFERENCE) {
+  console.log("⚠ No reference segments — bootstrapping from Soniox transcript only.");
 }
 
 const OUT_DIR = resolve("scripts/out");
@@ -149,12 +153,13 @@ function align(tokens: SonioxToken[]) {
   if (!chars.length) throw new Error("Soniox returned no Han chars");
   console.log(`  Soniox produced ${chars.length} Han chars`);
 
-  // 2) Full reference string (keep punctuation)
-  const refFull = video!.segments!.map((s) => s.hanzi).join("");
+  // 2) Full reference string (keep punctuation).
+  //    If we have curated segments, use them; otherwise bootstrap from
+  //    concatenated Soniox token text (includes any punctuation Soniox emitted).
+  const refFull = HAS_REFERENCE
+    ? video!.segments!.map((s) => s.hanzi).join("")
+    : tokens.map((t) => t.text || "").join("");
   const refArr = [...refFull];
-
-  // 3) Greedy 1:1 alignment: walk Soniox chars, find matching Han in ref
-  //    within a small lookahead. Skip Soniox char if no match (STT error).
   const LOOKAHEAD = 5;
   const refTime: number[] = new Array(refArr.length).fill(-1);
   let refPos = 0;
