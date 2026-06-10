@@ -180,12 +180,8 @@ const Dictation = () => {
         };
         setData(vd);
         resetAll();
-        if (vd.segments.length > 1) {
-          hasAutoStartedRef.current = true;
-          setCurrentIdx(1);
-        } else {
-          setCurrentIdx(0);
-        }
+        setCurrentIdx(0);
+        hasAutoStartedRef.current = true;
         toast({
           title: "Đã tải phụ đề",
           description: `${vd.segments.length} câu · Phụ đề có sẵn`,
