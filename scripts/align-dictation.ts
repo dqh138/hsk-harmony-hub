@@ -323,9 +323,9 @@ function align(tokens: SonioxToken[]) {
   const out: { idx: number; start: number; dur: number; hanzi: string }[] = [];
   let bufStart = 0;
   const flush = (endIdx: number) => {
-    // trim leading punctuation/whitespace from segment
+    // trim leading punctuation/whitespace from segment (giữ chữ số đầu câu)
     let s = bufStart;
-    while (s <= endIdx && !isHan(refArr[s])) s++;
+    while (s <= endIdx && !isMatchable(refArr[s])) s++;
     if (s > endIdx) { bufStart = endIdx + 1; return; }
     const hanzi = refArr.slice(s, endIdx + 1).join("").trim();
     if (!hanzi) { bufStart = endIdx + 1; return; }
