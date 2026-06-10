@@ -395,6 +395,11 @@ const Dictation = () => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
       if (isCurrentCorrect && showAnswer[currentIdx]) {
+        const isLast = currentIdx === (data?.segments.length ?? 1) - 1;
+        if (isLast) {
+          setCompleted(true);
+          return;
+        }
         const next = data?.segments[currentIdx + 1];
         goNext();
         if (next) {
