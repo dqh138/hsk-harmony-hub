@@ -23,7 +23,9 @@ export function normalizeHanzi(s: string): string {
 }
 
 export function hanziToPinyinSyllables(hanzi: string): string[] {
-  const cleaned = normalizeHanzi(hanzi);
+  // pinyin-pro không sinh pinyin cho chữ số → bỏ chữ số khỏi đầu vào pinyin
+  // (việc khớp chữ số đã được lo ở phần so sánh Hán tự).
+  const cleaned = normalizeHanzi(hanzi).replace(/[0-9]/g, "");
   if (!cleaned) return [];
   const result = pinyin(cleaned, { toneType: "none", type: "array", v: true });
   return result.map((s) => s.toLowerCase());
