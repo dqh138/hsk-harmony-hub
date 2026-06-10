@@ -394,12 +394,13 @@ const Dictation = () => {
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
+      const isLast = currentIdx === (data?.segments.length ?? 1) - 1;
+      // Câu cuối: chỉ cần đáp án đã hiện (đúng hoặc bấm "Hiện đáp án") là Enter sẽ kết thúc.
+      if (isLast && showAnswer[currentIdx]) {
+        setCompleted(true);
+        return;
+      }
       if (isCurrentCorrect && showAnswer[currentIdx]) {
-        const isLast = currentIdx === (data?.segments.length ?? 1) - 1;
-        if (isLast) {
-          setCompleted(true);
-          return;
-        }
         const next = data?.segments[currentIdx + 1];
         goNext();
         if (next) {
