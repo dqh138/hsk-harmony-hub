@@ -16,10 +16,84 @@ export function stripTone(s: string): string {
 
 const PUNCT_RE = /[\s\u3000\u3001\u3002\uff0c\uff01\uff1f\uff1b\uff1a\u201c\u201d\u2018\u2019\u300a\u300b\(\)\[\]\{\}.,!?;:'"`~]/g;
 
+// ===== Chuẩn hoá chữ số tiếng Trung → số Ả Rập =====
+// Cho phép người học gõ "六千" thay cho "6000", "百分之五十" thay cho "50%",
+// "五百块" thay cho "500块"… Đáp án tiêu chuẩn vẫn luôn giữ dạng số.
+const CN_NUM: Record<string, number> = {
+  "零": 0, "〇": 0, "○": 0,
+  "一": 1, "壹": 1, "二": 2, "贰": 2, "两": 2, "兩": 2,
+  "三": 3, "叁": 3, "四": 4, "肆": 4, "五": 5, "伍": 5,
+  "六": 6, "陆": 6, "七": 7, "柒": 7, "八": 8, "捌": 8, "九": 9, "玖": 9,
+};
+const CN_UNIT: Record<string, number> = { "十": 10, "拾": 10, "百": 100, "佰": 100, "千": 1000, "仟": 1000 };
+const CN_BIG: Record<string, number> = { "万": 10000, "萬": 10000, "亿": 100000000, "億": 100000000 };
+const CN_ALL = new Set<string>([
+  ...Object.keys(CN_NUM), ...Object.keys(CN_UNIT), ...Object.keys(CN_BIG),
+]);
+
+function parseCnNumber(s: string): number | null {
+  if (!s) return null;
+  let total = 0;
+  let section = 0;
+  let current = 0;
+  let touched = false;
+  for (const ch of s) {
+    if (ch in CN_NUM) {
+      current = CN_NUM[ch];
+      touched = true;
+    } else if (ch in CN_UNIT) {
+      const u = CN_UNIT[ch];
+      if (current === 0) current = 1;
+      section += current * u;
+      current = 0;
+      touched = true;
+    } else if (ch in CN_BIG) {
+      section += current;
+      if (section === 0) section = 1;
+      total += section * CN_BIG[ch];
+      section = 0;
+      current = 0;
+      touched = true;
+    } else {
+      return null;
+    }
+  }
+  if (!touched) return null;
+  return total + section + current;
+}
+
+export function normalizeNumbers(s: string): string {
+  if (!s) return s;
+  // 1) "百分之X" → "X%" (X có thể là chữ Hán hoặc chữ số)
+  s = s.replace(
+    /百分之([零〇○一壹二贰两兩三叁四肆五伍六陆七柒八捌九玖十拾百佰千仟万萬亿億]+|\d+(?:\.\d+)?)/g,
+    (_, n: string) => {
+      if (/^[\d.]+$/.test(n)) return `${n}%`;
+      const p = parseCnNumber(n);
+      return p !== null ? `${p}%` : `${n}%`;
+    }
+  );
+  // 2) Chuyển các đoạn chữ số Hán liên tiếp thành số Ả Rập
+  let out = "";
+  let buf = "";
+  const flush = () => {
+    if (!buf) return;
+    const n = parseCnNumber(buf);
+    out += n !== null ? String(n) : buf;
+    buf = "";
+  };
+  for (const ch of s) {
+    if (CN_ALL.has(ch)) buf += ch;
+    else { flush(); out += ch; }
+  }
+  flush();
+  return out;
+}
+
 export function normalizeHanzi(s: string): string {
   // Giữ lại chữ số (6000, 500, 1839…) vì là một phần của đáp án.
-  // Chỉ loại punctuation + chữ Latin (a-z).
-  return s.replace(PUNCT_RE, "").replace(/[a-zA-Z]/g, "");
+  // Chuẩn hoá chữ số Hán → số Ả Rập trước, sau đó loại punctuation + chữ Latin.
+  return normalizeNumbers(s).replace(PUNCT_RE, "").replace(/[a-zA-Z]/g, "");
 }
 
 export function hanziToPinyinSyllables(hanzi: string): string[] {
