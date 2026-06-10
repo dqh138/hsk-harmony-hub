@@ -263,7 +263,9 @@ const Dictation = () => {
     const allCorrect = normalizedAnswer.length > 0 && normalizedInput === normalizedAnswer;
     if (allCorrect) {
       setHints((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
-      setTimeout(() => goNext(), 350);
+      // Hiển thị đáp án đầy đủ + dịch, chờ Enter tiếp theo để qua câu kế.
+      setShowAnswer((p) => ({ ...p, [currentIdx]: true }));
+      void fetchTranslation();
     } else {
       // Tìm tiền tố đúng dài nhất, hiển thị thêm 1 chữ kế tiếp ở khu so sánh
       let prefix = 0;
@@ -279,7 +281,7 @@ const Dictation = () => {
       }
     }
     return result;
-  }, [seg, inputs, currentIdx, goNext]);
+  }, [seg, inputs, currentIdx]);
 
   const resetCurrent = () => {
     setScores((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
@@ -371,10 +373,21 @@ const Dictation = () => {
     return () => clearTimeout(timer);
   }, [data, seg, playCurrent]);
 
+  const isCurrentCorrect = useMemo(() => {
+    if (!seg) return false;
+    const ans = normalizeHanzi(seg.hanzi);
+    const inp = normalizeHanzi(inputs[currentIdx] ?? "");
+    return ans.length > 0 && inp === ans;
+  }, [seg, inputs, currentIdx]);
+
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
-      checkAnswer();
+      if (isCurrentCorrect && showAnswer[currentIdx]) {
+        goNext();
+      } else {
+        checkAnswer();
+      }
     }
   };
 
