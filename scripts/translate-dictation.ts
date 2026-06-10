@@ -104,7 +104,12 @@ async function translateBatch(
   if (!call) throw new Error(`No tool call in response: ${JSON.stringify(data).slice(0, 500)}`);
   const args = JSON.parse(call.function.arguments) as BatchOut;
   const map: Record<number, string> = {};
-  for (const t of args.translations) map[t.idx] = t.vi.trim();
+  const requestedIdx = items.map((i) => i.idx);
+  args.translations.forEach((t, i) => {
+    // Tin idx model trả về nếu khớp; nếu không, fallback theo vị trí.
+    const idx = requestedIdx.includes(t.idx) ? t.idx : requestedIdx[i];
+    if (idx !== undefined) map[idx] = (t.vi ?? "").trim();
+  });
   return map;
 }
 
