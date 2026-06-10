@@ -239,6 +239,7 @@ const Dictation = () => {
     hasAutoStartedRef.current = false;
     resetAll();
     setCurrentIdx(0);
+    setCompleted(false);
   };
 
   const seg = data?.segments[currentIdx];
