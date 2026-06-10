@@ -131,18 +131,82 @@ async function transcribe(fileId: string): Promise<SonioxToken[]> {
 }
 
 const isHan = (ch: string) => /[\u3400-\u9FFF]/.test(ch);
+const isDigit = (ch: string) => /[0-9]/.test(ch);
+// "Matchable" = chữ Hán hoặc chữ số Ả Rập. Số được giữ nguyên trong segment
+// và được dùng làm anchor khi căn chỉnh với Soniox (sau khi Soniox đã được
+// chuẩn hoá chữ số Hán → số Ả Rập, xem normalizeSonioxText bên dưới).
+const isMatchable = (ch: string) => isHan(ch) || isDigit(ch);
 const STRONG_PUNCT = new Set(["\u3002", "\uff1f", "\uff01", "\uff1b"]); // 。？！；
 const SOFT_PUNCT = new Set(["\uff0c", "\u3001", "\uff1a"]); // ，、：
 
+// ===== CN numerals → Arabic =====
+const CN_NUM: Record<string, number> = {
+  "零": 0, "〇": 0, "○": 0,
+  "一": 1, "壹": 1, "二": 2, "贰": 2, "两": 2, "兩": 2,
+  "三": 3, "叁": 3, "四": 4, "肆": 4, "五": 5, "伍": 5,
+  "六": 6, "陆": 6, "七": 7, "柒": 7, "八": 8, "捌": 8, "九": 9, "玖": 9,
+};
+const CN_UNIT: Record<string, number> = { "十": 10, "拾": 10, "百": 100, "佰": 100, "千": 1000, "仟": 1000 };
+const CN_BIG: Record<string, number> = { "万": 10000, "萬": 10000, "亿": 100000000, "億": 100000000 };
+const CN_ALL = new Set<string>([
+  ...Object.keys(CN_NUM), ...Object.keys(CN_UNIT), ...Object.keys(CN_BIG),
+]);
+function parseCnNumber(s: string): number | null {
+  if (!s) return null;
+  let total = 0, section = 0, current = 0, touched = false;
+  for (const ch of s) {
+    if (ch in CN_NUM) { current = CN_NUM[ch]; touched = true; }
+    else if (ch in CN_UNIT) {
+      const u = CN_UNIT[ch];
+      if (current === 0) current = 1;
+      section += current * u; current = 0; touched = true;
+    } else if (ch in CN_BIG) {
+      section += current;
+      if (section === 0) section = 1;
+      total += section * CN_BIG[ch];
+      section = 0; current = 0; touched = true;
+    } else return null;
+  }
+  return touched ? total + section + current : null;
+}
+function normalizeSonioxText(s: string): string {
+  // Soniox hay đọc số thành chữ Hán (六千, 一万二…). Reference của ta giữ dạng
+  // số Ả Rập, nên cần convert để alignment khớp được.
+  // Thay 百分之X → X%, sau đó convert các đoạn chữ số Hán liên tiếp → digits.
+  s = s.replace(
+    /百分之([零〇○一壹二贰两兩三叁四肆五伍六陆七柒八捌九玖十拾百佰千仟万萬亿億]+|\d+(?:\.\d+)?)/g,
+    (_, n: string) => {
+      if (/^[\d.]+$/.test(n)) return `${n}%`;
+      const p = parseCnNumber(n);
+      return p !== null ? `${p}%` : `${n}%`;
+    }
+  );
+  let out = "", buf = "";
+  const flush = () => {
+    if (!buf) return;
+    const n = parseCnNumber(buf);
+    out += n !== null ? String(n) : buf;
+    buf = "";
+  };
+  for (const ch of s) {
+    if (CN_ALL.has(ch)) buf += ch;
+    else { flush(); out += ch; }
+  }
+  flush();
+  return out;
+}
+
 function align(tokens: SonioxToken[]) {
-  // 1) Flatten Soniox into per-Han-char stream
+  // 1) Flatten Soniox into per-char stream (Han + digits).
+  //    Normalize CN numerals → Arabic so they align with digits in reference.
   const chars: { ch: string; start: number; end: number }[] = [];
   for (const tok of tokens) {
-    const hans = [...(tok.text || "")].filter(isHan);
-    if (!hans.length) continue;
+    const normText = normalizeSonioxText(tok.text || "");
+    const matchable = [...normText].filter(isMatchable);
+    if (!matchable.length) continue;
     const dur = (tok.end_ms - tok.start_ms) / 1000;
-    const per = dur / hans.length;
-    hans.forEach((ch, i) => {
+    const per = dur / matchable.length;
+    matchable.forEach((ch, i) => {
       chars.push({
         ch,
         start: tok.start_ms / 1000 + per * i,
@@ -150,8 +214,8 @@ function align(tokens: SonioxToken[]) {
       });
     });
   }
-  if (!chars.length) throw new Error("Soniox returned no Han chars");
-  console.log(`  Soniox produced ${chars.length} Han chars`);
+  if (!chars.length) throw new Error("Soniox returned no matchable chars");
+  console.log(`  Soniox produced ${chars.length} matchable chars (Han + digits)`);
 
   // 2) Full reference string (keep punctuation).
   //    If we have curated segments, use them; otherwise bootstrap from
@@ -165,15 +229,15 @@ function align(tokens: SonioxToken[]) {
   let refPos = 0;
   for (let s = 0; s < chars.length; s++) {
     const sCh = chars[s].ch;
-    // attach any leading non-Han ref chars (punctuation) to current time
-    while (refPos < refArr.length && !isHan(refArr[refPos])) {
+    // attach any leading non-matchable ref chars (punctuation) to current time
+    while (refPos < refArr.length && !isMatchable(refArr[refPos])) {
       refTime[refPos] = chars[s].start;
       refPos++;
     }
     if (refPos >= refArr.length) break;
     let found = -1;
     for (let k = 0; k <= LOOKAHEAD && refPos + k < refArr.length; k++) {
-      if (!isHan(refArr[refPos + k])) continue;
+      if (!isMatchable(refArr[refPos + k])) continue;
       if (refArr[refPos + k] === sCh) {
         found = refPos + k;
         break;
@@ -224,7 +288,7 @@ function align(tokens: SonioxToken[]) {
   let hanRunning = 0;
   for (let i = 0; i < refArr.length; i++) {
     const ch = refArr[i];
-    if (isHan(ch)) hanRunning++;
+    if (isMatchable(ch)) hanRunning++;
     const isStrong = STRONG_PUNCT.has(ch);
     const isSoft = SOFT_PUNCT.has(ch);
     if (isStrong && hanRunning >= MIN_HAN) {
@@ -259,9 +323,9 @@ function align(tokens: SonioxToken[]) {
   const out: { idx: number; start: number; dur: number; hanzi: string }[] = [];
   let bufStart = 0;
   const flush = (endIdx: number) => {
-    // trim leading punctuation/whitespace from segment
+    // trim leading punctuation/whitespace from segment (giữ chữ số đầu câu)
     let s = bufStart;
-    while (s <= endIdx && !isHan(refArr[s])) s++;
+    while (s <= endIdx && !isMatchable(refArr[s])) s++;
     if (s > endIdx) { bufStart = endIdx + 1; return; }
     const hanzi = refArr.slice(s, endIdx + 1).join("").trim();
     if (!hanzi) { bufStart = endIdx + 1; return; }
