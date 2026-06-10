@@ -226,7 +226,9 @@ const Dictation = () => {
   const handleChangeVideo = () => {
     setData(null);
     try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
+    hasAutoStartedRef.current = false;
     resetAll();
+    setCurrentIdx(0);
   };
 
   const seg = data?.segments[currentIdx];
