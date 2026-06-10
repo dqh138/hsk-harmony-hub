@@ -17,11 +17,15 @@ export function stripTone(s: string): string {
 const PUNCT_RE = /[\s\u3000\u3001\u3002\uff0c\uff01\uff1f\uff1b\uff1a\u201c\u201d\u2018\u2019\u300a\u300b\(\)\[\]\{\}.,!?;:'"`~]/g;
 
 export function normalizeHanzi(s: string): string {
-  return s.replace(PUNCT_RE, "").replace(/[a-zA-Z0-9]/g, "");
+  // Giữ lại chữ số (6000, 500, 1839…) vì là một phần của đáp án.
+  // Chỉ loại punctuation + chữ Latin (a-z).
+  return s.replace(PUNCT_RE, "").replace(/[a-zA-Z]/g, "");
 }
 
 export function hanziToPinyinSyllables(hanzi: string): string[] {
-  const cleaned = normalizeHanzi(hanzi);
+  // pinyin-pro không sinh pinyin cho chữ số → bỏ chữ số khỏi đầu vào pinyin
+  // (việc khớp chữ số đã được lo ở phần so sánh Hán tự).
+  const cleaned = normalizeHanzi(hanzi).replace(/[0-9]/g, "");
   if (!cleaned) return [];
   const result = pinyin(cleaned, { toneType: "none", type: "array", v: true });
   return result.map((s) => s.toLowerCase());
