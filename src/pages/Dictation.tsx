@@ -372,7 +372,7 @@ const Dictation = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto max-w-5xl px-4 py-6">
+      <main className="container mx-auto max-w-7xl px-4 py-6">
         <header className="mb-4">
           <h1 className="font-serif text-2xl font-bold gold-text md:text-3xl">听写 · Chép chính tả từ YouTube</h1>
           <p className="text-sm text-muted-foreground">
