@@ -390,7 +390,17 @@ const Dictation = () => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
       if (isCurrentCorrect && showAnswer[currentIdx]) {
+        const next = data?.segments[currentIdx + 1];
         goNext();
+        if (next) {
+          setTimeout(() => {
+            playerRef.current?.setRate(rate);
+            playerRef.current?.playSegment(
+              Math.max(0, next.start + AUDIO_OFFSET),
+              next.dur + PLAYBACK_PAD_END
+            );
+          }, 200);
+        }
       } else {
         checkAnswer();
       }
