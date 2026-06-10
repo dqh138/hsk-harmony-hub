@@ -263,7 +263,9 @@ const Dictation = () => {
     const allCorrect = normalizedAnswer.length > 0 && normalizedInput === normalizedAnswer;
     if (allCorrect) {
       setHints((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
-      setTimeout(() => goNext(), 350);
+      // Hiển thị đáp án đầy đủ + dịch, chờ Enter tiếp theo để qua câu kế.
+      setShowAnswer((p) => ({ ...p, [currentIdx]: true }));
+      void fetchTranslation();
     } else {
       // Tìm tiền tố đúng dài nhất, hiển thị thêm 1 chữ kế tiếp ở khu so sánh
       let prefix = 0;
@@ -279,7 +281,7 @@ const Dictation = () => {
       }
     }
     return result;
-  }, [seg, inputs, currentIdx, goNext]);
+  }, [seg, inputs, currentIdx]);
 
   const resetCurrent = () => {
     setScores((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
