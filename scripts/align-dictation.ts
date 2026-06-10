@@ -288,7 +288,7 @@ function align(tokens: SonioxToken[]) {
   let hanRunning = 0;
   for (let i = 0; i < refArr.length; i++) {
     const ch = refArr[i];
-    if (isHan(ch)) hanRunning++;
+    if (isMatchable(ch)) hanRunning++;
     const isStrong = STRONG_PUNCT.has(ch);
     const isSoft = SOFT_PUNCT.has(ch);
     if (isStrong && hanRunning >= MIN_HAN) {
