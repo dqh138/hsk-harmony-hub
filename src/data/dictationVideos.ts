@@ -174,7 +174,7 @@ const SILK_ROAD_SEGMENTS: DictationSegment[] = [
     dur: 3.92,
     hanzi: `\u4ee5\u53ca\u8d38\u6613\u548c\u4fdd\u62a4\u65c5\u884c\u5546\u4eba\u4ee5\u6362\u53d6\u5173\u7a0e\uff0c`,
   },
-  { idx: 22, start: 77.7, dur: 4.7, hanzi: `战争，贸易，以及以保护往来商人为条件增收税务，` },
+  { idx: 22, start: 77.7, dur: 4.7, hanzi: `和战争以及贸易和保护旅行商人以换取关税` },
   { idx: 23, start: 86.7, dur: 1.88, hanzi: `\u601d\u60f3\u548c\u6280\u672f\u3002` },
   {
     idx: 24,
