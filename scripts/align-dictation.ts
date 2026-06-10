@@ -36,7 +36,7 @@ if (!video) {
   console.error(`Video not found for youtubeId=${youtubeId} in dictationVideos.ts`);
   process.exit(1);
 }
-const HAS_REFERENCE = !!video.segments?.length;
+const HAS_REFERENCE = !!video.segments?.length && !process.env.BOOTSTRAP;
 if (!HAS_REFERENCE) {
   console.log("⚠ No reference segments — bootstrapping from Soniox transcript only.");
 }
