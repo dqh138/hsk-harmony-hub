@@ -106,6 +106,7 @@ const Dictation = () => {
   const [translations, setTranslations] = useState<Record<number, string>>({});
   const [translatingIdx, setTranslatingIdx] = useState<number | null>(null);
   const [rate, setRate] = useState<number>(1);
+  const [completed, setCompleted] = useState(false);
   const [levelFilter, setLevelFilter] = useState<DictationLevel | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState<DictationCategory | "all">("all");
   const playerRef = useRef<YouTubeSegmentPlayerHandle>(null);
