@@ -197,14 +197,16 @@ function normalizeSonioxText(s: string): string {
 }
 
 function align(tokens: SonioxToken[]) {
-  // 1) Flatten Soniox into per-Han-char stream
+  // 1) Flatten Soniox into per-char stream (Han + digits).
+  //    Normalize CN numerals → Arabic so they align with digits in reference.
   const chars: { ch: string; start: number; end: number }[] = [];
   for (const tok of tokens) {
-    const hans = [...(tok.text || "")].filter(isHan);
-    if (!hans.length) continue;
+    const normText = normalizeSonioxText(tok.text || "");
+    const matchable = [...normText].filter(isMatchable);
+    if (!matchable.length) continue;
     const dur = (tok.end_ms - tok.start_ms) / 1000;
-    const per = dur / hans.length;
-    hans.forEach((ch, i) => {
+    const per = dur / matchable.length;
+    matchable.forEach((ch, i) => {
       chars.push({
         ch,
         start: tok.start_ms / 1000 + per * i,
