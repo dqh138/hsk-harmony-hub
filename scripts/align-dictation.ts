@@ -131,8 +131,70 @@ async function transcribe(fileId: string): Promise<SonioxToken[]> {
 }
 
 const isHan = (ch: string) => /[\u3400-\u9FFF]/.test(ch);
+const isDigit = (ch: string) => /[0-9]/.test(ch);
+// "Matchable" = chữ Hán hoặc chữ số Ả Rập. Số được giữ nguyên trong segment
+// và được dùng làm anchor khi căn chỉnh với Soniox (sau khi Soniox đã được
+// chuẩn hoá chữ số Hán → số Ả Rập, xem normalizeSonioxText bên dưới).
+const isMatchable = (ch: string) => isHan(ch) || isDigit(ch);
 const STRONG_PUNCT = new Set(["\u3002", "\uff1f", "\uff01", "\uff1b"]); // 。？！；
 const SOFT_PUNCT = new Set(["\uff0c", "\u3001", "\uff1a"]); // ，、：
+
+// ===== CN numerals → Arabic =====
+const CN_NUM: Record<string, number> = {
+  "零": 0, "〇": 0, "○": 0,
+  "一": 1, "壹": 1, "二": 2, "贰": 2, "两": 2, "兩": 2,
+  "三": 3, "叁": 3, "四": 4, "肆": 4, "五": 5, "伍": 5,
+  "六": 6, "陆": 6, "七": 7, "柒": 7, "八": 8, "捌": 8, "九": 9, "玖": 9,
+};
+const CN_UNIT: Record<string, number> = { "十": 10, "拾": 10, "百": 100, "佰": 100, "千": 1000, "仟": 1000 };
+const CN_BIG: Record<string, number> = { "万": 10000, "萬": 10000, "亿": 100000000, "億": 100000000 };
+const CN_ALL = new Set<string>([
+  ...Object.keys(CN_NUM), ...Object.keys(CN_UNIT), ...Object.keys(CN_BIG),
+]);
+function parseCnNumber(s: string): number | null {
+  if (!s) return null;
+  let total = 0, section = 0, current = 0, touched = false;
+  for (const ch of s) {
+    if (ch in CN_NUM) { current = CN_NUM[ch]; touched = true; }
+    else if (ch in CN_UNIT) {
+      const u = CN_UNIT[ch];
+      if (current === 0) current = 1;
+      section += current * u; current = 0; touched = true;
+    } else if (ch in CN_BIG) {
+      section += current;
+      if (section === 0) section = 1;
+      total += section * CN_BIG[ch];
+      section = 0; current = 0; touched = true;
+    } else return null;
+  }
+  return touched ? total + section + current : null;
+}
+function normalizeSonioxText(s: string): string {
+  // Soniox hay đọc số thành chữ Hán (六千, 一万二…). Reference của ta giữ dạng
+  // số Ả Rập, nên cần convert để alignment khớp được.
+  // Thay 百分之X → X%, sau đó convert các đoạn chữ số Hán liên tiếp → digits.
+  s = s.replace(
+    /百分之([零〇○一壹二贰两兩三叁四肆五伍六陆七柒八捌九玖十拾百佰千仟万萬亿億]+|\d+(?:\.\d+)?)/g,
+    (_, n: string) => {
+      if (/^[\d.]+$/.test(n)) return `${n}%`;
+      const p = parseCnNumber(n);
+      return p !== null ? `${p}%` : `${n}%`;
+    }
+  );
+  let out = "", buf = "";
+  const flush = () => {
+    if (!buf) return;
+    const n = parseCnNumber(buf);
+    out += n !== null ? String(n) : buf;
+    buf = "";
+  };
+  for (const ch of s) {
+    if (CN_ALL.has(ch)) buf += ch;
+    else { flush(); out += ch; }
+  }
+  flush();
+  return out;
+}
 
 function align(tokens: SonioxToken[]) {
   // 1) Flatten Soniox into per-Han-char stream
