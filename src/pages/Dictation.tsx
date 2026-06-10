@@ -855,7 +855,7 @@ const Dictation = () => {
                 </div>
               </>
             )}
-
+          </>
         )}
       </main>
     </div>
