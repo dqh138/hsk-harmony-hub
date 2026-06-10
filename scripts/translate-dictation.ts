@@ -130,21 +130,32 @@ function escapeStr(s: string) {
   const segs = video.segments!;
   console.log(`Translating ${segs.length} segments for ${youtubeId} (batch=${BATCH_SIZE})…`);
   const all: Record<number, string> = {};
-  for (let i = 0; i < segs.length; i += BATCH_SIZE) {
-    const batch = segs.slice(i, i + BATCH_SIZE).map((s) => ({ idx: s.idx, hanzi: s.hanzi }));
-    process.stdout.write(`\r  batch ${i / BATCH_SIZE + 1}/${Math.ceil(segs.length / BATCH_SIZE)}    `);
+  const runBatch = async (batch: { idx: number; hanzi: string }[], depth = 0): Promise<void> => {
     let attempt = 0;
     while (true) {
       try {
         const res = await translateBatch(batch);
+        const got = batch.filter((b) => res[b.idx]).length;
+        if (got < batch.length && batch.length > 1 && depth < 3) {
+          const mid = Math.ceil(batch.length / 2);
+          console.log(`\n  ↪ Batch trả thiếu (${got}/${batch.length}), chia đôi & thử lại`);
+          await runBatch(batch.slice(0, mid), depth + 1);
+          await runBatch(batch.slice(mid), depth + 1);
+          return;
+        }
         Object.assign(all, res);
-        break;
+        return;
       } catch (e) {
         attempt++;
         if (attempt >= 3) throw e;
         await new Promise((r) => setTimeout(r, 2000 * attempt));
       }
     }
+  };
+  for (let i = 0; i < segs.length; i += BATCH_SIZE) {
+    const batch = segs.slice(i, i + BATCH_SIZE).map((s) => ({ idx: s.idx, hanzi: s.hanzi }));
+    process.stdout.write(`\r  batch ${i / BATCH_SIZE + 1}/${Math.ceil(segs.length / BATCH_SIZE)}    `);
+    await runBatch(batch);
   }
   console.log();
 
