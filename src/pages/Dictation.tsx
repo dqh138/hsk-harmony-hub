@@ -361,6 +361,16 @@ const Dictation = () => {
     };
   }, [data, seg, playCurrent, goNext, goPrev]);
 
+  // Auto-play segment 1 when a video is first loaded (skip intro/title segment 0)
+  useEffect(() => {
+    if (!data || !seg || !hasAutoStartedRef.current) return;
+    hasAutoStartedRef.current = false;
+    const timer = setTimeout(() => {
+      playCurrent();
+    }, 700);
+    return () => clearTimeout(timer);
+  }, [data, seg, playCurrent]);
+
   const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
