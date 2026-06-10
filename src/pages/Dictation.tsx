@@ -277,8 +277,14 @@ const Dictation = () => {
   const toggleAnswer = () => setShowAnswer((p) => ({ ...p, [currentIdx]: !p[currentIdx] }));
 
   const fetchTranslation = async () => {
-    if (!seg) return;
+    if (!seg || !data) return;
     if (translations[currentIdx]) return;
+    // Ưu tiên bản dịch dựng sẵn (script translate-dictation.ts)
+    const preset = data.translations?.[currentIdx];
+    if (preset) {
+      setTranslations((p) => ({ ...p, [currentIdx]: preset }));
+      return;
+    }
     setTranslatingIdx(currentIdx);
     try {
       const { data: res, error } = await supabase.functions.invoke("dictation-translate", {
