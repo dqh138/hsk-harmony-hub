@@ -142,8 +142,9 @@ const Dictation = () => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch { /* noop */ }
   }, [data, scores, inputs, currentIdx]);
 
+  const hasAutoStartedRef = useRef(false);
+
   const resetAll = () => {
-    setCurrentIdx(0);
     setScores({});
     setHints({});
     setInputs({});
