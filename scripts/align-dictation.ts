@@ -184,8 +184,13 @@ function normalizeSonioxText(s: string): string {
   let out = "", buf = "";
   const flush = () => {
     if (!buf) return;
-    const n = parseCnNumber(buf);
-    out += n !== null ? String(n) : buf;
+    const hasUnit = [...buf].some((c) => c in CN_UNIT || c in CN_BIG);
+    if (hasUnit) {
+      const n = parseCnNumber(buf);
+      out += n !== null ? String(n) : buf;
+    } else {
+      out += [...buf].map((c) => (c in CN_NUM ? String(CN_NUM[c]) : c)).join("");
+    }
     buf = "";
   };
   for (const ch of s) {
