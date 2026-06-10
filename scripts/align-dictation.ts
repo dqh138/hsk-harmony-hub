@@ -214,8 +214,8 @@ function align(tokens: SonioxToken[]) {
       });
     });
   }
-  if (!chars.length) throw new Error("Soniox returned no Han chars");
-  console.log(`  Soniox produced ${chars.length} Han chars`);
+  if (!chars.length) throw new Error("Soniox returned no matchable chars");
+  console.log(`  Soniox produced ${chars.length} matchable chars (Han + digits)`);
 
   // 2) Full reference string (keep punctuation).
   //    If we have curated segments, use them; otherwise bootstrap from
@@ -229,15 +229,15 @@ function align(tokens: SonioxToken[]) {
   let refPos = 0;
   for (let s = 0; s < chars.length; s++) {
     const sCh = chars[s].ch;
-    // attach any leading non-Han ref chars (punctuation) to current time
-    while (refPos < refArr.length && !isHan(refArr[refPos])) {
+    // attach any leading non-matchable ref chars (punctuation) to current time
+    while (refPos < refArr.length && !isMatchable(refArr[refPos])) {
       refTime[refPos] = chars[s].start;
       refPos++;
     }
     if (refPos >= refArr.length) break;
     let found = -1;
     for (let k = 0; k <= LOOKAHEAD && refPos + k < refArr.length; k++) {
-      if (!isHan(refArr[refPos + k])) continue;
+      if (!isMatchable(refArr[refPos + k])) continue;
       if (refArr[refPos + k] === sCh) {
         found = refPos + k;
         break;
