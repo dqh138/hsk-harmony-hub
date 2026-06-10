@@ -272,17 +272,6 @@ const Dictation = () => {
       // Hiển thị đáp án đầy đủ + dịch, chờ Enter tiếp theo để qua câu kế.
       setShowAnswer((p) => ({ ...p, [currentIdx]: true }));
       void fetchTranslation();
-      // Tự phát câu kế 1 lần để preview, không advance index.
-      const next = data?.segments[currentIdx + 1];
-      if (next) {
-        setTimeout(() => {
-          playerRef.current?.setRate(rate);
-          playerRef.current?.playSegment(
-            Math.max(0, next.start + AUDIO_OFFSET),
-            next.dur + PLAYBACK_PAD_END
-          );
-        }, 400);
-      }
     } else {
       // Tìm tiền tố đúng dài nhất, hiển thị thêm 1 chữ kế tiếp ở khu so sánh
       let prefix = 0;
@@ -401,7 +390,17 @@ const Dictation = () => {
     if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
       if (isCurrentCorrect && showAnswer[currentIdx]) {
+        const next = data?.segments[currentIdx + 1];
         goNext();
+        if (next) {
+          setTimeout(() => {
+            playerRef.current?.setRate(rate);
+            playerRef.current?.playSegment(
+              Math.max(0, next.start + AUDIO_OFFSET),
+              next.dur + PLAYBACK_PAD_END
+            );
+          }, 200);
+        }
       } else {
         checkAnswer();
       }
