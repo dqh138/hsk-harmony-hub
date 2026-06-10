@@ -592,6 +592,59 @@ const Dictation = () => {
               </div>
             </div>
 
+            {completed && (
+              <Card className="mx-auto max-w-lg">
+                <CardContent className="flex flex-col items-center gap-4 p-6 text-center">
+                  <div className="rounded-full bg-emerald-500/15 p-4">
+                    <CheckCircle className="h-10 w-10 text-emerald-500" />
+                  </div>
+                  <div className="space-y-1">
+                    <h2 className="text-xl font-bold">Hoàn thành!</h2>
+                    <p className="text-sm text-muted-foreground">
+                      Bạn đã hoàn thành tất cả {data.segments.length} câu của video này.
+                    </p>
+                  </div>
+
+                  {avgScore !== null && (
+                    <div className="flex w-full items-center justify-center gap-2 rounded-lg border border-border/60 bg-muted/30 p-3">
+                      <Trophy className="h-5 w-5 text-amber-500" />
+                      <span className="text-sm">Điểm trung bình:</span>
+                      <span
+                        className={cn(
+                          "text-lg font-bold",
+                          avgScore >= 80
+                            ? "text-emerald-500"
+                            : avgScore >= 50
+                              ? "text-amber-500"
+                              : "text-red-500"
+                        )}
+                      >
+                        {avgScore}%
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-2">
+                    <Button onClick={handleChangeVideo} className="gap-2">
+                      <ArrowLeft className="h-4 w-4" />
+                      Trở lại thư viện
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        resetAll();
+                        setCurrentIdx(data.segments.length > 1 ? 1 : 0);
+                      }}
+                      className="gap-2"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      Làm lại video này
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Split: video bên trái, controls/đáp án bên phải */}
             <div className="grid gap-4 lg:grid-cols-2">
               <div className="space-y-2 lg:sticky lg:top-4 lg:self-start">
