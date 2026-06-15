@@ -59,7 +59,7 @@ function saveData(s: string) {
   writeFileSync(DATA_FILE, s);
 }
 
-function findEntry(src: string): { entryStart: number; entryEnd: number; slug: string } {
+function findEntry(src: string): { entryStart: number; entryEnd: number; slug: string; topLevelAnchor: number } {
   // Locate the object literal containing `youtubeId: "<id>"`.
   const needle = `youtubeId: "${youtubeId}"`;
   const idx = src.indexOf(needle);
@@ -94,7 +94,12 @@ function findEntry(src: string): { entryStart: number; entryEnd: number; slug: s
     .replace(/[^a-zA-Z0-9]+/g, "_")
     .replace(/^_+|_+$/g, "")
     .toUpperCase();
-  return { entryStart: start, entryEnd: end, slug };
+  // Top-level anchor: position of `export const DICTATION_VIDEOS` declaration.
+  // New consts must be inserted at module scope, not inside the array literal.
+  const anchorMatch = src.match(/export const DICTATION_VIDEOS\b/);
+  if (!anchorMatch) throw new Error("Could not find `export const DICTATION_VIDEOS` anchor");
+  const topLevelAnchor = anchorMatch.index!;
+  return { entryStart: start, entryEnd: end, slug, topLevelAnchor };
 }
 
 function extractExportArray(file: string, exportName: string): string {
