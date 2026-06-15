@@ -167,7 +167,7 @@ async function main() {
   let entry = findEntry(data);
   const segsArr = extractExportArray(SEG_FILE, "SEGMENTS");
   const segConst = `${entry.slug}_SEGMENTS`;
-  data = upsertConst(data, segConst, ": DictationSegment[]", segsArr, entry.entryStart);
+  data = upsertConst(data, segConst, ": DictationSegment[]", segsArr, entry.topLevelAnchor);
   entry = findEntry(data); // re-find after insertion
   let entryText = data.slice(entry.entryStart, entry.entryEnd + 1);
   entryText = setEntryField(entryText, "segments", segConst);
@@ -186,7 +186,7 @@ async function main() {
   entry = findEntry(data);
   const transArr = extractExportArray(TRANS_FILE, "TRANSLATIONS");
   const transConst = `${entry.slug}_TRANSLATIONS`;
-  data = upsertConst(data, transConst, "", transArr, entry.entryStart);
+  data = upsertConst(data, transConst, "", transArr, entry.topLevelAnchor);
   entry = findEntry(data);
   entryText = data.slice(entry.entryStart, entry.entryEnd + 1);
   entryText = setEntryField(entryText, "translations", transConst);
