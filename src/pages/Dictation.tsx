@@ -274,17 +274,18 @@ const Dictation = () => {
       setShowAnswer((p) => ({ ...p, [currentIdx]: true }));
       void fetchTranslation();
     } else {
-      // Tìm tiền tố đúng dài nhất, hiển thị thêm 1 chữ kế tiếp ở khu so sánh
-      let prefix = 0;
-      while (
-        prefix < normalizedInput.length &&
-        prefix < normalizedAnswer.length &&
-        normalizedInput[prefix] === normalizedAnswer[prefix]
-      ) {
-        prefix++;
+      // Đếm số CHUNK đầu khớp (đồng bộ với hiển thị "So sánh ký tự" theo chunk).
+      const chunks = splitForCompare(seg.hanzi);
+      let consumed = 0;
+      let matchedChunks = 0;
+      for (const ch of chunks) {
+        if (normalizedInput.substr(consumed, ch.key.length) === ch.key) {
+          matchedChunks++;
+          consumed += ch.key.length;
+        } else break;
       }
-      if (prefix < normalizedAnswer.length) {
-        setHints((p) => ({ ...p, [currentIdx]: prefix + 1 }));
+      if (matchedChunks < chunks.length) {
+        setHints((p) => ({ ...p, [currentIdx]: matchedChunks + 1 }));
       }
     }
     return result;
