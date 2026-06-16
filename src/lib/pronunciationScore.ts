@@ -106,6 +106,37 @@ export function normalizeHanzi(s: string): string {
   return normalizeNumbers(s).replace(PUNCT_RE, "").replace(/[a-zA-Z]/g, "");
 }
 
+// Tách chuỗi thành các "chunk" để hiển thị so sánh ký tự:
+//  - Mỗi chunk có `display` (giữ nguyên chữ Hán, kể cả 一, 一万三千)
+//    và `key` (dạng đã chuẩn hoá để so khớp với input đã normalize).
+//  - Một cụm chữ số Hán có đơn vị (一万三千) gom làm 1 chunk; chữ số đơn (一, 二)
+//    tách riêng từng ký tự để vẫn so khớp 1:1 với "1样", "2个"…
+export interface CompareChunk { display: string; key: string }
+export function splitForCompare(s: string): CompareChunk[] {
+  const cleaned = s.replace(PUNCT_RE, "").replace(/[a-zA-Z]/g, "");
+  const out: CompareChunk[] = [];
+  let buf = "";
+  const flushBuf = () => {
+    if (!buf) return;
+    const hasUnit = [...buf].some((c) => c in CN_UNIT || c in CN_BIG);
+    if (hasUnit) {
+      const n = parseCnNumber(buf);
+      out.push({ display: buf, key: n !== null ? String(n) : buf });
+    } else {
+      for (const c of buf) {
+        out.push({ display: c, key: c in CN_NUM ? String(CN_NUM[c]) : c });
+      }
+    }
+    buf = "";
+  };
+  for (const c of cleaned) {
+    if (CN_ALL.has(c)) buf += c;
+    else { flushBuf(); out.push({ display: c, key: c }); }
+  }
+  flushBuf();
+  return out;
+}
+
 export function hanziToPinyinSyllables(hanzi: string): string[] {
   // pinyin-pro không sinh pinyin cho chữ số → bỏ chữ số khỏi đầu vào pinyin
   // (việc khớp chữ số đã được lo ở phần so sánh Hán tự).

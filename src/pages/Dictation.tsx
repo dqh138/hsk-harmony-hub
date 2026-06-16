@@ -26,7 +26,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { pinyin } from "pinyin-pro";
-import { normalizeHanzi, scorePronunciation, type ScoreResult } from "@/lib/pronunciationScore";
+import { normalizeHanzi, scorePronunciation, splitForCompare, type ScoreResult } from "@/lib/pronunciationScore";
 import YouTubeSegmentPlayer, { type YouTubeSegmentPlayerHandle } from "@/components/YouTubeSegmentPlayer";
 import {
   DICTATION_VIDEOS,
@@ -274,17 +274,18 @@ const Dictation = () => {
       setShowAnswer((p) => ({ ...p, [currentIdx]: true }));
       void fetchTranslation();
     } else {
-      // Tìm tiền tố đúng dài nhất, hiển thị thêm 1 chữ kế tiếp ở khu so sánh
-      let prefix = 0;
-      while (
-        prefix < normalizedInput.length &&
-        prefix < normalizedAnswer.length &&
-        normalizedInput[prefix] === normalizedAnswer[prefix]
-      ) {
-        prefix++;
+      // Đếm số CHUNK đầu khớp (đồng bộ với hiển thị "So sánh ký tự" theo chunk).
+      const chunks = splitForCompare(seg.hanzi);
+      let consumed = 0;
+      let matchedChunks = 0;
+      for (const ch of chunks) {
+        if (normalizedInput.substr(consumed, ch.key.length) === ch.key) {
+          matchedChunks++;
+          consumed += ch.key.length;
+        } else break;
       }
-      if (prefix < normalizedAnswer.length) {
-        setHints((p) => ({ ...p, [currentIdx]: prefix + 1 }));
+      if (matchedChunks < chunks.length) {
+        setHints((p) => ({ ...p, [currentIdx]: matchedChunks + 1 }));
       }
     }
     return result;
@@ -753,33 +754,35 @@ const Dictation = () => {
                     )}
 
                     {currentScore && (() => {
-                      const answerChars = normalizeHanzi(seg.hanzi).split("");
-                      const userChars = normalizeHanzi(inputs[currentIdx] ?? "").split("");
-                      let matchedLen = 0;
-                      while (
-                        matchedLen < answerChars.length &&
-                        matchedLen < userChars.length &&
-                        answerChars[matchedLen] === userChars[matchedLen]
-                      ) matchedLen++;
-                      const revealLen = hints[currentIdx] ?? 0;
+                      const answerChunks = splitForCompare(seg.hanzi);
+                      const userKey = normalizeHanzi(inputs[currentIdx] ?? "");
+                      let consumed = 0;
+                      let matchedChunks = 0;
+                      for (const ch of answerChunks) {
+                        if (userKey.substr(consumed, ch.key.length) === ch.key) {
+                          matchedChunks++;
+                          consumed += ch.key.length;
+                        } else break;
+                      }
+                      const revealChunks = hints[currentIdx] ?? 0;
                       return (
                         <div className="space-y-2 rounded-md border border-primary/30 bg-primary/5 p-3">
                           <div className="flex flex-wrap items-center gap-3 text-sm">
                             <span>So sánh ký tự:</span>
                             <TooltipProvider delayDuration={100}>
                               <p className="text-lg">
-                                {answerChars.map((ch, i) => {
-                                  if (i < matchedLen) {
-                                    return <span key={i} className="text-emerald-500">{ch}</span>;
+                                {answerChunks.map((ch, i) => {
+                                  if (i < matchedChunks) {
+                                    return <span key={i} className="text-emerald-500">{ch.display}</span>;
                                   }
-                                  if (i < revealLen) {
+                                  if (i < revealChunks) {
                                     return (
                                       <span
                                         key={i}
                                         className="rounded bg-amber-500/15 px-0.5 text-amber-600 underline decoration-dotted"
                                         title="Gợi ý chữ tiếp theo"
                                       >
-                                        {ch}
+                                        {ch.display}
                                       </span>
                                     );
                                   }
@@ -791,7 +794,7 @@ const Dictation = () => {
                                         </span>
                                       </TooltipTrigger>
                                       <TooltipContent side="top">
-                                        <span className="font-serif text-base">{ch}</span>
+                                        <span className="font-serif text-base">{ch.display}</span>
                                       </TooltipContent>
                                     </Tooltip>
                                   );
