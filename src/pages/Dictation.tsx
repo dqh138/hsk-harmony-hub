@@ -26,7 +26,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { pinyin } from "pinyin-pro";
-import { normalizeHanzi, scorePronunciation, type ScoreResult } from "@/lib/pronunciationScore";
+import { normalizeHanzi, scorePronunciation, splitForCompare, type ScoreResult } from "@/lib/pronunciationScore";
 import YouTubeSegmentPlayer, { type YouTubeSegmentPlayerHandle } from "@/components/YouTubeSegmentPlayer";
 import {
   DICTATION_VIDEOS,
