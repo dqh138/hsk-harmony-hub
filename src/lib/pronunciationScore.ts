@@ -113,7 +113,10 @@ export function normalizeHanzi(s: string): string {
 //    tách riêng từng ký tự để vẫn so khớp 1:1 với "1样", "2个"…
 export interface CompareChunk { display: string; key: string }
 export function splitForCompare(s: string): CompareChunk[] {
-  const cleaned = s.replace(PUNCT_RE, "").replace(/[a-zA-Z]/g, "");
+  // Giữ nguyên text gốc của "Đáp án" để hiển thị, chỉ bỏ punctuation.
+  // Chữ Latin (vd "T" trong "T型车") vẫn được hiển thị, nhưng có key=""
+  // nên không tham gia khớp ký tự (tự coi như đã đúng).
+  const cleaned = s.replace(PUNCT_RE, "");
   const out: CompareChunk[] = [];
   let buf = "";
   const flushBuf = () => {
@@ -131,6 +134,7 @@ export function splitForCompare(s: string): CompareChunk[] {
   };
   for (const c of cleaned) {
     if (CN_ALL.has(c)) buf += c;
+    else if (/[a-zA-Z]/.test(c)) { flushBuf(); out.push({ display: c, key: "" }); }
     else { flushBuf(); out.push({ display: c, key: c }); }
   }
   flushBuf();
