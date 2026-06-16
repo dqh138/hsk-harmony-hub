@@ -206,7 +206,10 @@ function align(tokens: SonioxToken[]) {
   //    Normalize CN numerals → Arabic so they align with digits in reference.
   const chars: { ch: string; start: number; end: number }[] = [];
   for (const tok of tokens) {
-    const normText = normalizeSonioxText(tok.text || "");
+    // Giữ NGUYÊN chữ Hán (kể cả 一, 一万三千) thay vì convert → "1", "13000".
+    // Lý do: đáp án hiển thị nên đúng những gì video đọc; phần so khớp với
+    // input của user đã xử lý tương đương số ↔ chữ ở src/lib/pronunciationScore.
+    const normText = tok.text || "";
     const matchable = [...normText].filter(isMatchable);
     if (!matchable.length) continue;
     const dur = (tok.end_ms - tok.start_ms) / 1000;
