@@ -118,14 +118,16 @@ async function transcribe(fileId: string): Promise<SonioxToken[]> {
     }),
   });
   const id = job.id as string;
-  for (let i = 0; i < 120; i++) {
+  let done = false;
+  for (let i = 0; i < 1200; i++) { // up to ~1h
     await new Promise((r) => setTimeout(r, 3000));
     const s = await sonioxFetch(`/v1/transcriptions/${id}`);
     process.stdout.write(`\r  status: ${s.status}    `);
-    if (s.status === "completed") break;
+    if (s.status === "completed") { done = true; break; }
     if (s.status === "error") throw new Error(`transcription error: ${JSON.stringify(s)}`);
   }
   console.log();
+  if (!done) throw new Error("transcription did not complete within timeout");
   const t = await sonioxFetch(`/v1/transcriptions/${id}/transcript`);
   return (t.tokens || []) as SonioxToken[];
 }
