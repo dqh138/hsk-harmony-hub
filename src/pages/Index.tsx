@@ -76,18 +76,6 @@ const Index = () => {
       iconBg: "bg-hsk4/15 text-hsk4",
     },
     {
-      title: "Passive Listening",
-      chinese: "被动听力",
-      description:
-        "Tự động đọc to tiêu đề tin tức bằng giọng zh-CN — bật lên rồi làm việc khác, tai vẫn quen âm điệu.",
-      icon: Headphones,
-      href: "/passive-listening",
-      cta: "Bật nghe nền",
-      stat: "Mới · Chế độ nền",
-      accent: "from-hsk5/20 to-hsk6/10",
-      iconBg: "bg-hsk5/15 text-hsk5",
-    },
-    {
       title: "Mock Exams",
       chinese: "模拟考试",
       description:
