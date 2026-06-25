@@ -33,7 +33,7 @@ const Navbar = () => {
   const isToolsActive =
     location.pathname.startsWith("/conversations") ||
     location.pathname.startsWith("/news") ||
-    location.pathname.startsWith("/passive-listening") ||
+    
     location.pathname.startsWith("/dictation") ||
     location.pathname.startsWith("/flashcards") ||
     location.pathname === "/saved-words";
