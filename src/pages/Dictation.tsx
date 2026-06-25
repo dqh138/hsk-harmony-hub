@@ -513,7 +513,10 @@ const Dictation = () => {
                 </Card>
               ) : (
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {filteredVideos.map((v) => (
+                  {filteredVideos.map((v) => {
+                    const totalSec = v.segments.reduce((acc, s) => acc + (s.dur || 0), 0);
+                    const sentenceCount = v.segments.length;
+                    return (
                     <button
                       key={v.id}
                       onClick={() => handlePickLibrary(v)}
@@ -527,11 +530,9 @@ const Dictation = () => {
                           className="h-full w-full object-cover transition group-hover:scale-105"
                           loading="lazy"
                         />
-                        {v.durationLabel && (
-                          <span className="absolute bottom-1 right-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] text-white">
-                            {v.durationLabel}
-                          </span>
-                        )}
+                        <span className="absolute bottom-1 right-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] text-white">
+                          {fmtTime(totalSec)} · {sentenceCount} câu
+                        </span>
                       </div>
                       <div className="space-y-1.5 p-3">
                         <div className="flex flex-wrap items-center gap-1.5">
@@ -546,9 +547,14 @@ const Dictation = () => {
                         {v.titleVi && (
                           <p className="line-clamp-1 text-xs text-muted-foreground">{v.titleVi}</p>
                         )}
+                        <div className="flex items-center gap-2 pt-1 text-[11px] text-muted-foreground">
+                          <span>⏱ {fmtTime(totalSec)}</span>
+                          <span>·</span>
+                          <span>📝 {sentenceCount} câu dictation</span>
+                        </div>
                       </div>
                     </button>
-                  ))}
+                  );})}
                 </div>
               )}
             </TabsContent>
