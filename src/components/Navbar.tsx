@@ -119,12 +119,6 @@ const Navbar = () => {
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/passive-listening" className="cursor-pointer">
-                  <Headphones className="mr-2 h-4 w-4" />
-                  被动听力 Nghe thụ động
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
                 <Link to="/dictation" className="cursor-pointer">
                   <PenLine className="mr-2 h-4 w-4" />
                   听写 Chép chính tả
