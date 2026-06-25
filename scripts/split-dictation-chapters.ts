@@ -154,28 +154,28 @@ interface Entry {
 }
 
 const entries: Entry[] = [];
-for (const sp of specs) {
+specs.forEach((sp, chapterIdx) => {
   const { start: from, end: to } = sliceByTimeRange(sp.start, sp.end);
   if (from >= to) {
     console.warn(`⚠ Chapter "${sp.title}" produced no segments`);
-    continue;
+    return;
   }
   const ranges = splitIntoParts(from, to, sp.parts);
   const total = ranges.length;
+  const chNum = String(chapterIdx + 1).padStart(2, "0");
+  const titleSlug = slugify(sp.titleVi) || `CH${chNum}`;
   ranges.forEach(([a, b], i) => {
     const partLabel = total > 1 ? ` Phần ${i + 1}/${total}` : "";
     const partCnLabel = total > 1 ? ` 第${i + 1}部分` : "";
     const segsRaw = segments.slice(a, b);
     const transRaw = translations.slice(a, b);
-    // Re-index from 0; keep absolute start (player seeks to seg.start within full video).
     const segs = segsRaw.map((s, k) => ({ ...s, idx: k }));
     const trans = transRaw.length === segs.length
       ? transRaw
       : segs.map((_, k) => transRaw[k] ?? "");
-    const base = slugify(`china_history_${sp.title}_${i + 1}_${youtubeId}`);
     entries.push({
-      id: `china-history-${slugify(sp.title).toLowerCase()}-p${i + 1}-${youtubeId}`,
-      constBase: `CHINA_HISTORY_${slugify(sp.title)}_P${i + 1}_${slugify(youtubeId)}`,
+      id: `china-history-ch${chNum}-p${i + 1}-${youtubeId}`,
+      constBase: `CHINA_HISTORY_CH${chNum}_${titleSlug}_P${i + 1}_${slugify(youtubeId)}`,
       title: `\u4e2d\u56fd\u5386\u53f2: ${sp.title}${partCnLabel}`,
       titleVi: `Lịch sử Trung Quốc: ${sp.titleVi}${partLabel}`,
       segs,
@@ -183,7 +183,7 @@ for (const sp of specs) {
       startSec: segs[0].start,
     });
   });
-}
+});
 
 console.log(`Prepared ${entries.length} chapter entries`);
 for (const e of entries) {
