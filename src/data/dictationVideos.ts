@@ -10356,7 +10356,7 @@ const TMP_CHINA_HISTORY_FULL_C9QIE0RFSLQ_TRANSLATIONS = [
   `H\u1eb9n g\u1eb7p l\u1ea1i l\u1ea7n sau.`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH01_H_TH_NG_CHU_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 0.48, dur: 3.14, hanzi: `\u5728\u590f\u4ee5\u524d\uff0c\u4e2d\u56fd\u8fd8\u5c5e\u4e8e\u539f\u59cb\u793e\u4f1a\u3002` },
   { idx: 1, start: 3.54, dur: 2.42, hanzi: `\u9009\u4e0b\u4e00\u4e2a\u541b\u738b\u90fd\u662f\u5b9e\u884c\u7985\u8ba9\u5236\uff0c` },
   { idx: 2, start: 5.88, dur: 1.82, hanzi: `\u5c31\u662f\u82f1\u96c4\u4e0d\u95ee\u51fa\u8eab\uff0c` },
@@ -10519,7 +10519,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 159, start: 412.5, dur: 6.26, hanzi: `\u81ea\u4ece\u5468\u671d\u90a3\u4f4d\u70fd\u706b\u620f\u8bf8\u4faf\u7684\u7f3a\u5fc3\u773c\u5929\u5b50\u5468\u5e7d\u738b\u88ab\u5c11\u6570\u6c11\u65cf\u5e72\u6389\u4e86\u4ee5\u540e\uff0c` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH01_H_TH_NG_CHU_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Tr\u01b0\u1edbc th\u1eddi nh\u00e0 H\u1ea1, Trung Qu\u1ed1c v\u1eabn \u1edf trong x\u00e3 h\u1ed9i nguy\u00ean th\u1ee7y.`,
   `Vi\u1ec7c ch\u1ecdn v\u1ecb vua ti\u1ebfp theo \u0111\u1ec1u th\u1ef1c hi\u1ec7n ch\u1ebf \u0111\u1ed9 thi\u1ec7n nh\u01b0\u1ee3ng,`,
   `T\u1ee9c l\u00e0, anh h\u00f9ng kh\u00f4ng k\u1ec3 xu\u1ea5t th\u00e2n,`,
@@ -10682,7 +10682,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `K\u1ec3 t\u1eeb khi Chu U V\u01b0\u01a1ng, v\u1ecb thi\u00ean t\u1eed g\u00e2y ra tr\u00f2 \u0111\u00f9a 'phong h\u1ecfa h\u00ed ch\u01b0 h\u1ea7u', b\u1ecb d\u00e2n t\u1ed9c thi\u1ec3u s\u1ed1 gi\u1ebft ch\u1ebft,`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH02_XU_N_THU_CHI_N_QU_C_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 418.68, dur: 3.92, hanzi: `\u5468\u671d\u4e0d\u5f97\u4e0d\u4ece\u539f\u6765\u7684\u738b\u90fd\u98a2\u4eac\u642c\u5230\u4e86\u6d1b\u9091\u3002` },
   { idx: 1, start: 422.52, dur: 2.18, hanzi: `\u897f\u5468\u706d\uff0c\u4e1c\u5468\u5f00\u59cb\u3002` },
   { idx: 2, start: 424.62, dur: 3.38, hanzi: `\u4e1c\u5468\u6309\u65f6\u95f4\u53c8\u5206\u4e3a\u6625\u79cb\u548c\u6218\u56fd\uff0c` },
@@ -10837,7 +10837,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 151, start: 848.94, dur: 2.42, hanzi: `\u6625\u79cb\u6218\u56fd\u5230\u6b64\u7ed3\u675f\u3002` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH02_XU_N_THU_CHI_N_QU_C_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `nh\u00e0 Chu bu\u1ed9c ph\u1ea3i d\u1eddi \u0111\u00f4 t\u1eeb H\u1ea1o Kinh v\u1ec1 L\u1ea1c \u1ea4p.`,
   `T\u00e2y Chu di\u1ec7t vong, \u0110\u00f4ng Chu b\u1eaft \u0111\u1ea7u.`,
   `\u0110\u00f4ng Chu l\u1ea1i \u0111\u01b0\u1ee3c chia th\u00e0nh hai th\u1eddi k\u1ef3 Xu\u00e2n Thu v\u00e0 Chi\u1ebfn Qu\u1ed1c,`,
@@ -10992,7 +10992,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Th\u1eddi Xu\u00e2n Thu Chi\u1ebfn Qu\u1ed1c \u0111\u1ebfn \u0111\u00e2y l\u00e0 k\u1ebft th\u00fac.`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH03_NH_T_N_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 851.28, dur: 3.68, hanzi: `\u8bf4\u79e6\u671d\uff0c\u4e3b\u8981\u5c31\u662f\u8bf4\u79e6\u59cb\u7687\uff0c\u56e0\u4e3a\u79e6\u671d\u592a\u77ed\u4e86\uff0c` },
   { idx: 1, start: 854.88, dur: 1.28, hanzi: `\u53ea\u6709\u5341\u4e94\u5e74\u3002` },
   { idx: 2, start: 856.08, dur: 1.94, hanzi: `\u516c\u5143\u524d\u4e8c\u767e\u4e8c\u5341\u4e00\u5e74\uff0c` },
@@ -11136,7 +11136,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 140, start: 1224.18, dur: 3.56, hanzi: `\u81f3\u6b64\uff0c\u79e6\u671d\u6c38\u8fdc\u5730\u9000\u51fa\u4e86\u5386\u53f2\u7684\u821e\u53f0\u3002` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH03_NH_T_N_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `N\u00f3i v\u1ec1 nh\u00e0 T\u1ea7n, ch\u1ee7 y\u1ebfu l\u00e0 n\u00f3i v\u1ec1 T\u1ea7n Th\u1ee7y Ho\u00e0ng, v\u00ec nh\u00e0 T\u1ea7n qu\u00e1 ng\u1eafn ng\u1ee7i,`,
   `ch\u1ec9 c\u00f3 m\u01b0\u1eddi l\u0103m n\u0103m.`,
   `N\u0103m 221 tr\u01b0\u1edbc C\u00f4ng nguy\u00ean,`,
@@ -11280,7 +11280,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `\u0110\u1ebfn \u0111\u00e2y, nh\u00e0 T\u1ea7n v\u0129nh vi\u1ec5n r\u00fat kh\u1ecfi v\u0169 \u0111\u00e0i l\u1ecbch s\u1eed.`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH04_S_H_N_TRANH_H_NG_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 1227.66, dur: 2.24, hanzi: `\u79e6\u706d\u4ee5\u540e\u5c31\u662f\u695a\u6c49\u4e4b\u4e89\u3002` },
   { idx: 1, start: 1229.82, dur: 2.66, hanzi: `\u5148\u6765\u8bf4\u4e0b\u4e24\u5927\u4e3b\u89d2\u5218\u90a6\u548c\u9879\u7fbd\u3002` },
   { idx: 2, start: 1232.4, dur: 2.06, hanzi: `\u5218\u90a6\u5c5e\u4e8e\u5927\u5668\u665a\u6210\u578b\uff0c` },
@@ -11400,7 +11400,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 116, start: 1534.26, dur: 1.82, hanzi: `\u65b9\u4fbf\u4eba\u4eec\u8fdb\u51fa\u8700\u5730\u3002` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH04_S_H_N_TRANH_H_NG_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Sau khi nh\u00e0 T\u1ea7n s\u1ee5p \u0111\u1ed5 l\u00e0 cu\u1ed9c chi\u1ebfn S\u1edf H\u00e1n.`,
   `Tr\u01b0\u1edbc ti\u00ean h\u00e3y n\u00f3i v\u1ec1 hai nh\u00e2n v\u1eadt ch\u00ednh l\u00e0 L\u01b0u Bang v\u00e0 H\u1ea1ng V\u0169.`,
   `L\u01b0u Bang thu\u1ed9c tu\u00fdp ng\u01b0\u1eddi th\u00e0nh c\u00f4ng mu\u1ed9n,`,
@@ -11520,7 +11520,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `\u0111\u1ec3 thu\u1eadn ti\u1ec7n cho m\u1ecdi ng\u01b0\u1eddi ra v\u00e0o \u0111\u1ea5t Th\u1ee5c.`,
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH04_S_H_N_TRANH_H_NG_P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 1536, dur: 4.94, hanzi: `\u5218\u90a6\u4e3a\u4e86\u6253\u6d88\u9879\u7fbd\u7684\u6212\u5fc3\uff0c\u5230\u5df4\u8700\u4ee5\u540e\u4e00\u628a\u706b\u70e7\u4e86\u6808\u9053\uff0c` },
   { idx: 1, start: 1540.86, dur: 2.96, hanzi: `\u8868\u660e\u81ea\u5df1\u4ee5\u540e\u4f1a\u5b89\u5fc3\u7684\u5f85\u5728\u6c49\u4e2d\u8700\u5730\uff0c` },
   { idx: 2, start: 1543.74, dur: 2.54, hanzi: `\u7edd\u5bf9\u4e0d\u4f1a\u518d\u5a01\u80c1\u5230\u9879\u7fbd\u3002` },
@@ -11630,7 +11630,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 106, start: 1834.74, dur: 3.56, hanzi: `\u5218\u90a6\u767b\u57fa\uff0c\u6b63\u5f0f\u5f00\u542f\u4e86\u5927\u6c49\u6a21\u5f0f\u3002` },
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH04_S_H_N_TRANH_H_NG_P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `\u0110\u1ec3 x\u00f3a tan nghi ng\u1edd c\u1ee7a H\u1ea1ng V\u0169, L\u01b0u Bang \u0111\u1ed1t ch\u00e1y \u0111\u01b0\u1eddng s\u1ea1n \u0111\u1ea1o sau khi \u0111\u1ebfn Ba Th\u1ee5c,`,
   `\u00e1m ch\u1ec9 r\u1eb1ng sau n\u00e0y \u00f4ng s\u1ebd an ph\u1eadn \u1edf H\u00e1n Trung v\u00e0 \u0111\u1ea5t Th\u1ee5c,`,
   `tuy\u1ec7t \u0111\u1ed1i s\u1ebd kh\u00f4ng \u0111e d\u1ecda H\u1ea1ng V\u0169 n\u1eefa.`,
@@ -11740,7 +11740,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `L\u01b0u Bang l\u00ean ng\u00f4i, ch\u00ednh th\u1ee9c m\u1edf ra tri\u1ec1u \u0111\u1ea1i nh\u00e0 H\u00e1n.`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 1838.22, dur: 2.06, hanzi: `\u5218\u90a6\u79f0\u5e1d\uff0c\u53f2\u79f0\u897f\u6c49\uff0c` },
   { idx: 1, start: 1840.2, dur: 2.66, hanzi: `\u540e\u9762\u8fd8\u6709\u4e1c\u6c49\uff0c\u8fd9\u4e2a\u4e4b\u540e\u4f1a\u8bf4\u5230\u7684\u3002` },
   { idx: 2, start: 1842.78, dur: 2.54, hanzi: `\u548c\u5176\u4ed6\u7684\u671d\u4ee3\u4e00\u6837\uff0c\u5218\u90a6\u767b\u57fa\u4e86\u4ee5\u540e\uff0c` },
@@ -11847,7 +11847,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 103, start: 2113.62, dur: 1.88, hanzi: `\u56db\u5c81\u7684\u5218\u5b8f\u4e3a\u5e1d\u3002` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `L\u01b0u Bang x\u01b0ng \u0111\u1ebf, s\u1eed g\u1ecdi l\u00e0 T\u00e2y H\u00e1n,`,
   `sau n\u00e0y c\u00f2n c\u00f3 \u0110\u00f4ng H\u00e1n, \u0111i\u1ec1u n\u00e0y s\u1ebd \u0111\u01b0\u1ee3c n\u00f3i \u0111\u1ebfn sau.`,
   `C\u0169ng nh\u01b0 c\u00e1c tri\u1ec1u \u0111\u1ea1i kh\u00e1c, sau khi L\u01b0u Bang l\u00ean ng\u00f4i,`,
@@ -11954,7 +11954,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `L\u01b0u H\u1ed3ng 4 tu\u1ed5i \u0111\u01b0\u1ee3c l\u1eadp l\u00e0m ho\u00e0ng \u0111\u1ebf.`,
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 2115.42, dur: 4.82, hanzi: `\u867d\u7136\u624b\u91cc\u6709\u4e86\u7687\u5e1d\u8fd9\u5f20\u724c\uff0c\u4f46\u662f\u671d\u4e2d\u7684\u5927\u81e3\u90fd\u662f\u5218\u90a6\u7684\u90e8\u4e0b\uff0c` },
   { idx: 1, start: 2120.16, dur: 1.88, hanzi: `\u4ed6\u4eec\u4e5f\u4e0d\u542c\u5415\u96c9\u7684\u8bdd\u3002` },
   { idx: 2, start: 2121.96, dur: 2.12, hanzi: `\u5415\u96c9\u81ea\u5df1\u4e5f\u77e5\u9053\u8fd9\u4e00\u70b9\uff0c` },
@@ -12061,7 +12061,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 103, start: 2392.32, dur: 3.2, hanzi: `\u53eb\u5927\u8089\u4e4b\u3002\u654c\u4eba\u7684\u654c\u4eba\u5c31\u662f\u670b\u53cb\u561b\u3002` },
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `M\u1eb7c d\u00f9 \u0111\u00e3 c\u00f3 qu\u00e2n c\u1edd l\u00e0 ho\u00e0ng \u0111\u1ebf, nh\u01b0ng c\u00e1c \u0111\u1ea1i th\u1ea7n trong tri\u1ec1u \u0111\u00ecnh \u0111\u1ec1u l\u00e0 thu\u1ed9c h\u1ea1 c\u1ee7a L\u01b0u Bang,`,
   `h\u1ecd c\u0169ng kh\u00f4ng nghe l\u1eddi L\u1eef Tr\u0129.`,
   `L\u1eef Tr\u0129 t\u1ef1 m\u00ecnh bi\u1ebft \u0111i\u1ec1u n\u00e0y,`,
@@ -12168,7 +12168,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `g\u1ecdi l\u00e0 \u0110\u1ea1i Nh\u1ee5c Chi. K\u1ebb th\u00f9 c\u1ee7a k\u1ebb th\u00f9 ch\u00ednh l\u00e0 b\u1ea1n.`,
 ];
 
-const CHINA_HISTORY__P3_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P3_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 2395.44, dur: 2.12, hanzi: `\u5218\u5f7b\u4e3a\u4e86\u4e0e\u5927\u8089\u4e4b\u53d6\u5f97\u8054\u7cfb\uff0c` },
   { idx: 1, start: 2397.48, dur: 2.84, hanzi: `\u4e5f\u4e3a\u4e86\u63a2\u7d22\u4e00\u4e0b\u897f\u57df\u90a3\u7247\u795e\u79d8\u7684\u571f\u5730\uff0c` },
   { idx: 2, start: 2400.24, dur: 2.6, hanzi: `\u4ed6\u5c31\u6d3e\u5f20\u9a9e\u4e00\u884c\u4eba\u51fa\u4f7f\u897f\u57df\uff0c` },
@@ -12280,7 +12280,7 @@ const CHINA_HISTORY__P3_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 108, start: 2676.18, dur: 2.3, hanzi: `\u672c\u6765\u4ed6\u662f\u60f3\u4e70\u7684\uff0c\u4f46\u662f\u4eba\u5bb6\u4e0d\u5356\u3002` },
 ];
 
-const CHINA_HISTORY__P3_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P3_C9QIE0RFSLQ_TRANSLATIONS = [
   `\u0110\u1ec3 li\u00ean l\u1ea1c v\u1edbi \u0110\u1ea1i Nh\u1ee5c Chi,`,
   `v\u00e0 \u0111\u1ec3 kh\u00e1m ph\u00e1 v\u00f9ng \u0111\u1ea5t b\u00ed \u1ea9n \u1edf T\u00e2y V\u1ef1c,`,
   `H\u00e1n V\u0169 \u0110\u1ebf c\u1eed Tr\u01b0\u01a1ng Khi\u00ean c\u00f9ng \u0111o\u00e0n t\u00f9y t\u00f9ng \u0111i s\u1ee9 T\u00e2y V\u1ef1c,`,
@@ -12392,7 +12392,7 @@ const CHINA_HISTORY__P3_C9QIE0RFSLQ_TRANSLATIONS = [
   `Ban \u0111\u1ea7u \u00f4ng mu\u1ed1n mua, nh\u01b0ng ng\u01b0\u1eddi ta kh\u00f4ng b\u00e1n.`,
 ];
 
-const CHINA_HISTORY__P4_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P4_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 2678.4, dur: 3.26, hanzi: `\u4e8e\u662f\u5218\u5f7b\u5c31\u8ba9\u674e\u5e7f\u5229\u8ba8\u4f10\u5927\u6e0a\u62a2\u9a6c\u3002` },
   { idx: 1, start: 2681.58, dur: 3.2, hanzi: `\u5176\u5b9e\u674e\u5e7f\u5229\u6ca1\u6709\u4ec0\u4e48\u672c\u4e8b\uff0c\u4ed6\u5c31\u662f\u8fd0\u6c14\u597d\uff0c` },
   { idx: 2, start: 2684.7, dur: 2.78, hanzi: `\u6253\u5230\u4e86\u5927\u6e0a\u7684\u65f6\u5019\uff0c\u5927\u6e0a\u6b63\u5904\u4e8e\u5185\u6218\uff0c` },
@@ -12494,7 +12494,7 @@ const CHINA_HISTORY__P4_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 98, start: 2947.02, dur: 3.2, hanzi: `\u4ed6\u5c31\u9009\u4e86\u5218\u5f7b\u7684\u4e00\u4e2a\u5b59\u5b50\u5218\u8d3a\u6765\u63a5\u73ed\u3002` },
 ];
 
-const CHINA_HISTORY__P4_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P4_C9QIE0RFSLQ_TRANSLATIONS = [
   `Th\u1ebf l\u00e0 L\u01b0u Tri\u1ec7t c\u1eed L\u00fd Qu\u1ea3ng L\u1ee3i \u0111i \u0111\u00e1nh \u0110\u1ea1i Uy\u00ean \u0111\u1ec3 c\u01b0\u1edbp ng\u1ef1a.`,
   `Th\u1ef1c ra L\u00fd Qu\u1ea3ng L\u1ee3i kh\u00f4ng c\u00f3 t\u00e0i c\u00e1n g\u00ec, anh ta ch\u1ec9 g\u1eb7p may.`,
   `Khi \u0111\u00e1nh \u0111\u1ebfn \u0110\u1ea1i Uy\u00ean, \u0110\u1ea1i Uy\u00ean \u0111ang x\u1ea3y ra n\u1ed9i chi\u1ebfn.`,
@@ -12596,7 +12596,7 @@ const CHINA_HISTORY__P4_C9QIE0RFSLQ_TRANSLATIONS = [
   `\u00f4ng ta \u0111\u00e3 ch\u1ecdn m\u1ed9t ng\u01b0\u1eddi ch\u00e1u c\u1ee7a L\u01b0u Tri\u1ec7t l\u00e0 L\u01b0u H\u1ea1 l\u00ean k\u1ebf v\u1ecb.`,
 ];
 
-const CHINA_HISTORY__P5_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P5_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 2950.14, dur: 1.58, hanzi: `\u4f46\u662f\u5218\u8d3a\u4e0d\u4e89\u6c14\uff0c` },
   { idx: 1, start: 2951.64, dur: 2.96, hanzi: `\u8fd8\u6ca1\u6709\u767b\u57fa\u591a\u4e45\uff0c\u4ed6\u5c31\u5f00\u59cb\u597d\u5403\u61d2\u505a\uff0c` },
   { idx: 2, start: 2954.52, dur: 2.72, hanzi: `\u8352\u6deb\u65e0\u5ea6\u3002\u970d\u5149\u5b9e\u5728\u662f\u770b\u4e0d\u4e0b\u53bb\u4e86\uff0c` },
@@ -12702,7 +12702,7 @@ const CHINA_HISTORY__P5_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 102, start: 3231.9, dur: 2.42, hanzi: `\u4e1c\u6c49\u672b\u5e74\u51fa\u4e86\u4e24\u4e2a\u6781\u54c1\u7687\u5e1d\uff0c` },
 ];
 
-const CHINA_HISTORY__P5_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P5_C9QIE0RFSLQ_TRANSLATIONS = [
   `Nh\u01b0ng L\u01b0u H\u1ea1 kh\u00f4ng l\u00e0m n\u00ean tr\u00f2 tr\u1ed1ng g\u00ec,`,
   `ch\u01b0a l\u00ean ng\u00f4i \u0111\u01b0\u1ee3c bao l\u00e2u, \u00f4ng ta \u0111\u00e3 b\u1eaft \u0111\u1ea7u ham \u0103n l\u01b0\u1eddi l\u00e0m,`,
   `Hoang d\u00e2m v\u00f4 \u0111\u1ed9. Ho\u1eafc Quang th\u1ef1c s\u1ef1 kh\u00f4ng th\u1ec3 ch\u1ecbu \u0111\u1ef1ng th\u00eam n\u1eefa,`,
@@ -12808,7 +12808,7 @@ const CHINA_HISTORY__P5_C9QIE0RFSLQ_TRANSLATIONS = [
   `Cu\u1ed1i \u0110\u00f4ng H\u00e1n xu\u1ea5t hi\u1ec7n hai v\u1ecb ho\u00e0ng \u0111\u1ebf c\u1ef1c ph\u1ea9m.`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH06_TAM_QU_C_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 3234.24, dur: 2.84, hanzi: `\u6c49\u6052\u5e1d\u5218\u6cbb\u548c\u4ed6\u4e4b\u540e\u7684\u6c49\u7075\u5e1d\u5218\u6d2a\uff0c` },
   { idx: 1, start: 3237, dur: 3.68, hanzi: `\u4e0d\u7406\u671d\u653f\u4e0d\u8bf4\uff0c\u8fd8\u5ba0\u5e78\u5ba6\u5b98\uff0c\u6253\u538b\u6587\u4eba\u58eb\u5927\u592b\uff0c` },
   { idx: 2, start: 3240.6, dur: 2.78, hanzi: `\u7a77\u5962\u6781\u6b32\uff0c\u5c24\u5176\u662f\u5218\u6d2a\uff0c\u4f5c\u4e3a\u4e00\u4e2a\u7687\u5e1d\uff0c` },
@@ -13020,7 +13020,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 208, start: 3753.96, dur: 2.24, hanzi: `\u6700\u9ed1\u6697\u7684\u4e00\u6bb5\u65f6\u671f\u3002` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH06_TAM_QU_C_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `H\u00e1n Ho\u00e0n \u0110\u1ebf L\u01b0u Ch\u00ed v\u00e0 H\u00e1n Linh \u0110\u1ebf L\u01b0u Ho\u00e0nh sau n\u00e0y.`,
   `Kh\u00f4ng ch\u1ec9 b\u1ecf b\u00ea tri\u1ec1u ch\u00ednh m\u00e0 c\u00f2n s\u1ee7ng \u00e1i ho\u1ea1n quan, \u0111\u00e0n \u00e1p v\u0103n nh\u00e2n s\u0129 phu.`,
   `V\u00f4 c\u00f9ng xa hoa tr\u1ee5y l\u1ea1c, \u0111\u1eb7c bi\u1ec7t l\u00e0 L\u01b0u Ho\u00e0nh, v\u1edbi t\u01b0 c\u00e1ch m\u1ed9t ho\u00e0ng \u0111\u1ebf.`,
@@ -13232,7 +13232,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `\u0111en t\u1ed1i nh\u1ea5t trong l\u1ecbch s\u1eed Trung Qu\u1ed1c.`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH07_NH_T_N_T_Y_T_N_NG_T_N_NAM_B_C_TRI_U_NG_H_TH_P_L_C_QU_C_NH_T_Y_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 3756.12, dur: 3.44, hanzi: `\u4e09\u56fd\u65f6\u671f\uff0c\u53f8\u9a6c\u61ff\u4f5c\u4e3a\u66f9\u64cd\u7684\u519b\u5e08\u4e0e\u5b59\u6743\u3001` },
   { idx: 1, start: 3759.48, dur: 3.02, hanzi: `\u5218\u5907\u4ea4\u6218\uff0c\u56e0\u5176\u5353\u8d8a\u7684\u519b\u4e8b\u653f\u6cbb\u80fd\u529b\uff0c` },
   { idx: 2, start: 3762.42, dur: 2.54, hanzi: `\u8fde\u7eed\u8f85\u4f50\u4e86\u66f9\u64cd\u7684\u513f\u5b50\u66f9\u4e15\u3001` },
@@ -13324,7 +13324,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 88, start: 3988.56, dur: 5.42, hanzi: `\u88ab\u53f2\u5b66\u5bb6\u8bb0\u5f55\u4e0b\u6765\u7684\u53ea\u6709\u7a0d\u5fae\u5728\u5386\u53f2\u4e0a\u6709\u90a3\u4e48\u70b9\u5b58\u5728\u611f\u7684\u5341\u516d\u4e2a\u56fd\u5bb6\u3002` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH07_NH_T_N_T_Y_T_N_NG_T_N_NAM_B_C_TRI_U_NG_H_TH_P_L_C_QU_C_NH_T_Y_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Th\u1eddi Tam Qu\u1ed1c, T\u01b0 M\u00e3 \u00dd l\u00e0 qu\u00e2n s\u01b0 c\u1ee7a T\u00e0o Th\u00e1o, c\u00f9ng T\u00f4n Quy\u1ec1n,`,
   `L\u01b0u B\u1ecb giao chi\u1ebfn. Nh\u1edd n\u0103ng l\u1ef1c qu\u00e2n s\u1ef1 ch\u00ednh tr\u1ecb xu\u1ea5t s\u1eafc,`,
   `\u00f4ng li\u00ean t\u1ee5c ph\u00f2 t\u00e1 con trai T\u00e0o Th\u00e1o l\u00e0 T\u00e0o Phi,`,
@@ -13416,7 +13416,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Ch\u1ec9 m\u01b0\u1eddi s\u00e1u qu\u1ed1c gia c\u00f3 ch\u00fat ti\u1ebfng t\u0103m trong l\u1ecbch s\u1eed \u0111\u01b0\u1ee3c c\u00e1c nh\u00e0 s\u1eed h\u1ecdc ghi l\u1ea1i.`,
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH07_NH_T_N_T_Y_T_N_NG_T_N_NAM_B_C_TRI_U_NG_H_TH_P_L_C_QU_C_NH_T_Y_P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 3993.9, dur: 3.14, hanzi: `\u8fd9\u5341\u516d\u4e2a\u56fd\u5bb6\u51e0\u4e4e\u5168\u90e8\u90fd\u662f\u7531\u5308\u5974\u3001` },
   { idx: 1, start: 3996.96, dur: 4.1, hanzi: `\u9c9c\u5351\u3001\u7f8c\u3001\u6c10\u3001\u7faf\u8fd9\u4e94\u4e2a\u5c11\u6570\u6c11\u65cf\u5efa\u7acb\u7684\uff0c` },
   { idx: 2, start: 4000.98, dur: 2.24, hanzi: `\u6240\u4ee5\u79f0\u4e3a\u4e94\u80e1\u5341\u516d\u56fd\u3002` },
@@ -13508,7 +13508,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 88, start: 4224.9, dur: 3.62, hanzi: `\u968b\u706d\u540e\u51e0\u5e74\uff0c\u5927\u5510\u4e00\u7edf\u5929\u4e0b\u3002` },
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH07_NH_T_N_T_Y_T_N_NG_T_N_NAM_B_C_TRI_U_NG_H_TH_P_L_C_QU_C_NH_T_Y_P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `M\u01b0\u1eddi s\u00e1u qu\u1ed1c gia n\u00e0y h\u1ea7u nh\u01b0 t\u1ea5t c\u1ea3 \u0111\u1ec1u do c\u00e1c d\u00e2n t\u1ed9c thi\u1ec3u s\u1ed1 Hung N\u00f4,`,
   `Ti\u00ean Ti, Kh\u01b0\u01a1ng, \u0110\u00ea, Y\u1ebft th\u00e0nh l\u1eadp,`,
   `V\u00ec v\u1eady \u0111\u01b0\u1ee3c g\u1ecdi l\u00e0 Ng\u0169 H\u1ed3 Th\u1eadp L\u1ee5c Qu\u1ed1c.`,
@@ -13600,7 +13600,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `V\u00e0i n\u0103m sau khi nh\u00e0 T\u00f9y di\u1ec7t vong, nh\u00e0 \u0110\u01b0\u1eddng th\u1ed1ng nh\u1ea5t thi\u00ean h\u1ea1.`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH08_NH_NG_NG_I_TH_P_QU_C_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 4228.44, dur: 2.18, hanzi: `\u5510\u671d\u4e00\u5171\u6709\u4e8c\u5341\u4e00\u4f4d\u7687\u5e1d\uff0c` },
   { idx: 1, start: 4230.54, dur: 1.76, hanzi: `\u5386\u7ecf\u4e8c\u767e\u516b\u5341\u4e5d\u5e74\u3002` },
   { idx: 2, start: 4232.22, dur: 3.44, hanzi: `\u4eca\u5929\u6211\u4eec\u5c31\u628a\u8fd9\u4e8c\u5341\u4e00\u4e2a\u7687\u5e1d\u5206\u4e09\u6ce2\u6765\u8bf4\uff1a` },
@@ -13699,7 +13699,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 95, start: 4485.6, dur: 1.7, hanzi: `\u5bfc\u81f4\u4e86\u6768\u5bb6\u5f97\u52bf\u3002` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH08_NH_NG_NG_I_TH_P_QU_C_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Nh\u00e0 \u0110\u01b0\u1eddng c\u00f3 t\u1ed5ng c\u1ed9ng hai m\u01b0\u01a1i m\u1ed1t v\u1ecb ho\u00e0ng \u0111\u1ebf,`,
   `tr\u1ea3i qua hai tr\u0103m t\u00e1m m\u01b0\u01a1i ch\u00edn n\u0103m.`,
   `H\u00f4m nay ch\u00fang ta s\u1ebd chia hai m\u01b0\u01a1i m\u1ed1t v\u1ecb ho\u00e0ng \u0111\u1ebf n\u00e0y th\u00e0nh ba nh\u00f3m \u0111\u1ec3 n\u00f3i:`,
@@ -13798,7 +13798,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Khi\u1ebfn nh\u00e0 h\u1ecd D\u01b0\u01a1ng c\u00f3 th\u1ebf l\u1ef1c.`,
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH08_NH_NG_NG_I_TH_P_QU_C_P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 4487.22, dur: 2.72, hanzi: `\u6768\u7389\u73af\u7684\u5802\u5144\u6768\u56fd\u5fe0\u4efb\u5bb0\u76f8\uff0c` },
   { idx: 1, start: 4489.86, dur: 1.34, hanzi: `\u4ed6\u8d2a\u6c61\u793e\u4f1a\uff0c` },
   { idx: 2, start: 4491.12, dur: 2.24, hanzi: `\u6392\u9664\u5f02\u5df1\uff0c\u6405\u4e71\u671d\u653f\uff0c` },
@@ -13900,7 +13900,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 98, start: 4739.52, dur: 3.2, hanzi: `\u5728\u4e2d\u539f\u4ee5\u5916\u7684\u5468\u8fb9\u6253\u4e86\u6253\u9171\u6cb9\u3002` },
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH08_NH_NG_NG_I_TH_P_QU_C_P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `D\u01b0\u01a1ng Qu\u1ed1c Trung, anh h\u1ecd c\u1ee7a D\u01b0\u01a1ng Ng\u1ecdc Ho\u00e0n, gi\u1eef ch\u1ee9c t\u1ec3 t\u01b0\u1edbng.`,
   `H\u1eafn tham \u00f4 x\u00e3 h\u1ed9i,`,
   `b\u00e0i tr\u1eeb ng\u01b0\u1eddi ch\u1ed1ng \u0111\u1ed1i, l\u00e0m lo\u1ea1n tri\u1ec1u ch\u00ednh,`,
@@ -14002,7 +14002,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `v\u00e0 ch\u1ec9 \u0111\u00f3ng vai tr\u00f2 th\u1ee9 y\u1ebfu \u1edf c\u00e1c v\u00f9ng xung quanh ngo\u00e0i trung nguy\u00ean.`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH09_NH_T_NG_B_C_T_NG_NAM_T_NG_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 4742.64, dur: 2.18, hanzi: `\u8d75\u5321\u80e4\u672c\u6765\u662f\u540e\u5468\u7684\u5927\u5c06\uff0c` },
   { idx: 1, start: 4744.74, dur: 4.28, hanzi: `\u638c\u63e1\u5175\u6743\uff0c\u540e\u5468\u6700\u540e\u4e00\u4e2a\u7687\u5e1d\u662f\u4e03\u5c81\u7684\u67f4\u5b97\u8bad\u3002` },
   { idx: 2, start: 4748.94, dur: 4.04, hanzi: `\u8fd9\u65f6\u8d75\u5321\u80e4\u770b\u5230\u4e86\u593a\u53d6\u540e\u5468\u7684\u6761\u4ef6\u5df2\u7ecf\u6210\u719f\uff0c` },
@@ -14132,7 +14132,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 126, start: 5079.72, dur: 2.06, hanzi: `\u4e2d\u56fd\u8fdb\u5165\u4e86\u5143\u671d\u3002` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH09_NH_T_NG_B_C_T_NG_NAM_T_NG_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Tri\u1ec7u Khu\u00f4ng D\u1eadn v\u1ed1n l\u00e0 \u0111\u1ea1i t\u01b0\u1edbng c\u1ee7a nh\u00e0 H\u1eadu Chu,`,
   `n\u1eafm gi\u1eef binh quy\u1ec1n, vua cu\u1ed1i c\u00f9ng c\u1ee7a nh\u00e0 H\u1eadu Chu l\u00e0 S\u00e0i T\u00f4ng Hu\u1ea5n m\u1edbi b\u1ea3y tu\u1ed5i.`,
   `L\u00fac n\u00e0y, Tri\u1ec7u Khu\u00f4ng D\u1eadn th\u1ea5y \u0111i\u1ec1u ki\u1ec7n \u0111\u1ec3 \u0111o\u1ea1t l\u1ea5y H\u1eadu Chu \u0111\u00e3 ch\u00edn mu\u1ed3i,`,
@@ -14262,7 +14262,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Trung Qu\u1ed1c b\u01b0\u1edbc v\u00e0o th\u1eddi nh\u00e0 Nguy\u00ean.`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH10_NH_NGUY_N_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 5081.7, dur: 1.52, hanzi: `1206\u5e74\uff0c` },
   { idx: 1, start: 5083.14, dur: 5.24, hanzi: `\u8349\u539f\u4e0a\u6709\u4e2a\u59d3\u535a\u5c14\u3001\u8ba1\u666f\u7279\u7684\u6253\u67b6\u5c0f\u80fd\u624b\u94c1\u6728\u771f\u5efa\u7acb\u4e86\u5927\u8499\u53e4\u56fd\uff0c` },
   { idx: 2, start: 5088.3, dur: 2.9, hanzi: `\u4ed6\u8fd8\u6709\u4e00\u4e2a\u5c0a\u79f0\u53eb\u6210\u5409\u601d\u6c57\u3002` },
@@ -14359,7 +14359,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 93, start: 5343.72, dur: 3.32, hanzi: `\u6731\u5143\u748b\u662f\u600e\u4e48\u4ece\u4e00\u4e2a\u653e\u725b\u5a03\u5f53\u4e0a\u7687\u5e1d\u7684\u5462\uff1f` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH10_NH_NGUY_N_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `N\u0103m 1206,`,
   `Tr\u00ean th\u1ea3o nguy\u00ean, Thi\u1ebft M\u1ed9c Ch\u00e2n, m\u1ed9t b\u1eadc th\u1ea7y chi\u1ebfn \u0111\u1ea5u c\u1ee7a d\u00f2ng h\u1ecd B\u1ed9t Nhi Ch\u1ec9 C\u00e1t \u0110\u1eb7c, \u0111\u00e3 th\u00e0nh l\u1eadp \u0110\u1ea1i M\u00f4ng C\u1ed5 Qu\u1ed1c.`,
   `\u00d4ng c\u00f2n c\u00f3 m\u1ed9t t\u00f4n hi\u1ec7u l\u00e0 Th\u00e0nh C\u00e1t T\u01b0 H\u00e3n.`,
@@ -14456,7 +14456,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Chu Nguy\u00ean Ch\u01b0\u01a1ng \u0111\u00e3 t\u1eeb m\u1ed9t \u0111\u1ee9a tr\u1ebb ch\u0103n tr\u00e2u tr\u1edf th\u00e0nh ho\u00e0ng \u0111\u1ebf nh\u01b0 th\u1ebf n\u00e0o?`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH11_NH_MINH_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 5346.96, dur: 4.16, hanzi: `\u5728\u6240\u6709\u5f00\u56fd\u7687\u5e1d\u5f53\u4e2d\uff0c\u6731\u5143\u748b\u5e94\u8be5\u662f\u8eab\u4e16\u6700\u60e8\u7684\u4e00\u4e2a\u3002` },
   { idx: 1, start: 5351.04, dur: 2.06, hanzi: `\u4ed6\u8001\u7238\u662f\u4e00\u4e2a\u5730\u5730\u9053\u9053\u7684\u519c\u6c11\uff0c` },
   { idx: 2, start: 5353.02, dur: 2.72, hanzi: `\u4ed6\u5c0f\u65f6\u5019\u7ed9\u5730\u4e3b\u5bb6\u5f53\u8fc7\u653e\u725b\u5a03\u3002` },
@@ -14565,7 +14565,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 105, start: 5634.18, dur: 2.18, hanzi: `\u5c31\u6025\u901f\u7684\u5f00\u59cb\u524a\u85e9\u3002` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH11_NH_MINH_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `Trong t\u1ea5t c\u1ea3 c\u00e1c ho\u00e0ng \u0111\u1ebf khai qu\u1ed1c, Chu Nguy\u00ean Ch\u01b0\u01a1ng c\u00f3 l\u1ebd l\u00e0 ng\u01b0\u1eddi c\u00f3 th\u00e2n th\u1ebf bi th\u1ea3m nh\u1ea5t.`,
   `Cha \u00f4ng l\u00e0 m\u1ed9t n\u00f4ng d\u00e2n ch\u00ednh hi\u1ec7u,`,
   `Khi c\u00f2n nh\u1ecf, \u00f4ng t\u1eebng ch\u0103n tr\u00e2u cho nh\u00e0 \u0111\u1ecba ch\u1ee7.`,
@@ -14674,7 +14674,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `n\u00ean \u00f4ng nhanh ch\u00f3ng b\u1eaft \u0111\u1ea7u c\u1eaft gi\u1ea3m phi\u00ean v\u01b0\u01a1ng.`,
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH11_NH_MINH_P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 5636.28, dur: 2.12, hanzi: `\u71d5\u738b\u6731\u68e3\u5c31\u5750\u4e0d\u4f4f\u4e86\u3002` },
   { idx: 1, start: 5638.32, dur: 2.12, hanzi: `\u6731\u68e3\u662f\u6731\u5143\u748b\u7684\u56db\u513f\u5b50\uff0c` },
   { idx: 2, start: 5640.36, dur: 2.42, hanzi: `\u4ece\u5c0f\u5c31\u8ddf\u7740\u6731\u5143\u748b\u5728\u519b\u8425\u957f\u5927\uff0c` },
@@ -14790,7 +14790,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 112, start: 5923.26, dur: 3.08, hanzi: `\u8fd8\u6ca1\u7b49\u5bf9\u65b9\u6765\u8981\u631f\uff0c\u5c31\u628a\u7687\u5e1d\u7ed9\u6362\u4e86\u3002` },
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH11_NH_MINH_P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `Y\u00ean V\u01b0\u01a1ng Chu \u0110\u1ec7 kh\u00f4ng th\u1ec3 ng\u1ed3i y\u00ean.`,
   `Chu \u0110\u1ec7 l\u00e0 con trai th\u1ee9 t\u01b0 c\u1ee7a Chu Nguy\u00ean Ch\u01b0\u01a1ng,`,
   `l\u1edbn l\u00ean trong qu\u00e2n doanh c\u00f9ng Chu Nguy\u00ean Ch\u01b0\u01a1ng t\u1eeb nh\u1ecf,`,
@@ -14906,7 +14906,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `ch\u01b0a \u0111\u1ee3i \u0111\u1ed1i ph\u01b0\u01a1ng \u0111\u1ebfn uy hi\u1ebfp, \u0111\u00e3 thay th\u1ebf ho\u00e0ng \u0111\u1ebf.`,
 ];
 
-const CHINA_HISTORY__P3_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH11_NH_MINH_P3_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 5926.26, dur: 4.58, hanzi: `\u6731\u7941\u9547\u88ab\u4fd8\u6ca1\u8fc7\u51e0\u5929\uff0c\u4ed6\u7684\u5f1f\u5f1f\u6731\u7941\u94b0\u5c31\u88ab\u7acb\u4e3a\u4e86\u65b0\u7684\u7687\u5e1d\u3002` },
   { idx: 1, start: 5930.76, dur: 2, hanzi: `\u6731\u7941\u94b0\u706b\u901f\u767b\u57fa\u4ee5\u540e\uff0c` },
   { idx: 2, start: 5932.68, dur: 1.58, hanzi: `\u518d\u6765\u8bf4\u8499\u53e4\u8fd9\u8fb9\uff0c` },
@@ -15017,7 +15017,7 @@ const CHINA_HISTORY__P3_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 107, start: 6213.9, dur: 1.94, hanzi: `\u8981\u53d6\u7ae5\u5973\u7684\u7cbe\u8840\u5165\u836f\u3002` },
 ];
 
-const CHINA_HISTORY__P3_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH11_NH_MINH_P3_C9QIE0RFSLQ_TRANSLATIONS = [
   `Kh\u00f4ng bao l\u00e2u sau khi Chu K\u1ef3 Tr\u1ea5n b\u1ecb b\u1eaft, em trai \u00f4ng l\u00e0 Chu K\u1ef3 Ng\u1ecdc \u0111\u00e3 \u0111\u01b0\u1ee3c l\u1eadp l\u00e0m ho\u00e0ng \u0111\u1ebf m\u1edbi.`,
   `Sau khi Chu K\u1ef3 Ng\u1ecdc nhanh ch\u00f3ng l\u00ean ng\u00f4i,`,
   `Quay l\u1ea1i v\u1edbi qu\u00e2n M\u00f4ng C\u1ed5.`,
@@ -15128,7 +15128,7 @@ const CHINA_HISTORY__P3_C9QIE0RFSLQ_TRANSLATIONS = [
   `C\u1ea7n l\u1ea5y m\u00e1u trinh n\u1eef l\u00e0m thu\u1ed1c.`,
 ];
 
-const CHINA_HISTORY__P4_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH11_NH_MINH_P4_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 6215.76, dur: 2.42, hanzi: `\u4e3a\u4e86\u4fdd\u6301\u8fd9\u4e9b\u5165\u836f\u5c0f\u5bab\u5973\u7684\u6d01\u51c0\uff0c` },
   { idx: 1, start: 6218.1, dur: 2.54, hanzi: `\u8fd8\u4e0d\u7ed9\u5979\u4eec\u5403\u996d\uff0c\u53ea\u80fd\u5403\u4e00\u70b9\u6851\u53f6\uff0c` },
   { idx: 2, start: 6220.56, dur: 2.54, hanzi: `\u559d\u4e00\u70b9\u6c34\uff0c\u800c\u4e14\u52a8\u4e0d\u52a8\u5c31\u66b4\u529b\u5bf9\u5f85\uff0c` },
@@ -15251,7 +15251,7 @@ const CHINA_HISTORY__P4_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 119, start: 6504.54, dur: 2.3, hanzi: `\u660e\u671d\u4e5f\u5c31\u753b\u4e0a\u4e86\u53e5\u53f7\u3002` },
 ];
 
-const CHINA_HISTORY__P4_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH11_NH_MINH_P4_C9QIE0RFSLQ_TRANSLATIONS = [
   `\u0110\u1ec3 gi\u1eef cho nh\u1eefng cung n\u1eef d\u00f9ng l\u00e0m thu\u1ed1c n\u00e0y \u0111\u01b0\u1ee3c trong s\u1ea1ch,`,
   `h\u1ecd kh\u00f4ng \u0111\u01b0\u1ee3c \u0103n c\u01a1m, ch\u1ec9 \u0111\u01b0\u1ee3c \u0103n m\u1ed9t \u00edt l\u00e1 d\u00e2u t\u1eb1m,`,
   `u\u1ed1ng m\u1ed9t \u00edt n\u01b0\u1edbc, v\u00e0 th\u01b0\u1eddng xuy\u00ean b\u1ecb b\u1ea1o h\u00e0nh.`,
@@ -15374,7 +15374,7 @@ const CHINA_HISTORY__P4_C9QIE0RFSLQ_TRANSLATIONS = [
   `nh\u00e0 Minh c\u0169ng \u0111\u1eb7t d\u1ea5u ch\u1ea5m h\u1ebft.`,
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH12_NH_THANH_P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 6506.76, dur: 3.14, hanzi: `\u540e\u91d1\u7684\u52aa\u5c14\u54c8\u8d64\uff0c\u4ed6\u4eec\u5bb6\u662f\u5973\u771f\u8d35\u65cf\uff0c` },
   { idx: 1, start: 6509.82, dur: 3.02, hanzi: `\u4ed6\u81ea\u5df1\u539f\u672c\u662f\u660e\u671d\u8fb9\u7586\u7684\u4e00\u4e2a\u5c0f\u5b98\u3002` },
   { idx: 2, start: 6512.76, dur: 4.1, hanzi: `\u540e\u6765\uff0c\u56e0\u4e3a\u660e\u671d\u5bf9\u4e1c\u5317\u8fb9\u5883\u7684\u5c11\u6570\u6c11\u65cf\u91c7\u53d6\u4e86\u5f3a\u786c\u7684\u63aa\u65bd\uff0c` },
@@ -15461,7 +15461,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 83, start: 6722.94, dur: 1.76, hanzi: `\u5927\u8086\u7684\u8d2a\u6c61\u53d7\u8d3f\u3002` },
 ];
 
-const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH12_NH_THANH_P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `N\u1ed7 Nh\u0129 C\u00e1p X\u00edch c\u1ee7a H\u1eadu Kim, gia \u0111\u00ecnh \u00f4ng l\u00e0 qu\u00fd t\u1ed9c N\u1eef Ch\u00e2n,`,
   `b\u1ea3n th\u00e2n \u00f4ng ta v\u1ed1n l\u00e0 m\u1ed9t quan nh\u1ecf \u1edf bi\u00ean gi\u1edbi nh\u00e0 Minh.`,
   `Sau n\u00e0y, v\u00ec nh\u00e0 Minh \u0111\u00e3 \u00e1p d\u1ee5ng c\u00e1c bi\u1ec7n ph\u00e1p c\u1ee9ng r\u1eafn \u0111\u1ed1i v\u1edbi c\u00e1c d\u00e2n t\u1ed9c thi\u1ec3u s\u1ed1 \u1edf bi\u00ean gi\u1edbi ph\u00eda \u0111\u00f4ng b\u1eafc,`,
@@ -15548,7 +15548,7 @@ const CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS = [
   `tha h\u1ed3 tham \u00f4 nh\u1eadn h\u1ed1i l\u1ed9.`,
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
+const CHINA_HISTORY_CH12_NH_THANH_P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 0, start: 6724.62, dur: 4.1, hanzi: `\u800c\u8fd9\u65f6\u5019\u7684\u897f\u65b9\u5df2\u7ecf\u53d1\u751f\u4e86\u7ffb\u5929\u8986\u5730\u7684\u5927\u53d8\u9769\uff0c` },
   { idx: 1, start: 6728.64, dur: 1.64, hanzi: `\u82f1\u56fd\u5f00\u59cb\u5de5\u4e1a\u9769\u547d\uff0c` },
   { idx: 2, start: 6730.2, dur: 1.52, hanzi: `\u7f8e\u56fd\u5df2\u7ecf\u5efa\u7acb\uff0c` },
@@ -15644,7 +15644,7 @@ const CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS: DictationSegment[] = [
   { idx: 92, start: 6949.56, dur: 0.5, hanzi: `\u4e0b\u6b21\u89c1\u3002` },
 ];
 
-const CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS = [
+const CHINA_HISTORY_CH12_NH_THANH_P2_C9QIE0RFSLQ_TRANSLATIONS = [
   `Trong khi \u0111\u00f3, ph\u01b0\u01a1ng T\u00e2y \u0111\u00e3 tr\u1ea3i qua nh\u1eefng thay \u0111\u1ed5i long tr\u1eddi l\u1edf \u0111\u1ea5t,`,
   `Anh b\u1eaft \u0111\u1ea7u c\u00e1ch m\u1ea1ng c\u00f4ng nghi\u1ec7p,`,
   `M\u1ef9 \u0111\u00e3 th\u00e0nh l\u1eadp,`,
@@ -16013,7 +16013,7 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
   },
 
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch01-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u590f\u5546\u5468`,
     titleVi: "Lịch sử Trung Quốc: Hạ - Thương - Chu",
@@ -16021,11 +16021,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH01_H_TH_NG_CHU_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH01_H_TH_NG_CHU_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch02-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u6625\u79cb\u6230\u570b`,
     titleVi: "Lịch sử Trung Quốc: Xuân Thu - Chiến Quốc",
@@ -16033,11 +16033,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH02_XU_N_THU_CHI_N_QU_C_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH02_XU_N_THU_CHI_N_QU_C_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch03-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u79e6\u671d`,
     titleVi: "Lịch sử Trung Quốc: Nhà Tần",
@@ -16045,11 +16045,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH03_NH_T_N_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH03_NH_T_N_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch04-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u695a\u6f22\u722d\u9738 \u7b2c1\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Sở - Hán tranh hùng Phần 1/2",
@@ -16057,11 +16057,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH04_S_H_N_TRANH_H_NG_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH04_S_H_N_TRANH_H_NG_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p2-C9Qie0RFSLQ",
+    id: "china-history-ch04-p2-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u695a\u6f22\u722d\u9738 \u7b2c2\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Sở - Hán tranh hùng Phần 2/2",
@@ -16069,11 +16069,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH04_S_H_N_TRANH_H_NG_P2_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH04_S_H_N_TRANH_H_NG_P2_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch05-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u6f22\u671d\uff08\u897f\u6f22\u3001\u65b0\u671d\u3001\u6771\u6f22\uff09 \u7b2c1\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Hán (Tây Hán, Tân triều, Đông Hán) Phần 1/5",
@@ -16081,11 +16081,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p2-C9Qie0RFSLQ",
+    id: "china-history-ch05-p2-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u6f22\u671d\uff08\u897f\u6f22\u3001\u65b0\u671d\u3001\u6771\u6f22\uff09 \u7b2c2\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Hán (Tây Hán, Tân triều, Đông Hán) Phần 2/5",
@@ -16093,11 +16093,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P2_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P2_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p3-C9Qie0RFSLQ",
+    id: "china-history-ch05-p3-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u6f22\u671d\uff08\u897f\u6f22\u3001\u65b0\u671d\u3001\u6771\u6f22\uff09 \u7b2c3\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Hán (Tây Hán, Tân triều, Đông Hán) Phần 3/5",
@@ -16105,11 +16105,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P3_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P3_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P3_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P3_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p4-C9Qie0RFSLQ",
+    id: "china-history-ch05-p4-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u6f22\u671d\uff08\u897f\u6f22\u3001\u65b0\u671d\u3001\u6771\u6f22\uff09 \u7b2c4\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Hán (Tây Hán, Tân triều, Đông Hán) Phần 4/5",
@@ -16117,11 +16117,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P4_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P4_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P4_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P4_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p5-C9Qie0RFSLQ",
+    id: "china-history-ch05-p5-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u6f22\u671d\uff08\u897f\u6f22\u3001\u65b0\u671d\u3001\u6771\u6f22\uff09 \u7b2c5\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Hán (Tây Hán, Tân triều, Đông Hán) Phần 5/5",
@@ -16129,11 +16129,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P5_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P5_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P5_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH05_NH_H_N_T_Y_H_N_T_N_TRI_U_NG_H_N_P5_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch06-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u4e09\u570b`,
     titleVi: "Lịch sử Trung Quốc: Tam Quốc",
@@ -16141,11 +16141,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH06_TAM_QU_C_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH06_TAM_QU_C_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch07-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u6649\u671d\uff08\u897f\u6649\u3001\u6771\u6649\u3001\u5357\u5317\u671d\u3001\u4e94\u80e1\u5341\u516d\u570b\u3001\u968b\u671d\uff09 \u7b2c1\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Tấn (Tây Tấn, Đông Tấn, Nam Bắc triều, Ngũ Hồ thập lục quốc, nhà Tùy) Phần 1/2",
@@ -16153,11 +16153,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH07_NH_T_N_T_Y_T_N_NG_T_N_NAM_B_C_TRI_U_NG_H_TH_P_L_C_QU_C_NH_T_Y_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH07_NH_T_N_T_Y_T_N_NG_T_N_NAM_B_C_TRI_U_NG_H_TH_P_L_C_QU_C_NH_T_Y_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p2-C9Qie0RFSLQ",
+    id: "china-history-ch07-p2-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u6649\u671d\uff08\u897f\u6649\u3001\u6771\u6649\u3001\u5357\u5317\u671d\u3001\u4e94\u80e1\u5341\u516d\u570b\u3001\u968b\u671d\uff09 \u7b2c2\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Tấn (Tây Tấn, Đông Tấn, Nam Bắc triều, Ngũ Hồ thập lục quốc, nhà Tùy) Phần 2/2",
@@ -16165,11 +16165,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH07_NH_T_N_T_Y_T_N_NG_T_N_NAM_B_C_TRI_U_NG_H_TH_P_L_C_QU_C_NH_T_Y_P2_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH07_NH_T_N_T_Y_T_N_NG_T_N_NAM_B_C_TRI_U_NG_H_TH_P_L_C_QU_C_NH_T_Y_P2_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch08-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u5510\u671d\uff08\u4e94\u4ee3\u5341\u570b\uff09 \u7b2c1\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Đường (Ngũ Đại Thập Quốc) Phần 1/2",
@@ -16177,11 +16177,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH08_NH_NG_NG_I_TH_P_QU_C_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH08_NH_NG_NG_I_TH_P_QU_C_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p2-C9Qie0RFSLQ",
+    id: "china-history-ch08-p2-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u5510\u671d\uff08\u4e94\u4ee3\u5341\u570b\uff09 \u7b2c2\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Đường (Ngũ Đại Thập Quốc) Phần 2/2",
@@ -16189,11 +16189,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH08_NH_NG_NG_I_TH_P_QU_C_P2_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH08_NH_NG_NG_I_TH_P_QU_C_P2_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch09-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u5b8b\u671d\uff08\u5317\u5b8b\u3001\u5357\u5b8b\uff09`,
     titleVi: "Lịch sử Trung Quốc: Nhà Tống (Bắc Tống, Nam Tống)",
@@ -16201,11 +16201,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH09_NH_T_NG_B_C_T_NG_NAM_T_NG_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH09_NH_T_NG_B_C_T_NG_NAM_T_NG_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch10-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u5143\u671d`,
     titleVi: "Lịch sử Trung Quốc: Nhà Nguyên",
@@ -16213,11 +16213,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH10_NH_NGUY_N_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH10_NH_NGUY_N_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch11-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u660e\u671d \u7b2c1\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Minh Phần 1/4",
@@ -16225,11 +16225,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH11_NH_MINH_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH11_NH_MINH_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p2-C9Qie0RFSLQ",
+    id: "china-history-ch11-p2-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u660e\u671d \u7b2c2\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Minh Phần 2/4",
@@ -16237,11 +16237,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH11_NH_MINH_P2_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH11_NH_MINH_P2_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p3-C9Qie0RFSLQ",
+    id: "china-history-ch11-p3-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u660e\u671d \u7b2c3\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Minh Phần 3/4",
@@ -16249,11 +16249,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P3_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P3_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH11_NH_MINH_P3_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH11_NH_MINH_P3_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p4-C9Qie0RFSLQ",
+    id: "china-history-ch11-p4-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u660e\u671d \u7b2c4\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Minh Phần 4/4",
@@ -16261,11 +16261,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P4_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P4_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH11_NH_MINH_P4_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH11_NH_MINH_P4_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p1-C9Qie0RFSLQ",
+    id: "china-history-ch12-p1-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u6e05\u671d \u7b2c1\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Thanh Phần 1/2",
@@ -16273,11 +16273,11 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P1_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P1_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH12_NH_THANH_P1_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH12_NH_THANH_P1_C9QIE0RFSLQ_TRANSLATIONS,
   },
   {
-    id: "china-history--p2-C9Qie0RFSLQ",
+    id: "china-history-ch12-p2-C9Qie0RFSLQ",
     youtubeId: "C9Qie0RFSLQ",
     title: `\u4e2d\u56fd\u5386\u53f2: \u6e05\u671d \u7b2c2\u90e8\u5206`,
     titleVi: "Lịch sử Trung Quốc: Nhà Thanh Phần 2/2",
@@ -16285,8 +16285,8 @@ export const DICTATION_VIDEOS: DictationVideo[] = [
     category: "history",
     languageCode: "zh-Hant",
     isAutoGenerated: false,
-    segments: CHINA_HISTORY__P2_C9QIE0RFSLQ_SEGMENTS,
-    translations: CHINA_HISTORY__P2_C9QIE0RFSLQ_TRANSLATIONS,
+    segments: CHINA_HISTORY_CH12_NH_THANH_P2_C9QIE0RFSLQ_SEGMENTS,
+    translations: CHINA_HISTORY_CH12_NH_THANH_P2_C9QIE0RFSLQ_TRANSLATIONS,
   },
 ];
 
