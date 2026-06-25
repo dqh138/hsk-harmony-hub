@@ -260,14 +260,6 @@ const Navbar = () => {
                 新闻 Tin Trung Quốc
               </Link>
               <Link
-                to="/passive-listening"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-              >
-                <Headphones className="h-4 w-4" />
-                被动听力 Nghe thụ động
-              </Link>
-              <Link
                 to="/dictation"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
