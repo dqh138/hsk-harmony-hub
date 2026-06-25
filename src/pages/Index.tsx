@@ -76,18 +76,6 @@ const Index = () => {
       iconBg: "bg-hsk4/15 text-hsk4",
     },
     {
-      title: "Passive Listening",
-      chinese: "被动听力",
-      description:
-        "Tự động đọc to tiêu đề tin tức bằng giọng zh-CN — bật lên rồi làm việc khác, tai vẫn quen âm điệu.",
-      icon: Headphones,
-      href: "/passive-listening",
-      cta: "Bật nghe nền",
-      stat: "Mới · Chế độ nền",
-      accent: "from-hsk5/20 to-hsk6/10",
-      iconBg: "bg-hsk5/15 text-hsk5",
-    },
-    {
       title: "Mock Exams",
       chinese: "模拟考试",
       description:
@@ -259,13 +247,12 @@ const Index = () => {
           <p className="mt-3 text-sm text-muted-foreground">Một vòng lặp đơn giản, hiệu quả từ HSK 1 đến HSK 6.</p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { step: "01", icon: BookOpen, title: "Học ngữ pháp", desc: "Nắm chắc cấu trúc HSK theo level.", href: "/grammar" },
             { step: "02", icon: Layers, title: "Mở rộng từ vựng", desc: "Thêm từ mới — lưu vào sổ tay.", href: "/vocabulary" },
             { step: "03", icon: Mic, title: "Luyện nói", desc: "Karaoke hội thoại + AI chấm phát âm.", href: "/conversations" },
-            { step: "04", icon: Headphones, title: "Nghe thụ động", desc: "Bật tin tức zh-CN nghe nền.", href: "/passive-listening" },
-            { step: "05", icon: FileText, title: "Luyện đề thật", desc: "Bấm giờ, làm đề HSK đầy đủ 3 phần.", href: "/mock-exams" },
+            { step: "04", icon: FileText, title: "Luyện đề thật", desc: "Bấm giờ, làm đề HSK đầy đủ 3 phần.", href: "/mock-exams" },
           ].map((s) => {
             const Icon = s.icon;
             return (

@@ -19,7 +19,7 @@ import Conversations from "./pages/Conversations";
 import News from "./pages/News";
 import ConversationLevel from "./pages/ConversationLevel";
 import ConversationPractice from "./pages/ConversationPractice";
-import PassiveListening from "./pages/PassiveListening";
+
 import Dictation from "./pages/Dictation";
 import NotFound from "./pages/NotFound";
 import StudyToolsLayer from "./components/StudyToolsLayer";
@@ -100,7 +100,7 @@ const App = () => (
             <Route path="/conversations/:level" element={<ConversationLevel />} />
             <Route path="/conversations/:level/:id" element={<ConversationPractice />} />
             <Route path="/news" element={<News />} />
-            <Route path="/passive-listening" element={<PassiveListening />} />
+            
             <Route path="/dictation" element={<Dictation />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
