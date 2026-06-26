@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+
 import ChinaMap from "@/components/explore/ChinaMap";
 import ProvinceDrawer from "@/components/explore/ProvinceDrawer";
 import { PROVINCES, type Province } from "@/data/provinces";
