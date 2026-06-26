@@ -1,89 +1,84 @@
-# Kế hoạch: Thư viện video Dictation + phím tắt
+## Khám Phá Trung Quốc — Interactive Map
 
-## 1. Dữ liệu video curated
+Tạo mục mới trong menu 学习工具, tên **探索中国 Khám phá Trung Quốc**, route `/explore-china`.
 
-Tạo `src/data/dictationVideos.ts` (pattern giống `conversations.ts`):
+### 1. Bản đồ
+- **Nguồn dữ liệu:** GeoJSON tỉnh TQ (offline, tự host) tại `src/data/china-geo.json`. Mình sẽ dùng bản chuẩn từ repo công khai (Natural Earth + dataset province TQ phổ biến) và **chỉnh thủ công**:
+  - Bao gồm 34 đơn vị: 23 tỉnh (gồm 台湾), 5 khu tự trị, 4 thành phố trực thuộc TW, 2 đặc khu (HK, Macau).
+  - **Chủ quyền:** Loại bỏ/sửa các polygon "九段线" (đường lưỡi bò), đảm bảo Hoàng Sa (Paracel) và Trường Sa (Spratly) **không** thuộc lãnh thổ TQ trong file GeoJSON. Các quần đảo tranh chấp khác (Senkaku/Điếu Ngư, Scarborough) cũng không gắn nhãn TQ.
+  - Vùng TQ tô màu nổi bật (gradient theo design token đỏ HSK); nước láng giềng (VN, Lào, Mông Cổ, Nga, Ấn Độ, Hàn, Nhật...) hiển thị mờ làm bối cảnh, không tô màu, không nhãn nổi bật.
+- **Render:** `react-simple-maps` (D3 + SVG) — projection `geoMercator` hoặc `geoConicEquidistant` phù hợp với TQ.
+- **Tương tác:**
+  - Hover tỉnh → highlight viền vàng + tooltip nhỏ (tên CN + Pinyin + VN).
+  - Click tỉnh → mở **Sheet/Drawer bên phải** với thông tin đầy đủ.
+  - Zoom & pan bằng wheel/drag (react-simple-maps `ZoomableGroup`).
+  - Sidebar trái: list 34 tỉnh có search (CN/Pinyin/VN), click cũng mở drawer.
 
+### 2. Dữ liệu mỗi tỉnh (file `src/data/provinces.ts`)
+Schema:
 ```ts
-export type DictationLevel = 1 | 2 | 3 | 4 | 5 | 6;
-export type DictationCategory = "news" | "vlog" | "cartoon" | "drama" | "education" | "other";
-
-export interface DictationVideo {
-  id: string;            // slug nội bộ
-  youtubeId: string;     // mã video YouTube
-  title: string;         // tiêu đề tiếng Trung
-  titleVi?: string;      // tiêu đề tiếng Việt (tùy chọn)
-  level: DictationLevel;
-  category: DictationCategory;
-  description?: string;
-  durationLabel?: string; // "3:45" hiển thị nhanh
-  thumbnail?: string;     // mặc định dùng https://i.ytimg.com/vi/<id>/hqdefault.jpg
+{
+  id, nameCn, namePinyin, nameVn, capital, population,
+  majorCities: [...],          // 3-5 thành phố
+  highlights: {
+    cuisine: string[],          // món ăn nổi tiếng
+    universities: string[],
+    industries: string[],
+    famousPeople: string[],
+    landmarks: string[],
+    historical: string,         // VD: 古都 cố đô
+  },
+  readingPassage: {             // bài đọc hiểu ngắn
+    cn: string,                 // ~80-120 chữ Hán
+    pinyin: string,
+    vn: string,
+  },
+  emoji: string,                // 🏯 🐼 ...
 }
-
-export const DICTATION_VIDEOS: DictationVideo[] = [
-  // bạn paste video tại đây
-];
-
-export const DICTATION_CATEGORIES: { id: DictationCategory; label: string }[] = [
-  { id: "news", label: "Tin tức" },
-  { id: "vlog", label: "Vlog" },
-  { id: "cartoon", label: "Hoạt hình" },
-  { id: "drama", label: "Phim" },
-  { id: "education", label: "Học tập" },
-  { id: "other", label: "Khác" },
-];
 ```
 
-Phụ đề vẫn lấy động qua edge function `youtube-captions` đã có — không cần paste segments thủ công.
+**Phase 1 (lần này):** soạn nội dung đầy đủ cho **6 đơn vị mẫu** để bạn duyệt format:
+1. 北京 Bắc Kinh
+2. 上海 Thượng Hải
+3. 广东 Quảng Đông
+4. 四川 Tứ Xuyên
+5. 西藏 Tây Tạng
+6. 台湾 Đài Loan
 
-## 2. Trang chọn video `src/pages/Dictation.tsx` (refactor)
+33 đơn vị còn lại: tạo stub `{ id, nameCn, namePinyin, nameVn, capital }` để map vẫn click được, hiển thị badge "Đang cập nhật". Sau khi bạn duyệt format, mình mở rộng tiếp.
 
-Chia thành 2 chế độ qua `Tabs`:
+### 3. UI / Drawer chi tiết
+- Header: emoji + 名称 + Pinyin + tên Việt + badge loại (省/直辖市/自治区/特别行政区).
+- Stats row: 首府 / 人口 / 面积.
+- Sections (card grid):
+  - 主要城市 Thành phố chính
+  - 美食 Ẩm thực
+  - 高校 Trường đại học
+  - 产业 Ngành nghề
+  - 名人 Người nổi tiếng
+  - 地标 Địa danh
+- **Bài đọc hiểu** (component reuse style hiện có): toggle hiện Pinyin / dịch VN, tích hợp `SelectionPopover` để tra từ như các trang khác.
+- Nút "Phát âm" tên tỉnh dùng TTS hiện có (nếu có) hoặc bỏ qua.
 
-- **Tab "Thư viện"** (mặc định):
-  - Filter theo HSK level (1–6, dùng màu HSK trong `mem://style/color-palette`).
-  - Filter theo category (chip).
-  - Grid card: thumbnail YouTube + title + badge level + category. Click → vào chế độ luyện với `youtubeId` đó.
-- **Tab "Dán link"**: giữ nguyên ô input + nút "Tải phụ đề" hiện tại.
+### 4. Thay đổi file
+- **Thêm:**
+  - `src/pages/ExploreChina.tsx` — page chính (map + sidebar + drawer)
+  - `src/components/explore/ChinaMap.tsx` — SVG map
+  - `src/components/explore/ProvinceDrawer.tsx` — drawer chi tiết
+  - `src/components/explore/ProvinceReadingCard.tsx` — bài đọc hiểu
+  - `src/data/provinces.ts` — dataset 34 tỉnh
+  - `src/data/china-geo.json` — GeoJSON đã sửa chủ quyền
+- **Sửa:**
+  - `src/App.tsx` — thêm route `/explore-china`
+  - `src/components/Navbar.tsx` — thêm item "探索中国 Khám phá TQ" vào dropdown 学习工具 (cả desktop & mobile accordion) với icon `Map`/`Compass`
+  - `src/components/StudyToolsLayer.tsx` — bật `SelectionPopover` cho route `/explore-china`
+- **Dependency:** `bun add react-simple-maps @types/react-simple-maps d3-geo`
 
-Khi chọn xong video, hiển thị panel luyện (player + segment card) hiện có. Thêm nút "← Đổi video" để quay lại danh sách.
+### 5. Chủ quyền — quy trình bảo đảm
+Trước khi commit GeoJSON mình sẽ:
+1. Mở file, grep các feature có name chứa "South China Sea", "Spratly", "Paracel", "Nansha", "Xisha", "Senkaku", "Diaoyu", "Scarborough" và **xoá khỏi China feature collection** nếu nằm trong.
+2. Đảm bảo không render bất kỳ "U-shaped line" / nine-dash line nào.
+3. Tooltip / styling cho vùng "Đài Loan" giữ tên 台湾 (theo yêu cầu user là một phần của map) nhưng phần xử lý chủ quyền biển đảo nói trên là **tuyệt đối**.
 
-## 3. Phím tắt trong panel luyện
-
-Đăng ký `useEffect` global keydown trên trang Dictation, chỉ active khi `data && seg`:
-
-| Phím | Hành động |
-|---|---|
-| `Ctrl` (hoặc `Cmd`) đơn lẻ | Phát lại câu hiện tại (`playCurrent()`) |
-| `Enter` (trong textarea, không Shift) | Nộp đáp án (`checkAnswer()`); nếu đã có score → đi câu tiếp |
-| `Ctrl/Cmd + →` | Câu tiếp |
-| `Ctrl/Cmd + ←` | Câu trước |
-
-Chi tiết:
-- `Ctrl` đơn lẻ: lắng nghe `keydown` với `e.key === "Control"` (hoặc Meta), bỏ qua nếu đang giữ thêm phím khác (check `e.repeat` để không spam). Để tránh trigger khi user dùng Ctrl+C copy, chỉ play khi `keyup` của Control mà không có phím nào khác bấm cùng (track flag `ctrlAlone`).
-- `Enter` trong `<Textarea>`: xử lý ngay `onKeyDown` (đã có; thay thế shortcut Ctrl+Enter cũ). `Shift+Enter` vẫn xuống dòng bình thường.
-- Mũi tên: handler global, `preventDefault` khi match.
-
-Thêm khối "Phím tắt" nhỏ dưới card hướng dẫn cho người dùng.
-
-## 4. Navbar / routing
-
-Không đổi — route `/dictation` đã có, mục **听写** đã ở 学习工具.
-
-## 5. Lưu ý kỹ thuật
-
-- Chinese text trong `dictationVideos.ts` để trong backtick (theo `mem://architecture/encoding-standards`).
-- Thumbnail dùng `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`, có fallback `mqdefault.jpg`.
-- `localStorage` state hiện tại được giữ; khi chọn video mới từ thư viện thì reset như khi load URL.
-- Không thêm DB / bảng mới.
-
-## Files thay đổi
-
-- **Tạo** `src/data/dictationVideos.ts`
-- **Sửa** `src/pages/Dictation.tsx` (thêm Tabs, grid thư viện, filter, phím tắt)
-
-## Ngoài phạm vi (có thể làm sau)
-
-- Đánh dấu video đã hoàn thành / tiến độ theo từng video.
-- Lưu segments đã cache để không phải gọi lại edge function.
-- Admin UI thêm/sửa video.
+### 6. Sau khi hoàn tất
+Demo 6 tỉnh mẫu + 28 stub. Bạn duyệt format và nội dung bài đọc, mình sẽ viết tiếp các tỉnh còn lại theo cùng schema trong các turn sau.

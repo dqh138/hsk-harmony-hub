@@ -7,7 +7,7 @@ import HighlightActions from "./HighlightActions";
  * Selection popover, highlights and highlight-removal actions are scoped to
  * study/practice pages only — not the landing page or auth screens.
  */
-const STUDY_PATTERNS = [/^\/hsk\//, /^\/vocabulary\//, /^\/mock-exam(s)?(\/|$)/, /^\/saved-words/, /^\/flashcards/, /^\/dictation(\/|$)/];
+const STUDY_PATTERNS = [/^\/hsk\//, /^\/vocabulary\//, /^\/mock-exam(s)?(\/|$)/, /^\/saved-words/, /^\/flashcards/, /^\/dictation(\/|$)/, /^\/explore-china(\/|$)/];
 
 const StudyToolsLayer = () => {
   const { pathname } = useLocation();
