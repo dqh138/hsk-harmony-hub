@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, ChevronDown, ChevronRight, Bookmark, LogIn, LogOut, User, Layers, UserCircle2, MessageSquare, Newspaper, Headphones, GraduationCap, BookOpen, Languages, ClipboardCheck, PenLine } from "lucide-react";
+import { Menu, X, ChevronDown, ChevronRight, Bookmark, LogIn, LogOut, User, Layers, UserCircle2, MessageSquare, Newspaper, Headphones, GraduationCap, BookOpen, Languages, ClipboardCheck, PenLine, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/ThemeToggle";
 import logo from "@/assets/logo.png";
