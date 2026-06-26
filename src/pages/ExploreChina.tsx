@@ -48,7 +48,7 @@ const ExploreChina = () => {
             <h1 className="text-2xl font-bold">探索中国 · Khám phá Trung Quốc</h1>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Bản đồ tương tác 34 đơn vị hành chính cấp tỉnh. Hover để xem thông tin nhanh, click để mở phần
+            Bản đồ tương tác 34 đơn vị hành chính cấp tỉnh. Click để mở phần
             giới thiệu chi tiết kèm bài đọc hiểu.
           </p>
         </header>
