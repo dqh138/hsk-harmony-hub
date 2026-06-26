@@ -79,7 +79,6 @@ const ExploreChina = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-1.5 truncate">
                       <span className="font-bold">{p.nameCn}</span>
-                      <span className="text-xs text-muted-foreground">{p.namePinyin}</span>
                     </div>
                     <div className="truncate text-[11px] text-muted-foreground">{p.nameVn}</div>
                   </div>
