@@ -47,7 +47,6 @@ const Section = ({
 };
 
 const ProvinceDrawer = ({ province, open, onOpenChange }: Props) => {
-  const [showPinyin, setShowPinyin] = useState(true);
   const [showVn, setShowVn] = useState(false);
 
   if (!province) return null;
@@ -60,10 +59,7 @@ const ProvinceDrawer = ({ province, open, onOpenChange }: Props) => {
           <div className="flex items-center gap-2">
             <span className="text-3xl">{province.emoji}</span>
             <div className="flex-1">
-              <SheetTitle className="flex items-baseline gap-2 text-2xl">
-                <span>{province.nameCn}</span>
-                <span className="text-base font-normal text-muted-foreground">{province.namePinyin}</span>
-              </SheetTitle>
+              <SheetTitle className="text-2xl">{province.nameCn}</SheetTitle>
               <SheetDescription className="mt-0.5 flex items-center gap-2">
                 <span>{province.nameVn}</span>
                 <Badge variant="secondary" className="text-[10px]">
@@ -143,28 +139,17 @@ const ProvinceDrawer = ({ province, open, onOpenChange }: Props) => {
                 <BookOpen className="h-4 w-4" />
                 阅读理解 — Bài đọc hiểu
               </div>
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant={showPinyin ? "default" : "outline"}
-                  className="h-7 px-2 text-xs"
-                  onClick={() => setShowPinyin((v) => !v)}
-                >
-                  拼音
-                </Button>
-                <Button
-                  size="sm"
-                  variant={showVn ? "default" : "outline"}
-                  className="h-7 px-2 text-xs"
-                  onClick={() => setShowVn((v) => !v)}
-                >
-                  VN
-                </Button>
-              </div>
+              <Button
+                size="sm"
+                variant={showVn ? "default" : "outline"}
+                className="h-7 px-2 text-xs"
+                onClick={() => setShowVn((v) => !v)}
+              >
+                Tiếng Việt
+              </Button>
             </div>
             <Card className="space-y-2 p-4 leading-relaxed">
               <p className="text-base">{r.cn}</p>
-              {showPinyin && <p className="text-sm italic text-muted-foreground">{r.pinyin}</p>}
               {showVn && <p className="border-t border-border pt-2 text-sm">{r.vn}</p>}
             </Card>
           </div>
