@@ -112,7 +112,7 @@ const ExploreChina = () => {
 
       <ProvinceDrawer province={selected} open={open} onOpenChange={setOpen} />
 
-      <Footer />
+      
     </div>
   );
 };
