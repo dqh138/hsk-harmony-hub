@@ -37,7 +37,20 @@ function parseCnNumber(s: string): number | null {
   let section = 0;
   let current = 0;
   let touched = false;
+  let digitRun = ""; // gom chuỗi số Ả Rập (e.g. "150" trong "150万")
+  const flushDigits = () => {
+    if (digitRun) {
+      current = parseInt(digitRun, 10);
+      digitRun = "";
+      touched = true;
+    }
+  };
   for (const ch of s) {
+    if (/\d/.test(ch)) {
+      digitRun += ch;
+      continue;
+    }
+    if (digitRun) flushDigits();
     if (ch in CN_NUM) {
       current = CN_NUM[ch];
       touched = true;
@@ -58,47 +71,52 @@ function parseCnNumber(s: string): number | null {
       return null;
     }
   }
+  flushDigits();
   if (!touched) return null;
   return total + section + current;
 }
 
 export function normalizeNumbers(s: string): string {
   if (!s) return s;
-  // 1) "百分之X" → "X%" (X có thể là chữ Hán hoặc chữ số)
+  // 1) "百分之X" → "X%" (X có thể là chữ Hán hoặc chữ số, hoặc lai)
   s = s.replace(
-    /百分之([零〇○一壹二贰两兩三叁四肆五伍六陆七柒八捌九玖十拾百佰千仟万萬亿億]+|\d+(?:\.\d+)?)/g,
+    /百分之([零〇○一壹二贰两兩三叁四肆五伍六陆七柒八捌九玖十拾百佰千仟万萬亿億\d.]+)/g,
     (_, n: string) => {
       if (/^[\d.]+$/.test(n)) return `${n}%`;
       const p = parseCnNumber(n);
       return p !== null ? `${p}%` : `${n}%`;
     }
   );
-  // 2) Chuyển các đoạn chữ số Hán liên tiếp thành số Ả Rập.
-  //    - Có đơn vị (千/百/十/万/亿) → parse theo nghĩa (六千 → 6000).
-  //    - Không có đơn vị → đọc rời từng chữ số (一八三九 → 1839, dùng cho năm,
-  //      số điện thoại, mã số…). Đáp án chuẩn vẫn luôn giữ dạng số Ả Rập.
+  // 2) Chuyển các đoạn số (Hán hoặc Ả Rập, hoặc lai như "150万") thành số Ả Rập.
+  //    - Có đơn vị (千/百/十/万/亿) → parse theo nghĩa (六千 → 6000, 150万 → 1500000).
+  //    - Không có đơn vị → giữ chữ số đơn (一八三九 → 1839).
   let out = "";
   let buf = "";
   const flush = () => {
     if (!buf) return;
     const hasUnit = [...buf].some((c) => c in CN_UNIT || c in CN_BIG);
+    const hasCnDigit = [...buf].some((c) => c in CN_NUM);
     if (hasUnit) {
       const n = parseCnNumber(buf);
       out += n !== null ? String(n) : buf;
-    } else {
-      // Tất cả là chữ số đơn (0-9) → ghép thành digits.
+    } else if (hasCnDigit) {
+      // Chỉ chữ số Hán đơn lẻ → ghép thành digits.
       const digits = [...buf].map((c) => (c in CN_NUM ? String(CN_NUM[c]) : c)).join("");
       out += digits;
+    } else {
+      // Toàn bộ là chữ số Ả Rập, giữ nguyên.
+      out += buf;
     }
     buf = "";
   };
   for (const ch of s) {
-    if (CN_ALL.has(ch)) buf += ch;
+    if (CN_ALL.has(ch) || /\d/.test(ch)) buf += ch;
     else { flush(); out += ch; }
   }
   flush();
   return out;
 }
+
 
 export function normalizeHanzi(s: string): string {
   // Giữ lại chữ số (6000, 500, 1839…) vì là một phần của đáp án.
