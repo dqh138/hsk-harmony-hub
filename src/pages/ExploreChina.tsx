@@ -101,10 +101,7 @@ const ExploreChina = () => {
             </div>
             <div className="mt-2 flex flex-wrap items-center justify-between gap-2 px-2 pb-1 text-[11px] text-muted-foreground">
               <span>Cuộn chuột để zoom · kéo để di chuyển bản đồ.</span>
-              <span>
-                Bản đồ chỉ phục vụ học tập. Hoàng Sa &amp; Trường Sa thuộc Việt Nam — không thể hiện trên
-                vùng lãnh thổ Trung Quốc.
-              </span>
+              <span>Bản đồ chỉ phục vụ học tập. Hoàng Sa &amp; Trường Sa thuộc Việt Nam.</span>
             </div>
           </section>
         </div>
