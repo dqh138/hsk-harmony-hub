@@ -99,6 +99,7 @@ const Dictation = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<VideoData | null>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
+  const [entryId, setEntryId] = useState<string | null>(null);
   const [inputs, setInputs] = useState<Record<number, string>>({});
   const [scores, setScores] = useState<Record<number, ScoreResult>>({});
   const [hints, setHints] = useState<Record<number, number>>({});
