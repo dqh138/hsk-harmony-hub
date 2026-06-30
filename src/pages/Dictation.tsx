@@ -126,12 +126,15 @@ const Dictation = () => {
       const s = JSON.parse(raw) as PersistedState;
       if (s?.data?.segments?.length) {
         // Rehydrate translations từ thư viện curated nếu localStorage cũ chưa có
-        const curated = DICTATION_VIDEOS.find((v) => v.youtubeId === s.videoId);
+        const curated =
+          (s.entryId && DICTATION_VIDEOS.find((v) => v.id === s.entryId)) ||
+          DICTATION_VIDEOS.find((v) => v.youtubeId === s.videoId);
         const merged: VideoData = {
           ...s.data,
           translations: s.data.translations ?? curated?.translations,
         };
         setData(merged);
+        setEntryId(s.entryId ?? curated?.id ?? null);
         setUrl(`https://www.youtube.com/watch?v=${s.videoId}`);
         setScores(s.scores ?? {});
         setInputs(s.inputs ?? {});
