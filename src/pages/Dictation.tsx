@@ -148,13 +148,14 @@ const Dictation = () => {
     if (!data) return;
     const s: PersistedState = {
       videoId: data.videoId,
+      entryId: entryId ?? undefined,
       data,
       scores,
       inputs,
       currentIdx,
     };
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch { /* noop */ }
-  }, [data, scores, inputs, currentIdx]);
+  }, [data, scores, inputs, currentIdx, entryId]);
 
   const hasAutoStartedRef = useRef(false);
 
