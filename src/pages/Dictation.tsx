@@ -87,6 +87,7 @@ const STORAGE_KEY = "hskhub:dictation:state";
 
 interface PersistedState {
   videoId: string;
+  entryId?: string;
   data: VideoData;
   scores: Record<number, ScoreResult>;
   inputs: Record<number, string>;
