@@ -33,11 +33,14 @@ const groups: { key: string; label: string; sources: SourceDef[] }[] = [
     ],
   },
   {
-    key: "news",
-    label: "新闻 · Tin chính thống",
+    key: "finance",
+    label: "财经 · Tài chính / Business",
     sources: [
-      { id: "thepaper", cn: "澎湃新闻", vi: "ThePaper" },
+      { id: "wallstreetcn", cn: "华尔街见闻", vi: "Wall Street CN (24h)" },
+      { id: "jin10", cn: "金十数据", vi: "Jin10 Flash" },
       { id: "cls", cn: "财联社电报", vi: "CLS Telegraph" },
+      { id: "xueqiu", cn: "雪球热股", vi: "Xueqiu Hot Stocks" },
+      { id: "kr36", cn: "36氪快讯", vi: "36Kr Newsflash" },
     ],
   },
 ];

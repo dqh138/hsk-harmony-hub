@@ -105,13 +105,75 @@ const sources: Record<string, () => Promise<NewsItem[]>> = {
     }));
   },
 
-  thepaper: async () => {
-    const r = await f("https://cache.thepaper.cn/contentapi/wwwIndex/rightSidebar");
+  wallstreetcn: async () => {
+    const r = await f(
+      "https://api-one.wallstcn.com/apiv1/content/lives?channel=global-channel&limit=30"
+    );
     const j = await r.json();
-    return (j?.data?.hotNews ?? []).slice(0, 30).map((k: any) => ({
-      id: String(k.contId),
-      title: k.name,
-      url: `https://www.thepaper.cn/newsDetail_forward_${k.contId}`,
+    return (j?.data?.items ?? []).map((k: any) => ({
+      id: String(k.id),
+      title: k.title || k.content_text || k.content_short,
+      url: k.uri,
+      extra: k.display_time
+        ? new Date(k.display_time * 1000).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })
+        : undefined,
+    }));
+  },
+
+  jin10: async () => {
+    const r = await f(`https://www.jin10.com/flash_newest.js?t=${Date.now()}`);
+    const raw = await r.text();
+    const jsonStr = raw.replace(/^var\s+newest\s*=\s*/, "").replace(/;*\s*$/, "").trim();
+    const data = JSON.parse(jsonStr) as any[];
+    return data
+      .filter((k) => (k.data?.title || k.data?.content) && !k.channel?.includes(5))
+      .slice(0, 30)
+      .map((k) => {
+        const text = (k.data.title || k.data.content).replace(/<\/?b>/g, "");
+        const m = text.match(/^【([^】]*)】(.*)$/);
+        return {
+          id: String(k.id),
+          title: m ? m[1] : text,
+          url: `https://flash.jin10.com/detail/${k.id}`,
+          extra: k.important ? "✰" : undefined,
+        };
+      });
+  },
+
+  xueqiu: async () => {
+    // Prime cookie via xueqiu.com so hot_stock endpoint accepts the request
+    const c = await f("https://xueqiu.com/hq");
+    const setCookies: string[] =
+      (c.headers as any).getSetCookie?.() ?? [c.headers.get("set-cookie") ?? ""];
+    const cookie = setCookies
+      .filter(Boolean)
+      .map((s) => s.split(";")[0])
+      .join("; ");
+    const r = await f(
+      "https://stock.xueqiu.com/v5/stock/hot_stock/list.json?size=30&_type=10&type=10",
+      { headers: { Cookie: cookie, Referer: "https://xueqiu.com/" } }
+    );
+    const j = await r.json();
+    return (j?.data?.items ?? [])
+      .filter((k: any) => !k.ad)
+      .map((k: any) => ({
+        id: k.code,
+        title: `${k.name} (${k.code})`,
+        url: `https://xueqiu.com/S/${k.code}`,
+        extra: `${k.percent > 0 ? "+" : ""}${k.percent}% · ${k.exchange}`,
+      }));
+  },
+
+  kr36: async () => {
+    const r = await f(
+      "https://www.36kr.com/pp/api/newsflash?per_page=30&b_id=0"
+    );
+    const j = await r.json();
+    return (j?.data?.items ?? []).slice(0, 30).map((k: any) => ({
+      id: String(k.id),
+      title: k.title,
+      url: `https://www.36kr.com/newsflashes/${k.id}`,
+      extra: k.published_at ? k.published_at.slice(11, 16) : undefined,
     }));
   },
 
