@@ -141,11 +141,12 @@ const sources: Record<string, () => Promise<NewsItem[]>> = {
   },
 
   xueqiu: async () => {
-    // Prime cookie
+    // Prime cookie via xueqiu.com so hot_stock endpoint accepts the request
     const c = await f("https://xueqiu.com/hq");
-    const setCookie = c.headers.get("set-cookie") ?? "";
-    const cookie = setCookie
-      .split(/,(?=[^ ])/)
+    const setCookies: string[] =
+      (c.headers as any).getSetCookie?.() ?? [c.headers.get("set-cookie") ?? ""];
+    const cookie = setCookies
+      .filter(Boolean)
       .map((s) => s.split(";")[0])
       .join("; ");
     const r = await f(
@@ -164,38 +165,16 @@ const sources: Record<string, () => Promise<NewsItem[]>> = {
   },
 
   kr36: async () => {
-    const r = await f("https://www.36kr.com/newsflashes");
-    const html = await r.text();
-    const items: NewsItem[] = [];
-    // Extract from embedded JSON state (more reliable than HTML parsing)
-    const stateMatch = html.match(/window\.initialState\s*=\s*(\{[\s\S]*?\})<\/script>/);
-    if (stateMatch) {
-      try {
-        const state = JSON.parse(stateMatch[1]);
-        const list =
-          state?.newsflashCatalog?.newsflashList?.data?.itemList ??
-          state?.newsflash?.data?.itemList ?? [];
-        for (const k of list.slice(0, 30)) {
-          const t = k.templateMaterial || k;
-          if (!t.widgetTitle) continue;
-          items.push({
-            id: String(t.itemId || t.widgetTitle),
-            title: t.widgetTitle,
-            url: `https://www.36kr.com/newsflashes/${t.itemId}`,
-          });
-        }
-      } catch { /* fall through */ }
-    }
-    if (items.length === 0) {
-      // Fallback: regex over anchor tags
-      const re = /<a[^>]+href="(\/newsflashes\/\d+)"[^>]*class="[^"]*item-title[^"]*"[^>]*>([^<]+)<\/a>/g;
-      let m: RegExpExecArray | null;
-      while ((m = re.exec(html)) !== null) {
-        items.push({ id: m[1], title: m[2].trim(), url: `https://www.36kr.com${m[1]}` });
-        if (items.length >= 30) break;
-      }
-    }
-    return items;
+    const r = await f(
+      "https://www.36kr.com/pp/api/newsflash?per_page=30&b_id=0"
+    );
+    const j = await r.json();
+    return (j?.data?.items ?? []).slice(0, 30).map((k: any) => ({
+      id: String(k.id),
+      title: k.title,
+      url: `https://www.36kr.com/newsflashes/${k.id}`,
+      extra: k.published_at ? k.published_at.slice(11, 16) : undefined,
+    }));
   },
 
   juejin: async () => {
