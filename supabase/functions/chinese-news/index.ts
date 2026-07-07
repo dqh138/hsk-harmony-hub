@@ -105,14 +105,97 @@ const sources: Record<string, () => Promise<NewsItem[]>> = {
     }));
   },
 
-  thepaper: async () => {
-    const r = await f("https://cache.thepaper.cn/contentapi/wwwIndex/rightSidebar");
+  wallstreetcn: async () => {
+    const r = await f(
+      "https://api-one.wallstcn.com/apiv1/content/lives?channel=global-channel&limit=30"
+    );
     const j = await r.json();
-    return (j?.data?.hotNews ?? []).slice(0, 30).map((k: any) => ({
-      id: String(k.contId),
-      title: k.name,
-      url: `https://www.thepaper.cn/newsDetail_forward_${k.contId}`,
+    return (j?.data?.items ?? []).map((k: any) => ({
+      id: String(k.id),
+      title: k.title || k.content_text || k.content_short,
+      url: k.uri,
+      extra: k.display_time
+        ? new Date(k.display_time * 1000).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })
+        : undefined,
     }));
+  },
+
+  jin10: async () => {
+    const r = await f(`https://www.jin10.com/flash_newest.js?t=${Date.now()}`);
+    const raw = await r.text();
+    const jsonStr = raw.replace(/^var\s+newest\s*=\s*/, "").replace(/;*\s*$/, "").trim();
+    const data = JSON.parse(jsonStr) as any[];
+    return data
+      .filter((k) => (k.data?.title || k.data?.content) && !k.channel?.includes(5))
+      .slice(0, 30)
+      .map((k) => {
+        const text = (k.data.title || k.data.content).replace(/<\/?b>/g, "");
+        const m = text.match(/^【([^】]*)】(.*)$/);
+        return {
+          id: String(k.id),
+          title: m ? m[1] : text,
+          url: `https://flash.jin10.com/detail/${k.id}`,
+          extra: k.important ? "✰" : undefined,
+        };
+      });
+  },
+
+  xueqiu: async () => {
+    // Prime cookie
+    const c = await f("https://xueqiu.com/hq");
+    const setCookie = c.headers.get("set-cookie") ?? "";
+    const cookie = setCookie
+      .split(/,(?=[^ ])/)
+      .map((s) => s.split(";")[0])
+      .join("; ");
+    const r = await f(
+      "https://stock.xueqiu.com/v5/stock/hot_stock/list.json?size=30&_type=10&type=10",
+      { headers: { Cookie: cookie, Referer: "https://xueqiu.com/" } }
+    );
+    const j = await r.json();
+    return (j?.data?.items ?? [])
+      .filter((k: any) => !k.ad)
+      .map((k: any) => ({
+        id: k.code,
+        title: `${k.name} (${k.code})`,
+        url: `https://xueqiu.com/S/${k.code}`,
+        extra: `${k.percent > 0 ? "+" : ""}${k.percent}% · ${k.exchange}`,
+      }));
+  },
+
+  kr36: async () => {
+    const r = await f("https://www.36kr.com/newsflashes");
+    const html = await r.text();
+    const items: NewsItem[] = [];
+    // Extract from embedded JSON state (more reliable than HTML parsing)
+    const stateMatch = html.match(/window\.initialState\s*=\s*(\{[\s\S]*?\})<\/script>/);
+    if (stateMatch) {
+      try {
+        const state = JSON.parse(stateMatch[1]);
+        const list =
+          state?.newsflashCatalog?.newsflashList?.data?.itemList ??
+          state?.newsflash?.data?.itemList ?? [];
+        for (const k of list.slice(0, 30)) {
+          const t = k.templateMaterial || k;
+          if (!t.widgetTitle) continue;
+          items.push({
+            id: String(t.itemId || t.widgetTitle),
+            title: t.widgetTitle,
+            url: `https://www.36kr.com/newsflashes/${t.itemId}`,
+          });
+        }
+      } catch { /* fall through */ }
+    }
+    if (items.length === 0) {
+      // Fallback: regex over anchor tags
+      const re = /<a[^>]+href="(\/newsflashes\/\d+)"[^>]*class="[^"]*item-title[^"]*"[^>]*>([^<]+)<\/a>/g;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(html)) !== null) {
+        items.push({ id: m[1], title: m[2].trim(), url: `https://www.36kr.com${m[1]}` });
+        if (items.length >= 30) break;
+      }
+    }
+    return items;
   },
 
   juejin: async () => {
