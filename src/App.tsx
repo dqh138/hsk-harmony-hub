@@ -22,6 +22,7 @@ import ConversationPractice from "./pages/ConversationPractice";
 
 import Dictation from "./pages/Dictation";
 import ExploreChina from "./pages/ExploreChina";
+import Idioms from "./pages/Idioms";
 import NotFound from "./pages/NotFound";
 import StudyToolsLayer from "./components/StudyToolsLayer";
 import { ChineseDecorBackdrop } from "./components/ChineseDecor";
@@ -104,6 +105,7 @@ const App = () => (
             
             <Route path="/dictation" element={<Dictation />} />
             <Route path="/explore-china" element={<ExploreChina />} />
+            <Route path="/idioms" element={<Idioms />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
