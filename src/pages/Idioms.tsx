@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { addSavedWord } from "@/lib/savedWords";
+import { saveWord } from "@/lib/savedWords";
 import idiomsBg from "@/assets/idioms-bg.jpg";
 
 interface Idiom {
@@ -86,12 +86,7 @@ const Idioms = () => {
 
   const save = async (it: Idiom) => {
     try {
-      await addSavedWord({
-        hanzi: it.hanzi,
-        pinyin: it.pinyin,
-        meaning: it.meaning,
-        source: "idioms",
-      });
+      await saveWord(it.hanzi, `${it.pinyin} — ${it.meaning}`);
       toast({ title: "Đã lưu vào sổ từ vựng", description: it.hanzi });
     } catch (e) {
       toast({ title: "Không lưu được", description: String(e), variant: "destructive" });
