@@ -14,8 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        serif: ["Noto Serif SC", "serif"],
+        serif: ["Cormorant Garamond", "Noto Serif SC", "serif"],
         sans: ["Noto Sans SC", "sans-serif"],
+        hanzi: ["Noto Serif SC", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -57,6 +58,15 @@ export default {
         hsk4: "hsl(var(--hsk4))",
         hsk5: "hsl(var(--hsk5))",
         hsk6: "hsl(var(--hsk6))",
+        "zhu-hong": "hsl(var(--zhu-hong))",
+        "yue-bai": "hsl(var(--yue-bai))",
+        "sha-se": "hsl(var(--sha-se))",
+        "song-lv": "hsl(var(--song-lv))",
+        "teng-huang": "hsl(var(--teng-huang))",
+        "mo-se": "hsl(var(--mo-se))",
+        "cang-se": "hsl(var(--cang-se))",
+        "ai-lv": "hsl(var(--ai-lv))",
+        "shan-hu": "hsl(var(--shan-hu))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

@@ -36,7 +36,7 @@ const Navbar = () => {
     location.pathname.startsWith("/explore-china") ||
     location.pathname.startsWith("/dictation") ||
     location.pathname.startsWith("/flashcards") ||
-    location.pathname.startsWith("/idioms") ||
+    
     location.pathname === "/saved-words";
 
   const handleSignOut = async () => {
@@ -123,12 +123,6 @@ const Navbar = () => {
                 <Link to="/dictation" className="cursor-pointer">
                   <PenLine className="mr-2 h-4 w-4" />
                   听写 Chép chính tả
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/idioms" className="cursor-pointer">
-                  <ScrollText className="mr-2 h-4 w-4" />
-                  成语 Tra thành ngữ
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -279,14 +273,6 @@ const Navbar = () => {
               >
                 <PenLine className="h-4 w-4" />
                 听写 Chép chính tả
-              </Link>
-              <Link
-                to="/idioms"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
-              >
-                <ScrollText className="h-4 w-4" />
-                成语 Tra thành ngữ
               </Link>
               <Link
                 to="/flashcards"
