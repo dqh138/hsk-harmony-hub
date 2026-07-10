@@ -20,10 +20,10 @@
 
 @layer base {
   :root {
-    --background: 45 48% 94%;          /* 月白 */
+    --background: 45 55% 97%;          /* 月白 – brighter */
     --foreground: 30 8% 12%;           /* 墨色 */
 
-    --card: 42 52% 96%;
+    --card: 42 55% 98%;
     --card-foreground: 30 8% 12%;
 
     --popover: 42 52% 96%;
