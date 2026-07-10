@@ -1,102 +1,137 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Palette: Chinese Traditional Colors (Chroma Cathay atlas inspired)
+  ─────────────────────────────────────────────────────────────
+  朱红 zhu-hong   #C73B2E  — primary red
+  月白 yue-bai    #F6F3E7  — cream paper
+  沙色 sha-se     #F2E8D6  — warm surface
+  松绿 song-lv    #2E6F6B  — jade / brand secondary
+  藤黄 teng-huang #D4A24C  — dunhuang gold
+  墨色 mo-se      #14100C  — ink black
+  苍色 cang-se    #4A6B8A  — song slate blue
+  艾绿 ai-lv      #8FA588  — sage
+  珊瑚 shan-hu    #E07856  — coral
+*/
+
 @layer base {
   :root {
-    --background: 42 30% 95%;
-    --foreground: 30 15% 15%;
+    --background: 45 48% 94%;          /* 月白 */
+    --foreground: 30 8% 12%;           /* 墨色 */
 
-    --card: 40 25% 97%;
-    --card-foreground: 30 15% 15%;
+    --card: 42 52% 96%;
+    --card-foreground: 30 8% 12%;
 
-    --popover: 40 25% 97%;
-    --popover-foreground: 30 15% 15%;
+    --popover: 42 52% 96%;
+    --popover-foreground: 30 8% 12%;
 
-    --primary: 0 72% 45%;
-    --primary-foreground: 40 80% 97%;
+    --primary: 5 63% 48%;              /* 朱红 */
+    --primary-foreground: 45 48% 96%;
 
-    --secondary: 38 70% 50%;
-    --secondary-foreground: 40 80% 97%;
+    --secondary: 176 41% 31%;          /* 松绿 jade */
+    --secondary-foreground: 45 48% 96%;
 
-    --muted: 38 20% 90%;
-    --muted-foreground: 30 10% 45%;
+    --muted: 39 40% 88%;               /* 沙色 */
+    --muted-foreground: 30 12% 38%;
 
-    --accent: 0 72% 45%;
-    --accent-foreground: 40 80% 97%;
+    --accent: 39 61% 56%;              /* 藤黄 dunhuang gold */
+    --accent-foreground: 30 20% 12%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 5 63% 48%;
+    --destructive-foreground: 45 48% 96%;
 
-    --border: 38 20% 85%;
-    --input: 38 20% 85%;
-    --ring: 0 72% 45%;
+    --border: 39 30% 82%;
+    --input: 39 30% 82%;
+    --ring: 176 41% 31%;
 
-    --radius: 0.5rem;
+    --radius: 0.625rem;
 
-    --hsk1: 142 55% 38%;
-    --hsk2: 210 65% 45%;
-    --hsk3: 270 55% 50%;
-    --hsk4: 28 85% 48%;
-    --hsk5: 0 72% 45%;
-    --hsk6: 42 80% 45%;
+    /* Extended atlas tokens */
+    --zhu-hong: 5 63% 48%;
+    --yue-bai: 45 48% 94%;
+    --sha-se: 39 53% 89%;
+    --song-lv: 176 41% 31%;
+    --teng-huang: 39 61% 56%;
+    --mo-se: 30 8% 12%;
+    --cang-se: 213 30% 42%;
+    --ai-lv: 110 14% 59%;
+    --shan-hu: 14 68% 61%;
 
-    --sidebar-background: 40 25% 93%;
-    --sidebar-foreground: 30 15% 15%;
-    --sidebar-primary: 0 72% 45%;
-    --sidebar-primary-foreground: 40 80% 97%;
-    --sidebar-accent: 38 20% 88%;
-    --sidebar-accent-foreground: 30 15% 15%;
-    --sidebar-border: 38 20% 85%;
-    --sidebar-ring: 0 72% 45%;
+    --hsk1: 176 41% 34%;               /* jade */
+    --hsk2: 213 40% 45%;               /* 苍 slate */
+    --hsk3: 110 20% 45%;               /* 艾 sage deeper */
+    --hsk4: 39 61% 50%;                /* gold */
+    --hsk5: 5 63% 48%;                 /* zhu-hong */
+    --hsk6: 14 55% 40%;                /* burnt coral */
+
+    --sidebar-background: 42 45% 92%;
+    --sidebar-foreground: 30 8% 12%;
+    --sidebar-primary: 5 63% 48%;
+    --sidebar-primary-foreground: 45 48% 96%;
+    --sidebar-accent: 39 40% 86%;
+    --sidebar-accent-foreground: 30 8% 12%;
+    --sidebar-border: 39 30% 82%;
+    --sidebar-ring: 176 41% 31%;
   }
 
   .dark {
-    --background: 30 15% 7%;
-    --foreground: 38 60% 90%;
+    --background: 30 12% 8%;           /* 墨 deeper */
+    --foreground: 45 40% 92%;
 
-    --card: 30 12% 11%;
-    --card-foreground: 38 60% 90%;
+    --card: 30 10% 12%;
+    --card-foreground: 45 40% 92%;
 
-    --popover: 30 12% 11%;
-    --popover-foreground: 38 60% 90%;
+    --popover: 30 10% 12%;
+    --popover-foreground: 45 40% 92%;
 
-    --primary: 0 72% 45%;
-    --primary-foreground: 38 80% 95%;
+    --primary: 5 68% 55%;              /* brighter 朱红 */
+    --primary-foreground: 45 45% 96%;
 
-    --secondary: 38 70% 50%;
-    --secondary-foreground: 30 15% 7%;
+    --secondary: 176 38% 42%;          /* brighter jade */
+    --secondary-foreground: 45 45% 96%;
 
-    --muted: 30 10% 16%;
-    --muted-foreground: 30 15% 55%;
+    --muted: 30 8% 17%;
+    --muted-foreground: 39 20% 68%;
 
-    --accent: 0 72% 45%;
-    --accent-foreground: 38 80% 95%;
+    --accent: 39 65% 62%;              /* gold on dark */
+    --accent-foreground: 30 15% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 5 68% 55%;
+    --destructive-foreground: 45 45% 96%;
 
-    --border: 30 12% 18%;
-    --input: 30 12% 18%;
-    --ring: 0 72% 45%;
+    --border: 30 10% 20%;
+    --input: 30 10% 20%;
+    --ring: 176 38% 42%;
 
-    --hsk1: 142 55% 42%;
-    --hsk2: 210 65% 50%;
-    --hsk3: 270 55% 55%;
-    --hsk4: 28 85% 55%;
-    --hsk5: 0 72% 50%;
-    --hsk6: 42 80% 55%;
+    --zhu-hong: 5 68% 55%;
+    --yue-bai: 45 40% 92%;
+    --sha-se: 39 25% 22%;
+    --song-lv: 176 38% 42%;
+    --teng-huang: 39 65% 62%;
+    --mo-se: 30 12% 8%;
+    --cang-se: 213 32% 55%;
+    --ai-lv: 110 16% 62%;
+    --shan-hu: 14 68% 65%;
 
-    --sidebar-background: 30 12% 9%;
-    --sidebar-foreground: 38 60% 90%;
-    --sidebar-primary: 0 72% 45%;
-    --sidebar-primary-foreground: 38 80% 95%;
-    --sidebar-accent: 30 10% 16%;
-    --sidebar-accent-foreground: 38 60% 90%;
-    --sidebar-border: 30 12% 18%;
-    --sidebar-ring: 0 72% 45%;
+    --hsk1: 176 42% 48%;
+    --hsk2: 213 45% 60%;
+    --hsk3: 110 22% 55%;
+    --hsk4: 39 68% 62%;
+    --hsk5: 5 70% 60%;
+    --hsk6: 14 65% 60%;
+
+    --sidebar-background: 30 12% 10%;
+    --sidebar-foreground: 45 40% 92%;
+    --sidebar-primary: 5 68% 55%;
+    --sidebar-primary-foreground: 45 45% 96%;
+    --sidebar-accent: 30 8% 17%;
+    --sidebar-accent-foreground: 45 40% 92%;
+    --sidebar-border: 30 10% 20%;
+    --sidebar-ring: 176 38% 42%;
   }
 }
 
@@ -107,10 +142,16 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Noto Sans SC', sans-serif;
+    font-family: 'Noto Sans SC', 'Cormorant Garamond', sans-serif;
   }
 
-  h1, h2, h3 {
+  h1, h2, h3, h4 {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* Chinese-only headings keep the SC serif for authentic strokes */
+  :lang(zh), .font-hanzi {
     font-family: 'Noto Serif SC', serif;
   }
 }
@@ -119,28 +160,33 @@
   .chinese-border {
     border-image: linear-gradient(
       135deg,
-      hsl(0 72% 45%) 0%,
-      hsl(38 70% 50%) 50%,
-      hsl(0 72% 45%) 100%
+      hsl(var(--zhu-hong)) 0%,
+      hsl(var(--teng-huang)) 50%,
+      hsl(var(--song-lv)) 100%
     ) 1;
   }
 
+  /* Editorial red-on-cream gradient: 朱红 → 藤黄 */
   .gold-text {
-    background: linear-gradient(135deg, hsl(0 72% 45%), hsl(38 70% 50%), hsl(0 72% 45%));
+    background: linear-gradient(135deg, hsl(var(--zhu-hong)), hsl(var(--teng-huang)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .dark .gold-text {
-    background: linear-gradient(135deg, hsl(38 70% 50%), hsl(42 85% 65%), hsl(38 70% 50%));
+    background: linear-gradient(135deg, hsl(var(--teng-huang)), hsl(var(--shan-hu)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
+  .jade-text {
+    color: hsl(var(--song-lv));
+  }
+
   mark.hskhub-highlight {
-    background-color: hsl(var(--primary) / 0.25);
+    background-color: hsl(var(--teng-huang) / 0.35);
     color: inherit;
     border-radius: 0.125rem;
     padding: 0 0.1em;
@@ -148,6 +194,6 @@
   }
 
   .dark mark.hskhub-highlight {
-    background-color: hsl(var(--primary) / 0.4);
+    background-color: hsl(var(--teng-huang) / 0.4);
   }
 }
