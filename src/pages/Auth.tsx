@@ -121,7 +121,7 @@ const Auth = () => {
   }, []);
 
   useEffect(() => {
-    if (!loading && session) navigate("/", { replace: true });
+    if (!loading && session) navigate(getNextPath() ?? "/", { replace: true });
   }, [session, loading, navigate]);
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -140,7 +140,7 @@ const Auth = () => {
       if (error) throw error;
       applyRememberPreference(remember);
       toast({ title: "Đăng nhập thành công" });
-      navigate("/", { replace: true });
+      navigate(getNextPath() ?? "/", { replace: true });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Đăng nhập thất bại";
       toast({ title: "Lỗi", description: msg, variant: "destructive" });
@@ -169,7 +169,7 @@ const Auth = () => {
       if (error) throw error;
       applyRememberPreference(remember);
       toast({ title: "Tạo tài khoản thành công", description: "Đang đăng nhập..." });
-      navigate("/", { replace: true });
+      navigate(getNextPath() ?? "/", { replace: true });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Đăng ký thất bại";
       toast({ title: "Lỗi", description: msg, variant: "destructive" });
