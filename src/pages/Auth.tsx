@@ -49,6 +49,17 @@ const applyRememberPreference = (remember: boolean) => {
   }
 };
 
+// Same-origin relative path to return to after auth (used by the OAuth consent flow).
+const getNextPath = (): string | null => {
+  try {
+    const n = new URLSearchParams(window.location.search).get("next");
+    if (n && n.startsWith("/") && !n.startsWith("//")) return n;
+  } catch {
+    /* noop */
+  }
+  return null;
+};
+
 const buildAuthRedirectUrl = () => {
   const url = new URL("/auth", window.location.origin);
   try {
@@ -57,8 +68,11 @@ const buildAuthRedirectUrl = () => {
   } catch {
     /* noop */
   }
+  const next = getNextPath();
+  if (next) url.searchParams.set("next", next);
   return url.toString();
 };
+
 
 const emailSchema = z.string().trim().email("Email không hợp lệ").max(255);
 const passwordSchema = z
