@@ -22,6 +22,8 @@ import ConversationPractice from "./pages/ConversationPractice";
 
 import Dictation from "./pages/Dictation";
 import ExploreChina from "./pages/ExploreChina";
+import OAuthConsent from "./pages/OAuthConsent";
+
 
 import NotFound from "./pages/NotFound";
 import StudyToolsLayer from "./components/StudyToolsLayer";
@@ -105,6 +107,8 @@ const App = () => (
             
             <Route path="/dictation" element={<Dictation />} />
             <Route path="/explore-china" element={<ExploreChina />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+
             
             <Route path="*" element={<NotFound />} />
           </Routes>
