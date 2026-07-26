@@ -1,0 +1,250 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://tvksbjzilcqofkkrfvug.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "hsk-hub-mcp",
+      "version": "0.1.0",
+      "title": "HSK Hub"
+    },
+    "tools": [
+      {
+        "name": "search_vocabulary",
+        "title": "Search HSK vocabulary",
+        "description": "Search the HSK 1-6 vocabulary bank of HSK Hub by hanzi, pinyin or English meaning. Optionally filter by HSK level.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Hanzi, pinyin or English meaning to search for. Leave empty to browse by level."
+            },
+            "level": {
+              "type": "integer",
+              "description": "HSK level filter, 1 to 6."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of words to return (default 20, max 100)."
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_grammar",
+        "title": "Search HSK grammar points",
+        "description": "Search HSK Hub's HSK 1-6 grammar reference by pattern, name or explanation, with structure formula and examples.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Pattern, keyword or English explanation to search for. Leave empty to browse by level."
+            },
+            "level": {
+              "type": "integer",
+              "description": "HSK level filter, 1 to 6."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of grammar points to return (default 10, max 40)."
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_dictation_videos",
+        "title": "List dictation videos",
+        "description": "Browse HSK Hub's Chinese dictation (听写) library: title, level, topic category, duration and number of practice sentences.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Filter by title text (Chinese or Vietnamese)."
+            },
+            "level": {
+              "type": "string",
+              "description": "Level filter: beginner, intermediate or advanced."
+            },
+            "category": {
+              "type": "string",
+              "description": "Category filter: news, vlog, cartoon, drama, education, history, discovery, other."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of videos to return (default 25, max 100)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_dictation_transcript",
+        "title": "Get dictation transcript",
+        "description": "Return the sentence-by-sentence Chinese transcript (with Vietnamese translation when available) of one dictation video from HSK Hub. Use list_dictation_videos first to get the video id.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "videoId": {
+              "type": "string",
+              "description": "The dictation entry id returned by list_dictation_videos."
+            },
+            "from": {
+              "type": "integer",
+              "description": "First sentence index to return (0-based, default 0)."
+            },
+            "count": {
+              "type": "integer",
+              "description": "How many sentences to return (default 40, max 200)."
+            }
+          },
+          "required": [
+            "videoId"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_province",
+        "title": "Explore a Chinese province",
+        "description": "Look up one of China's 34 provincial-level units in HSK Hub's 探索中国 dataset: capital, population, area, cuisine, landmarks, universities and the Chinese reading passage when available. Omit the name to list all units.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Province name in Chinese, pinyin or Vietnamese. Omit to list every unit."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_saved_words",
+        "title": "List my saved words",
+        "description": "List the signed-in user's saved vocabulary notebook (生词本) entries from HSK Hub.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of entries to return (default 50, max 200)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "save_word",
+        "title": "Save a word to my notebook",
+        "description": "Add a Chinese word, phrase or sentence (with an optional note) to the signed-in user's HSK Hub 生词本.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "The Chinese word, phrase or sentence to save."
+            },
+            "note": {
+              "type": "string",
+              "description": "Optional note, meaning or translation."
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_exam_results",
+        "title": "List my mock exam results",
+        "description": "List the signed-in user's HSK mock exam results from HSK Hub, newest first, with score per section.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "description": "Maximum number of results to return (default 20, max 100)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
