@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { DICTATION_VIDEOS } from "@/data/dictationVideos";
+import { DICTATION_VIDEOS } from "../../../data/dictationVideos";
 
 export default defineTool({
   name: "list_dictation_videos",

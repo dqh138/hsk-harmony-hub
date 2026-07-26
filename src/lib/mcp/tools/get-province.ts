@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { PROVINCES } from "@/data/provinces";
+import { PROVINCES } from "../../../data/provinces";
 
 export default defineTool({
   name: "get_province",

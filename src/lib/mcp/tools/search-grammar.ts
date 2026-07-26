@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { allGrammar, getGrammarByLevel } from "@/data/grammar";
+import { allGrammar, getGrammarByLevel } from "../../../data/grammar";
 
 export default defineTool({
   name: "search_grammar",

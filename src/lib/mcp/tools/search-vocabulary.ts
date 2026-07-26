@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { allVocab, getVocabByLevel } from "@/data/vocab";
+import { allVocab, getVocabByLevel } from "../../../data/vocab";
 
 export default defineTool({
   name: "search_vocabulary",
