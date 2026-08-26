@@ -23,6 +23,8 @@ import ConversationPractice from "./pages/ConversationPractice";
 import Dictation from "./pages/Dictation";
 import ExploreChina from "./pages/ExploreChina";
 import OAuthConsent from "./pages/OAuthConsent";
+import PinyinChart from "./pages/PinyinChart";
+
 
 
 import NotFound from "./pages/NotFound";
