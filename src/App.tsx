@@ -109,6 +109,8 @@ const App = () => (
             
             <Route path="/dictation" element={<Dictation />} />
             <Route path="/explore-china" element={<ExploreChina />} />
+            <Route path="/pinyin" element={<PinyinChart />} />
+
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
 
             

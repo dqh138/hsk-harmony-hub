@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen, GraduationCap, Bookmark, FileText, ArrowRight, Sparkles, Layers, Search, Newspaper, Headphones, Mic } from "lucide-react";
+import { BookOpen, GraduationCap, Bookmark, FileText, ArrowRight, Sparkles, Layers, Search, Newspaper, Headphones, Mic, Languages } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { ChineseDecorInline } from "@/components/ChineseDecor";
@@ -62,6 +62,18 @@ const Index = () => {
       stat: "Karaoke + chấm điểm",
       accent: "from-hsk2/20 to-hsk3/10",
       iconBg: "bg-hsk2/15 text-hsk2",
+    },
+    {
+      title: "Pinyin Chart",
+      chinese: "拼音表",
+      description:
+        "Bảng âm tiết Pinyin đầy đủ — nhấn một âm tiết để nghe cả bốn thanh điệu kèm chữ Hán ví dụ.",
+      icon: Languages,
+      href: "/pinyin",
+      cta: "Mở bảng Pinyin",
+      stat: "4 thanh điệu",
+      accent: "from-hsk5/20 to-hsk6/10",
+      iconBg: "bg-hsk5/15 text-hsk5",
     },
     {
       title: "China News",
