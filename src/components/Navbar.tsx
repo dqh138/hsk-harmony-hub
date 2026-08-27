@@ -35,6 +35,7 @@ const Navbar = () => {
     location.pathname.startsWith("/news") ||
     location.pathname.startsWith("/explore-china") ||
     location.pathname.startsWith("/dictation") ||
+    location.pathname.startsWith("/pinyin") ||
     location.pathname.startsWith("/flashcards") ||
     
     location.pathname === "/saved-words";
@@ -129,6 +130,12 @@ const Navbar = () => {
                 <Link to="/flashcards" className="cursor-pointer">
                   <Layers className="mr-2 h-4 w-4" />
                   抽认卡 Flashcards
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/pinyin" className="cursor-pointer">
+                  <Languages className="mr-2 h-4 w-4" />
+                  拼音表 Bảng Pinyin
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -281,6 +288,14 @@ const Navbar = () => {
               >
                 <Layers className="h-4 w-4" />
                 抽认卡 Flashcards
+              </Link>
+              <Link
+                to="/pinyin"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+              >
+                <Languages className="h-4 w-4" />
+                拼音表 Bảng Pinyin
               </Link>
               <Link
                 to="/explore-china"
