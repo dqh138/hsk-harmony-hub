@@ -30,7 +30,7 @@ const speak = (text: string) => {
  */
 const ZERO_INITIAL_FINALS: Record<string, string> = {
   yi: "i", ya: "ia", ye: "ie", yao: "iao", you: "iu", yan: "ian", yin: "in", yang: "iang", ying: "ing",
-  wu: "u", wa: "ua", wo: "uo", wai: "uai", wei: "ui", wan: "uan", wen: "un", wang: "uang", weng: "eng",
+  wu: "u", wa: "ua", wo: "uo", wai: "uai", wei: "ui", wan: "uan", wen: "un", wang: "uang", weng: "ueng",
   yu: "\u00fc", yue: "\u00fce", yuan: "\u00fcan", yun: "\u00fcn", yong: "iong",
 };
 
@@ -50,7 +50,7 @@ const FINAL_ORDER = [
   "ai", "ei", "ao", "ou",
   "an", "en", "ang", "eng", "ong",
   "i", "ia", "ie", "iao", "iu", "ian", "in", "iang", "ing", "iong",
-  "u", "ua", "uo", "uai", "ui", "uan", "un", "uang",
+  "u", "ua", "uo", "uai", "ui", "uan", "un", "uang", "ueng",
   "\u00fc", "\u00fce", "\u00fcan", "\u00fcn",
 ];
 
