@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Search, Volume2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,6 +24,56 @@ const speak = (text: string) => {
   window.speechSynthesis.speak(utt);
 };
 
+/**
+ * Chuyển cách viết chính tả (yi/wu/yu/ju...) về vận mẫu gốc để xếp vào đúng cột.
+ * Ví dụ: "yi" -> "i", "ju" -> "ü", "wan" -> "uan".
+ */
+const ZERO_INITIAL_FINALS: Record<string, string> = {
+  yi: "i", ya: "ia", ye: "ie", yao: "iao", you: "iu", yan: "ian", yin: "in", yang: "iang", ying: "ing",
+  wu: "u", wa: "ua", wo: "uo", wai: "uai", wei: "ui", wan: "uan", wen: "un", wang: "uang", weng: "eng",
+  yu: "\u00fc", yue: "\u00fce", yuan: "\u00fcan", yun: "\u00fcn", yong: "iong",
+};
+
+const getFinal = (initial: string, syllable: string): string => {
+  if (!initial) return ZERO_INITIAL_FINALS[syllable] ?? syllable;
+  let f = syllable.slice(initial.length);
+  // j/q/x + u thực chất là ü
+  if ("jqx".includes(initial) && f.startsWith("u")) {
+    f = "\u00fc" + f.slice(1);
+  }
+  return f;
+};
+
+/** Thứ tự cột vận mẫu theo bảng Pinyin truyền thống. */
+const FINAL_ORDER = [
+  "a", "o", "e", "er",
+  "ai", "ei", "ao", "ou",
+  "an", "en", "ang", "eng", "ong",
+  "i", "ia", "ie", "iao", "iu", "ian", "in", "iang", "ing", "iong",
+  "u", "ua", "uo", "uai", "ui", "uan", "un", "uang",
+  "\u00fc", "\u00fce", "\u00fcan", "\u00fcn",
+];
+
+interface Cell {
+  syllable: string;
+}
+
+interface Row {
+  initial: string;
+  label: string;
+  note: string;
+  cells: Map<string, Cell>; // final -> cell
+}
+
+const buildMatrix = (): Row[] =>
+  PINYIN_GROUPS.map((g) => {
+    const cells = new Map<string, Cell>();
+    for (const s of g.syllables) {
+      cells.set(getFinal(g.initial, s), { syllable: s });
+    }
+    return { initial: g.initial, label: g.label, note: g.note, cells };
+  });
+
 const PinyinChart = () => {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
@@ -32,22 +81,35 @@ const PinyinChart = () => {
 
   const q = query.trim().toLowerCase().replace(/\u00fc/g, "v");
 
-  const groups = useMemo(
-    () =>
-      PINYIN_GROUPS.map((g) => ({
-        ...g,
-        syllables: q ? g.syllables.filter((s) => s.includes(q)) : g.syllables,
-      })).filter((g) => g.syllables.length > 0),
-    [q]
-  );
+  const rows = useMemo(() => {
+    const matrix = buildMatrix();
+    if (!q) return matrix;
+    return matrix
+      .map((r) => {
+        const cells = new Map<string, Cell>();
+        r.cells.forEach((cell, final) => {
+          if (cell.syllable.includes(q) || displaySyllable(cell.syllable).includes(query.trim().toLowerCase())) {
+            cells.set(final, cell);
+          }
+        });
+        return { ...r, cells };
+      })
+      .filter((r) => r.cells.size > 0);
+  }, [q, query]);
+
+  // Chỉ giữ các cột vận mẫu thực sự xuất hiện (sau lọc).
+  const columns = useMemo(() => {
+    const present = new Set<string>();
+    rows.forEach((r) => r.cells.forEach((_, f) => present.add(f)));
+    return FINAL_ORDER.filter((f) => present.has(f));
+  }, [rows]);
 
   const total = useMemo(() => PINYIN_GROUPS.reduce((n, g) => n + g.syllables.length, 0), []);
-  const shown = groups.reduce((n, g) => n + g.syllables.length, 0);
+  const shown = rows.reduce((n, r) => n + r.cells.size, 0);
 
   const playTone = (syllable: string, tone: number) => {
     const example = getExample(syllable, tone);
     setPlayingTone(tone);
-    // Ưu tiên đọc chữ Hán mẫu (giọng zh-CN phát âm thanh điệu chuẩn hơn pinyin).
     speak(example?.hanzi ?? withTone(syllable, tone));
     window.setTimeout(() => setPlayingTone(null), 900);
   };
@@ -69,8 +131,8 @@ const PinyinChart = () => {
             拼音表 · Bảng Pinyin
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Toàn bộ {total} âm tiết Pinyin của tiếng Phổ thông, sắp xếp theo thanh mẫu. Nhấn vào một âm
-            tiết để nghe lần lượt bốn thanh điệu kèm chữ Hán ví dụ.
+            Bảng kết hợp {total} âm tiết Pinyin: hàng là thanh mẫu (声母), cột là vận mẫu (韵母). Nhấn vào
+            một âm tiết để nghe lần lượt bốn thanh điệu kèm chữ Hán ví dụ.
           </p>
         </header>
 
@@ -89,47 +151,74 @@ const PinyinChart = () => {
           )}
         </div>
 
-        <div className="space-y-4">
-          {groups.map((g) => (
-            <Card key={g.initial || "zero"}>
-              <CardContent className="p-4">
-                <div className="mb-3 flex items-baseline gap-2">
-                  <span className="font-serif text-xl font-black text-primary">
-                    {g.initial || g.label}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{g.note}</span>
-                  <span className="ml-auto text-xs text-muted-foreground">
-                    {g.syllables.length} âm tiết
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {g.syllables.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => setSelected(s)}
-                      className={cn(
-                        "rounded-md border border-border/60 bg-background/60 px-3 py-1.5 text-sm font-medium transition-all",
-                        "hover:-translate-y-0.5 hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
-                      )}
+        {rows.length === 0 ? (
+          <p className="py-12 text-center text-sm text-muted-foreground">
+            Không tìm thấy âm tiết nào phù hợp.
+          </p>
+        ) : (
+          <div className="overflow-x-auto rounded-lg border border-border/60">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="bg-muted/40">
+                  <th className="sticky left-0 z-10 min-w-[4.5rem] border-b border-r border-border/60 bg-muted/60 px-3 py-2 text-left font-serif">
+                    声母
+                    <span className="mx-1 text-muted-foreground">/</span>
+                    韵母
+                  </th>
+                  {columns.map((f) => (
+                    <th
+                      key={f}
+                      className="min-w-[3.25rem] whitespace-nowrap border-b border-border/40 px-2 py-2 text-center font-semibold text-primary"
                     >
-                      {displaySyllable(s)}
-                    </button>
+                      {f}
+                    </th>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-          {groups.length === 0 && (
-            <p className="py-12 text-center text-sm text-muted-foreground">
-              Không tìm thấy âm tiết nào phù hợp.
-            </p>
-          )}
-        </div>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.initial || "zero"} className="even:bg-muted/20">
+                    <th
+                      className="sticky left-0 z-10 whitespace-nowrap border-r border-border/60 bg-background px-3 py-1.5 text-left font-serif text-base font-black text-primary"
+                      title={r.note}
+                    >
+                      {r.initial || "零"}
+                      <span className="ml-1.5 text-[10px] font-normal text-muted-foreground">{r.note}</span>
+                    </th>
+                    {columns.map((f) => {
+                      const cell = r.cells.get(f);
+                      return (
+                        <td
+                          key={f}
+                          className={cn(
+                            "border-b border-border/30 px-1 py-1 text-center",
+                            !cell && "bg-muted/10"
+                          )}
+                        >
+                          {cell && (
+                            <button
+                              type="button"
+                              onClick={() => setSelected(cell.syllable)}
+                              className={cn(
+                                "w-full rounded-md px-1.5 py-1.5 text-sm font-medium transition-all",
+                                "hover:-translate-y-0.5 hover:bg-primary/10 hover:text-primary"
+                              )}
+                            >
+                              {displaySyllable(cell.syllable)}
+                            </button>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-        <p className="mt-8 text-center text-xs text-muted-foreground">
-          Âm thanh được tạo bằng giọng đọc tiếng Trung của trình duyệt. Bố cục tham khảo bảng Pinyin
-          thông dụng.
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          Âm thanh được tạo bằng giọng đọc tiếng Trung của trình duyệt. j/q/x + u đọc như ü (ju = jü).
         </p>
       </main>
 
