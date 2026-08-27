@@ -160,7 +160,7 @@ const PinyinChart = () => {
             <table className="w-full table-fixed border-collapse text-[11px] leading-none">
               <thead>
                 <tr className="bg-muted/40">
-                  <th className="w-[3.4rem] border-b border-r border-border/60 bg-muted/60 px-1 py-1 text-left font-serif text-[10px]">
+                  <th className="w-[5.5rem] border-b border-r border-border/60 bg-muted/60 px-1 py-1 text-left font-serif text-[10px]">
                     声母
                     <span className="mx-1 text-muted-foreground">/</span>
                     韵母
@@ -183,7 +183,7 @@ const PinyinChart = () => {
                       title={r.note}
                     >
                       {r.initial || "零"}
-                      <span className="ml-1 hidden text-[9px] font-normal text-muted-foreground xl:inline">{r.note}</span>
+                      <span className="ml-1 hidden truncate align-middle text-[9px] font-normal text-muted-foreground 2xl:inline-block 2xl:max-w-[4rem]">{r.note}</span>
                     </th>
                     {columns.map((f) => {
                       const cell = r.cells.get(f);
@@ -200,7 +200,7 @@ const PinyinChart = () => {
                               type="button"
                               onClick={() => setSelected(cell.syllable)}
                               className={cn(
-                                "w-full truncate rounded px-0.5 py-1 text-[11px] font-medium transition-all",
+                                "w-full rounded px-0 py-1 text-[10px] font-medium leading-tight transition-all",
                                 "hover:-translate-y-0.5 hover:bg-primary/10 hover:text-primary"
                               )}
                             >
