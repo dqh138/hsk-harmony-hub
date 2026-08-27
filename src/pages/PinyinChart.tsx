@@ -118,7 +118,7 @@ const PinyinChart = () => {
     <div className="relative z-10 min-h-screen">
       <Navbar />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="mx-auto w-full max-w-[1800px] px-3 py-6">
         <Link to="/">
           <Button variant="ghost" size="sm" className="mb-3 gap-1">
             <ArrowLeft className="h-4 w-4" />
@@ -126,7 +126,7 @@ const PinyinChart = () => {
           </Button>
         </Link>
 
-        <header className="mb-6">
+        <header className="mb-4">
           <h1 className="font-serif text-3xl font-black gold-text md:text-4xl">
             拼音表 · Bảng Pinyin
           </h1>
@@ -136,7 +136,7 @@ const PinyinChart = () => {
           </p>
         </header>
 
-        <div className="relative mb-6 max-w-sm">
+        <div className="relative mb-4 max-w-sm">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={query}
@@ -156,11 +156,11 @@ const PinyinChart = () => {
             Không tìm thấy âm tiết nào phù hợp.
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-border/60">
-            <table className="w-full border-collapse text-sm">
+          <div className="w-full rounded-lg border border-border/60">
+            <table className="w-full table-fixed border-collapse text-[11px] leading-none">
               <thead>
                 <tr className="bg-muted/40">
-                  <th className="sticky left-0 z-10 min-w-[4.5rem] border-b border-r border-border/60 bg-muted/60 px-3 py-2 text-left font-serif">
+                  <th className="w-[3.4rem] border-b border-r border-border/60 bg-muted/60 px-1 py-1 text-left font-serif text-[10px]">
                     声母
                     <span className="mx-1 text-muted-foreground">/</span>
                     韵母
@@ -168,7 +168,7 @@ const PinyinChart = () => {
                   {columns.map((f) => (
                     <th
                       key={f}
-                      className="min-w-[3.25rem] whitespace-nowrap border-b border-border/40 px-2 py-2 text-center font-semibold text-primary"
+                      className="whitespace-nowrap border-b border-border/40 px-0.5 py-1 text-center text-[10px] font-semibold text-primary"
                     >
                       {f}
                     </th>
@@ -179,11 +179,11 @@ const PinyinChart = () => {
                 {rows.map((r) => (
                   <tr key={r.initial || "zero"} className="even:bg-muted/20">
                     <th
-                      className="sticky left-0 z-10 whitespace-nowrap border-r border-border/60 bg-background px-3 py-1.5 text-left font-serif text-base font-black text-primary"
+                      className="whitespace-nowrap border-r border-border/60 bg-background px-1 py-0.5 text-left font-serif text-xs font-black text-primary"
                       title={r.note}
                     >
                       {r.initial || "零"}
-                      <span className="ml-1.5 text-[10px] font-normal text-muted-foreground">{r.note}</span>
+                      <span className="ml-1 hidden text-[9px] font-normal text-muted-foreground xl:inline">{r.note}</span>
                     </th>
                     {columns.map((f) => {
                       const cell = r.cells.get(f);
@@ -191,7 +191,7 @@ const PinyinChart = () => {
                         <td
                           key={f}
                           className={cn(
-                            "border-b border-border/30 px-1 py-1 text-center",
+                            "border-b border-border/30 p-0 text-center",
                             !cell && "bg-muted/10"
                           )}
                         >
@@ -200,7 +200,7 @@ const PinyinChart = () => {
                               type="button"
                               onClick={() => setSelected(cell.syllable)}
                               className={cn(
-                                "w-full rounded-md px-1.5 py-1.5 text-sm font-medium transition-all",
+                                "w-full truncate rounded px-0.5 py-1 text-[11px] font-medium transition-all",
                                 "hover:-translate-y-0.5 hover:bg-primary/10 hover:text-primary"
                               )}
                             >
