@@ -10,7 +10,7 @@ export default defineTool({
   inputSchema: {
     query: z.string().optional().describe("Filter by title text (Chinese or Vietnamese)."),
     level: z.string().optional().describe("Level filter: beginner, intermediate or advanced."),
-    category: z.string().optional().describe("Category filter: news, vlog, cartoon, drama, education, history, discovery, other."),
+    category: z.string().optional().describe("Category filter: hsk, news, vlog, cartoon, drama, education, history, discovery, other."),
     limit: z.number().int().optional().describe("Maximum number of videos to return (default 25, max 100)."),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
