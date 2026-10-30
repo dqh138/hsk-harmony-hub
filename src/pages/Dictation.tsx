@@ -323,12 +323,24 @@ const Dictation = () => {
     if (auto && translateFailedRef.current) return;
     setTranslatingIdx(currentIdx);
     try {
-      const { data: res, error } = await supabase.functions.invoke("dictation-translate", {
-        body: { text: seg.hanzi },
-      });
-      if (error) throw new Error(error.message);
-      if (res?.error) throw new Error(res.error);
-      setTranslations((p) => ({ ...p, [currentIdx]: res.translation as string }));
+      let translation: string;
+      try {
+        const { data: res, error } = await supabase.functions.invoke("dictation-translate", {
+          body: { text: seg.hanzi },
+        });
+        if (error) throw new Error(error.message);
+        if (res?.error) throw new Error(res.error);
+        translation = res.translation as string;
+      } catch {
+        // Dự phòng: pinyin-translate (Claude) cũng trả về nghĩa tiếng Việt, giới hạn 100 ký tự.
+        const { data: res, error } = await supabase.functions.invoke("pinyin-translate", {
+          body: { text: seg.hanzi.slice(0, 100) },
+        });
+        if (error) throw new Error(error.message);
+        if (res?.error || !res?.meaning) throw new Error(res?.error ?? "Không có bản dịch");
+        translation = res.meaning as string;
+      }
+      setTranslations((p) => ({ ...p, [currentIdx]: translation }));
       translateFailedRef.current = false;
     } catch (e) {
       if (!translateFailedRef.current) {
