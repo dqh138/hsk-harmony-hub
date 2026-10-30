@@ -107,6 +107,8 @@ const Dictation = () => {
   const [showPinyin, setShowPinyin] = useState<Record<number, boolean>>({});
   const [translations, setTranslations] = useState<Record<number, string>>({});
   const [translatingIdx, setTranslatingIdx] = useState<number | null>(null);
+  // Edge function dịch lỗi một lần thì thôi tự dịch và không báo lỗi lặp lại mỗi câu.
+  const translateFailedRef = useRef(false);
   const [rate, setRate] = useState<number>(1);
   const [completed, setCompleted] = useState(false);
   const [levelFilter, setLevelFilter] = useState<DictationLevel | "all">("all");
@@ -280,7 +282,7 @@ const Dictation = () => {
       setHints((p) => { const n = { ...p }; delete n[currentIdx]; return n; });
       // Hiển thị đáp án đầy đủ + dịch, chờ Enter tiếp theo để qua câu kế.
       setShowAnswer((p) => ({ ...p, [currentIdx]: true }));
-      void fetchTranslation();
+      void fetchTranslation(true);
     } else {
       // Đếm số CHUNK đầu khớp (đồng bộ với hiển thị "So sánh ký tự" theo chunk).
       const chunks = splitForCompare(seg.hanzi);
@@ -309,7 +311,7 @@ const Dictation = () => {
   const togglePinyin = () => setShowPinyin((p) => ({ ...p, [currentIdx]: !p[currentIdx] }));
   const toggleAnswer = () => setShowAnswer((p) => ({ ...p, [currentIdx]: !p[currentIdx] }));
 
-  const fetchTranslation = async () => {
+  const fetchTranslation = async (auto = false) => {
     if (!seg || !data) return;
     if (translations[currentIdx]) return;
     // Ưu tiên bản dịch dựng sẵn (script translate-dictation.ts)
@@ -318,6 +320,7 @@ const Dictation = () => {
       setTranslations((p) => ({ ...p, [currentIdx]: preset }));
       return;
     }
+    if (auto && translateFailedRef.current) return;
     setTranslatingIdx(currentIdx);
     try {
       const { data: res, error } = await supabase.functions.invoke("dictation-translate", {
@@ -326,9 +329,17 @@ const Dictation = () => {
       if (error) throw new Error(error.message);
       if (res?.error) throw new Error(res.error);
       setTranslations((p) => ({ ...p, [currentIdx]: res.translation as string }));
+      translateFailedRef.current = false;
     } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      toast({ title: "Không dịch được", description: msg, variant: "destructive" });
+      if (!translateFailedRef.current) {
+        const msg = e instanceof Error ? e.message : String(e);
+        toast({
+          title: "Tạm thời không dịch được",
+          description: `${msg}. Bạn vẫn luyện nghe bình thường; app sẽ không báo lại lỗi này.`,
+          variant: "destructive",
+        });
+      }
+      translateFailedRef.current = true;
     } finally {
       setTranslatingIdx(null);
     }
@@ -744,7 +755,7 @@ const Dictation = () => {
                         {showPinyin[currentIdx] ? " Ẩn pinyin" : " Pinyin"}
                       </Button>
                       <Button
-                        onClick={fetchTranslation}
+                        onClick={() => fetchTranslation()}
                         variant="outline"
                         size="sm"
                         className="gap-1"
